@@ -1,6 +1,3 @@
-// MDVRP_JC.cpp : Defines the entry point for the console application.
-//
-
 #include "stdafx.h"
 #include "FrogLeapSolution.h"
 #include "FrogLeapController.h"
@@ -47,13 +44,13 @@ void setCustomer(FrogLeapController *controller, Graph * g, int vertIdLabel, int
 
 int main()
 {
-
+    
 	auto start_time = std::chrono::high_resolution_clock::now();
 
 	// create the graph given in above fugure 
-
+	
 	int V = 9;
-
+	
 	FrogLeapController * controller = new FrogLeapController();
 
 	char * fileName = "casog01.vrp";
@@ -64,7 +61,7 @@ int main()
 
 	DecodedFrogLeapSolution * dfls_1 = NULL;
 
-	if (controller->getSourceType() == SourceType::Graph)
+	if(controller->getSourceType() == SourceType::Graph)
 	{
 		Graph * g = new Graph(V);
 
@@ -86,13 +83,13 @@ int main()
 		int vertexIndex = g->getPositionVertexById(0);
 		DistVect * dv = NULL;
 
-		if (vertexIndex != -1)
+		if(vertexIndex != -1)
 		{
 			dv = g->dijkstra(vertexIndex);
-		}
-
+		}		
+		
 		/* main to test Dijkstra algorithm */
-
+		
 		setDepot(controller, g, 0, 12);
 		setDepot(controller, g, 6, 14);
 
@@ -119,7 +116,7 @@ int main()
 		dt = NULL;
 
 		controller->setUpCustomerAndDepotLists();
-	}
+	} 
 	else
 	{
 		controller->loadTSPEUC2D_Data(fileName);
@@ -131,8 +128,8 @@ int main()
 	}
 
 	//controller->setUpVehiclesPerDepot();	
-
-	/* Main to test all permutations of distance = 1 and distance = 2
+	
+	/* Main to test all permutations of distance = 1 and distance = 2 
 
 	FeasibleSolution * fs;
 	FeasibleSolCol * fscol;
@@ -140,19 +137,19 @@ int main()
 	fs = new FeasibleSolution(V);
 	*/
 
-	/* setting indexes as values in the FeasibleSolution
+	/* setting indexes as values in the FeasibleSolution	
 	for(int i = 0; i<V;i++)
 	{
-	fs->setSolFactValue(i, i);
+		fs->setSolFactValue(i, i);
 	}
-
+		
 	int distance;
 	distance = 1;
 	fscol = fs->genPermutations(distance,NULL, controller);
 	fscol->printFeasSolCol();
 	*/
 
-	/* main to test random vector (FeasibleSolution)
+	/* main to test random vector (FeasibleSolution) 
 	fs = new FeasibleSolution(V);
 
 	fs->setRandomSolution();
@@ -160,28 +157,28 @@ int main()
 	fs->printFeasibleSolution();
 	*/
 
-	/* main to test the random solution generator
+	/* main to test the random solution generator 
 	//FeasibleSolution * fs = new FeasibleSolution(V);
 	fs->setRandomSolution();
 	fscol = fs->genRandomFeasibleSolCol();
 
-	fscol->printFeasSolCol();
+	fscol->printFeasSolCol(); 
 	*/
 
-
+		
 	/* main test frogSolution */
-
+	
 	DistanceTable * dt = controller->getDistanceTable();
 
-	//printf("Testing distance table: dt[%d, %d] = %f", 260, 54, dt[260, 54]);
+	printf("Testing distance table: dt[%d, %d] = %f", 260, 54, dt[260, 54]);
 
 	int nDepots = controller->getNumberOfDepots();
 	int nCustomers = controller->getNumberOfCustomers();
-
+    
 	FrogLeapSolution * fls = new FrogLeapSolution(SolutionGenerationType::FrogLeaping, controller->getSourceType(), nCustomers, nDepots, 0);
 
 	dfls_1 = NULL;
-	float evalSol;
+	float evalSol;	
 	const long long int itNumber = controller->getNumberOfIterations();
 	long long int i = 0;
 	long long int timeBound, execTime;
@@ -191,7 +188,7 @@ int main()
 	auto time = end_time - start_time;
 	execTime = std::chrono::duration_cast<std::chrono::milliseconds>(time).count();
 	bool isFeasibleFLS = false;
-
+	
 	printf("Program execution started ... \n");
 
 	controller->openOutPutFile();
@@ -199,17 +196,17 @@ int main()
 	int counterAux = 0;
 	//while(execTime <= timeBound)
 	while (counterAux < 20)
-		//while(true)
+	//while(true)
 	{
-		isFeasibleFLS = fls->genSolution5(controller);
-
+		isFeasibleFLS = fls->genRandomSolution4(controller);
+		
 		controller->writeFrogLeapSolution(fls);
 
 		//fls->printFrogObj();
 
-		if (isFeasibleFLS == true)
+		if(isFeasibleFLS == true)		
 		{
-			dfls_1 = fls->decodeSolutionWithAngularCriteria(controller);
+			dfls_1 = fls->decodeSolution(controller);
 			if (dfls_1->getIsFeasibleSolution() == true)
 			{
 				controller->incSuccessAttempts();
@@ -243,7 +240,7 @@ int main()
 		end_time = std::chrono::high_resolution_clock::now();
 		time = end_time - start_time;
 		execTime = std::chrono::duration_cast<std::chrono::milliseconds>(time).count();
-
+		
 		controller->writeIterationInfo(i, evalSol);
 
 		printf("Iteration Number i = %lld MinCostValue = %.3f CurrentValue = %.3f\n", i, controller->getMinCostValue(), evalSol);
@@ -251,8 +248,8 @@ int main()
 
 		counterAux++;
 	}
-
-	printf("TOTAL ITERATION NUMBER %lld", i);
+	
+ 	printf("TOTAL ITERATION NUMBER %lld", i);
 
 	controller->printCtrl();
 	controller->closeOutPutFile();
@@ -269,4 +266,4 @@ int main()
 	return 0;
 }
 
-
+ 

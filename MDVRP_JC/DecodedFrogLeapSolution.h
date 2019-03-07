@@ -10,12 +10,16 @@ class FrogObjectCol;
 class Vehicle;
 class Graph;
 class FrogLeapController;
+class FrogLeapSolution;
+class Pair;
 
 
 class DecodedFrogLeapSolution : public FrogObject
 {
 	private:
 		FrogObjectCol * * vehicles;
+		FrogObjectCol * * assignedCustomers;
+
 		//vector<FrogObjectCol> vehicles;
 		//FrogObjectCol * vehicles;
 
@@ -25,7 +29,8 @@ class DecodedFrogLeapSolution : public FrogObject
 
 		int notAddedCustomer;
 
-		bool localSearchApplied;		
+		bool localSearchApplied;	
+		bool unReferenceItemsBeforeDelete;
 
 		int numDepots;
 	
@@ -51,7 +56,27 @@ class DecodedFrogLeapSolution : public FrogObject
 
 		bool decodeFrogLeapItem(FrogLeapController * controller, float fvalue, int customerIndex, int numberOfDepots);		
 
+		bool decodeFrogLeapItemToListWithAngularCriteria(FrogLeapController * controller, float fvalue, int customerIndex, int numberOfDepots);
+
 		bool decodeFrogLeapItemWithAngularCriteria(FrogLeapController * controller, float fvalue, int customerIndex, int numberOfDepots);
+
+		bool decodeFrogLeapItemToListWithClosestNextCriteria(FrogLeapController * controller, float fvalue, int customerIndex, int numberOfDepots);
+
+		void assignDecodedCustomersToVehicles(FrogLeapController * controller);
+
+		void assignDecodedCustomersToDepotVehicles(int depotIndex, FrogLeapController * controller);
+
+		void assignCustomersToDepotLists(FrogLeapController * controller, FrogLeapSolution * fls);
+
+		void assignCustomerToDepotList(FrogLeapController * controller, FrogLeapSolution * fls, int customerIndex);
+
+		void orderDepotCustomersWithClosestNextCriteria(int depotIndex, FrogLeapController * controller);
+
+		void orderCustomersWithClosestNextCriteria(FrogLeapController * controller);
+
+		Pair * getClosestCustomerIndexToDepot(int depotIndex, FrogLeapController * controller);
+
+		Pair * getClosestCustomerIndexToCustomer(int customerIndex, int depotIndex, FrogLeapController * controller);
 
 		float evalSolution();
 
@@ -76,6 +101,13 @@ class DecodedFrogLeapSolution : public FrogObject
 		void adjustDepotVehicleRoutes(FrogObjectCol * customerList, FrogLeapController * controller);
 
 		//Pair * calculateAngularValue(int customerIndex, int depotIndex, FrogLeapController * controller);
+
+		void setUnReferenceBeforeDelete(bool v_bol);
+
+		bool getUnReferenceBeforeDelete();
+		void writeDecodedFrogLeapSolution(FrogLeapController * controller);
+
+		void writeDecodedFrogLeapSolutionWithCoordinates(FrogLeapController * controller);
 
 		// abstract methods
 		void printFrogObj();

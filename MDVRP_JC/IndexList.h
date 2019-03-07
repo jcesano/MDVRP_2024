@@ -22,6 +22,8 @@ class IndexList
 
 		void removeIndex(int index);
 
+		int removeIndexByPosition(int position);
+
 		int getSize();
 
 		int getItem(int position);

@@ -52,7 +52,11 @@ class FrogLeapSolution: public FrogObject
 
 		bool genRandomSolution4(FrogLeapController * controller);
 
-		bool genSolution5(FrogLeapController * controller);
+		bool genRandomSolution5(FrogLeapController * controller);
+
+		bool genRandomSolution6(FrogLeapController * controller);
+
+		bool genRandomSolution7(FrogLeapController * controller);
 
 		bool genRandomSolutionFromTestCase(FrogLeapController * controller);
 
@@ -64,7 +68,13 @@ class FrogLeapSolution: public FrogObject
 
 		float assignRandomFeasibleDepot3(FrogLeapController * controller, FrogObjectCol * localDepotCol, int customerIndex);		
 
-		float assignRandomFeasibleDepot4(FrogLeapController * controller, FrogObjectCol * localDepotCol, int customerIndex);
+		float assignRandomFeasibleDepot4(FrogLeapController * controller, FrogObjectCol * & localDepotCol, int customerIndex);
+
+		void assignRandomFeasibleDepot5(FrogLeapController * controller, Pair * currentDepotPair);
+
+		void assignRandomFeasibleDepot6(FrogLeapController * controller, Pair * currentDepotPair, FrogObjectCol * depotListOrderedByCapacity);
+
+		void assignRemainingCustomersToClosestCluster(FrogLeapController * controller);
 
 		FrogObjectCol * initializeFeasibleDepotList(FrogLeapController * controller);
 
@@ -72,20 +82,36 @@ class FrogLeapSolution: public FrogObject
 
 		DecodedFrogLeapSolution * decodeFrogLeapSolution(FrogLeapController * controller, bool adjustVehicleRoutes = false);
 
-		DecodedFrogLeapSolution * FrogLeapSolution::decodeSolutionWithAngularCriteria(FrogLeapController * controller);
+		DecodedFrogLeapSolution * decodeWholeSolutionWithAngularCriteria(FrogLeapController * controller);
 
-		DecodedFrogLeapSolution * FrogLeapSolution::decodeFrogLeapSolutionWithAngularCriteria(FrogLeapController * controller, bool adjustVehicleRoutes);
+		DecodedFrogLeapSolution * decodeFrogLeapWholeSolutionWithAngularCriteria(FrogLeapController * controller);
 		
+		DecodedFrogLeapSolution * decodeSolutionWithAngularCriteria(FrogLeapController * controller);
+
+		DecodedFrogLeapSolution * decodeFrogLeapSolutionWithAngularCriteria(FrogLeapController * controller, bool adjustVehicleRoutes);		
+
+		DecodedFrogLeapSolution * decodeWholeSolutionWithClosestNextCriteria(FrogLeapController * controller);
+
+		DecodedFrogLeapSolution * decodeFrogLeapWholeSolutionWithClosestNextCriteria(FrogLeapController * controller, bool adjustVehicleRoutes);		
+
 		void setSolutionGenerationType(SolutionGenerationType v_sgt);
 
 		SolutionGenerationType getSolutionGenerationType();
 
 		void initCustomerSelection(FrogLeapController * controller);
 
+		FeasibleSolution * initDepotSelection(FrogLeapController * controller);
+
 		void destroyRandomCustomerSelectionList();
 
 		int selectRandomCustomerIndex(int i, FrogLeapController * controller);
-		
+
+		int selectRandomDepotIndex(int i, FeasibleSolution * fs, FrogLeapController * controller);
+
+		void assignMatchCustomerListToFLValues(FrogObjectCol * matchCustomerCol, FrogLeapController * controller);		
+
+		void writeFrogLeapSolution(FrogLeapController * controller);
+
 		// abstract methods
 		void printFrogObj();
 

@@ -65,6 +65,40 @@ void IndexList::removeIndex(int index)
 	} // end while (nodePtr != NULL)
 }
 
+int IndexList::removeIndexByPosition(int position)
+{
+	// assign the first element
+	IndexListNode * currentNode = head, * prevNode = NULL;
+	int result = -1;
+
+	if ((this->head != NULL) && (position < this->getSize()) && (position >= 0))
+	{
+		// if i == 0 then for is not executed, otherwise we start from i = 1
+		// cause result is pointing to the first Node already (first node is in position = 0)
+		for (int j = 0; j < position; j++)
+		{
+			prevNode = currentNode;
+			currentNode = currentNode->getNextPtr();
+		}
+
+		// If the element is the first 
+		if(prevNode == NULL)
+		{
+			head = currentNode->getNextPtr();			
+		}
+		else
+		{
+			prevNode->setNextPtr(currentNode->getNextPtr());
+		}
+		
+		result = currentNode->getIndex();
+		this->size--;
+		delete currentNode;
+	}
+
+	return result;
+}
+
 int IndexList::getSize()
 {
 	return this->size;

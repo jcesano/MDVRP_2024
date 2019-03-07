@@ -217,6 +217,12 @@ class FrogLeapController
 
 		FrogObjectCol * createDepotListOrderedByCapacity();
 
+		FrogObjectCol * createDepotListDescOrderedByCapacity();
+
+		FrogObjectCol * createDepotListOrderedByRemainingCapacity();
+
+		FrogObjectCol * createCustomerListOrderedByDemandDesc();
+
 		FrogObjectCol * createCustomerListOrderedByDemand();
 
 		void resetDepotRemainingCapacities();
@@ -249,7 +255,7 @@ class FrogLeapController
 
 		bool existInLocalDepotList(int assignedDepotIndex, FrogObjectCol * localDepotCol, int low, int top);
 
-		int getClosestDepotIndexOfAssignedCustomers(int customerIndex, FrogObjectCol * localDepotCol, int low, int top, float & distanceToCustomer);
+		int getDepotIndexOfClosestAssignedCustomer(int customerIndex, FrogObjectCol * localDepotCol, int low, int top, float & distanceToCustomer);
 
 		void setCustomerPairAsAssigned(int customerIndex, int depotIndex);
 
@@ -257,12 +263,61 @@ class FrogLeapController
 
 		float genRandomFloatingNumber(float a, float b);
 
+		int genRandomIntNumber(int a, int b);
+
+		int getX_Coord(int nodeInternalId);
+
+		int getY_Coord(int nodeInternalId);
+		
+		FrogObjectCol * createMatchCustomerList(Pair * currentDepotPair);
+
+		FrogObjectCol * createCustomerListOrderedByDistanceFromDepot(Pair * currentDepotPair);
+
+		FrogObjectCol * createDepotListOrderedByDistanceFromCustomer(Pair * currentCustomerPair);
+
+		bool isAMatch(Pair * currentCustomerPair, Pair * currentDepotPair);
+
+		int getTotalDemandOrCapacity(FrogObjectCol * pairCol);
+
+		void assignDepotToCustomerPairs(Pair * depotPair, FrogObjectCol * customerCol);
+
+		FrogObjectCol * assignDepotToCustomerPairsUntilDemandComplete(Pair * depotPair, FrogObjectCol * customerCol);
+
+		FrogObjectCol * selectCustomerPairsUntilDemandComplete(Pair * depotPair, FrogObjectCol * customerCol);
+
+		void assignCustomersToCluster(Pair * depotPair, FrogObjectCol * & customerCol, FrogObjectCol * depotListOrderedByCapacity, FrogLeapSolution * fs);
+		
+		FrogObjectCol * orderCustomerPairListByNthClosestDepotDesc(int n, FrogObjectCol * customerPairCol);
+
+		void assignDepotToCustomer(Pair * depotPair, Pair * customerPair);
+
+		float addRandomNumberToInt(int index);
+
+		bool isCustomerPairAssigned(Pair * customerPair);
+
+		float assignRandomFeasibleDepot4(FrogObjectCol * & localDepotCol, int customerIndex);
+
+		time_t getSeedUsed();
+
 		// functions for writing information in an output file
 		void openOutPutFile();
 
 		void closeOutPutFile();
+
+		FILE * getPFile();
+
+		char * getTestCaseName();
+
+		char * getTestCaseComment();
+
+		int getTestCaseDimension();
+
+		char * getTestCaseType();
+
+		int getTestCaseCapacity();
+
 		void writeSeed();
-		void writeFrogLeapSolution(FrogLeapSolution * fls);
+		void writeFrogLeapSolution(FrogLeapSolution * fls);		
 		void writeIterationInfo(long long int i, float currentValue);
 		void writeRandomInfo(float a, float b, float finalRandom);
 		void writeExecutionInfo();

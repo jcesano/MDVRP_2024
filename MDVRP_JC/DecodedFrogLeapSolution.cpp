@@ -7,15 +7,20 @@
 #include <math.h>       /* floor */
 #include "Graph.h"
 #include "FrogLeapController.h"
+#include "FrogLeapSolution.h"
 
 
 DecodedFrogLeapSolution::DecodedFrogLeapSolution(int n_depots):FrogObject()
 {
 	//this->vehicles = new FrogObjectCol();
 	this->vehicles = new FrogObjectCol * [n_depots];
+	this->assignedCustomers = new FrogObjectCol *[n_depots];
+
+	this->unReferenceItemsBeforeDelete = false;
 
 	for (int i = 0; i < n_depots; i++) {
 		vehicles[i] = new FrogObjectCol();
+		assignedCustomers[i] = new FrogObjectCol();
 	};	
 
 	this->ptrController = NULL;
@@ -27,9 +32,12 @@ DecodedFrogLeapSolution::DecodedFrogLeapSolution(int n_depots, FrogLeapControlle
 {
 	//this->vehicles = new FrogObjectCol();
 	this->vehicles = new FrogObjectCol *[n_depots];
-
+	this->assignedCustomers = new FrogObjectCol *[n_depots];
+	this->unReferenceItemsBeforeDelete = false;
+	
 	for (int i = 0; i < n_depots; i++) {
 		vehicles[i] = new FrogObjectCol();
+		assignedCustomers[i] = new FrogObjectCol();
 	};
 
 	this->ptrController = controller;
@@ -69,6 +77,11 @@ void DecodedFrogLeapSolution::deleteArrayOfFrogObjectCols(FrogObjectCol ** array
 
 	for (int i = 0; i < size; i++)
 	{
+		if(this->unReferenceItemsBeforeDelete == true)
+		{
+			arrayPtr[i]->unReferenceFrogObjectCol();
+		}
+
 		delete arrayPtr[i];
 		arrayPtr[i] = NULL;
 	}	
@@ -178,6 +191,81 @@ bool DecodedFrogLeapSolution::decodeFrogLeapItem(FrogLeapController * controller
 	return result;
 }
 
+
+bool DecodedFrogLeapSolution::decodeFrogLeapItemToListWithClosestNextCriteria(FrogLeapController * controller, float fvalue, int customerIndex, int numberOfDepots)
+{
+	bool result = true;
+	int vehicleId;
+	int depotIndex = this->decodeFrogLeapValue(fvalue, numberOfDepots);
+
+	// assign customer to depot and adjust remaining capacity of the depot
+	int customerDemand = this->ptrController->getCustomerDemandByIndex(customerIndex);
+	int remainingDepotCapacity = this->ptrController->getDepotRemainingCapacityByIndex(depotIndex);
+	int customerId = this->ptrController->getCustomerInternalId(customerIndex);
+
+	if (customerDemand > controller->getVehicleCapacity() || customerDemand > remainingDepotCapacity)
+	{
+		this->setIsFeasibleSolution(false);
+		this->setNotAddedCustomer(customerId);
+		result = false;
+		return result;
+	}
+
+	this->ptrController->decRemainingDepotCapacity(depotIndex, customerDemand);
+
+	// we calculate angular values of customer pair and assign it to an ordered list of the depot
+	Pair * customerPair = controller->getCustomerPairByIndex(customerIndex);
+	int customerInternalId = controller->getCustomerInternalId(customerIndex);
+
+	Pair * depotPair = controller->getDepotPairByIndex(depotIndex);
+	int depotInternalId = controller->getDepotInternalId(depotIndex);
+
+	// calculate next closest next customer
+	
+
+	// assign it to an ordered list of the depot
+	this->assignedCustomers[depotIndex]->addFrogObjectDoubleOrdered(customerPair);
+
+	return result;
+}
+
+bool DecodedFrogLeapSolution::decodeFrogLeapItemToListWithAngularCriteria(FrogLeapController * controller, float fvalue, int customerIndex, int numberOfDepots)
+{
+	bool result = true;
+	int vehicleId;
+	int depotIndex = this->decodeFrogLeapValue(fvalue, numberOfDepots);
+
+	// assign customer to depot and adjust remaining capacity of the depot
+	int customerDemand = this->ptrController->getCustomerDemandByIndex(customerIndex);
+	int remainingDepotCapacity = this->ptrController->getDepotRemainingCapacityByIndex(depotIndex);
+	int customerId = this->ptrController->getCustomerInternalId(customerIndex);
+
+	if (customerDemand > controller->getVehicleCapacity() || customerDemand > remainingDepotCapacity)
+	{
+		this->setIsFeasibleSolution(false);
+		this->setNotAddedCustomer(customerId);
+		result = false;
+		return result;
+	}
+
+	this->ptrController->decRemainingDepotCapacity(depotIndex, customerDemand);
+
+	// we calculate angular values of customer pair and assign it to an ordered list of the depot
+	Pair * customerPair = controller->getCustomerPairByIndex(customerIndex);
+	int customerInternalId = controller->getCustomerInternalId(customerIndex);
+
+	Pair * depotPair = controller->getDepotPairByIndex(depotIndex);
+	int depotInternalId = controller->getDepotInternalId(depotIndex);
+
+	// calculate angular values of customer pair
+	controller->setAngularValues(customerPair, customerInternalId, depotInternalId);
+
+	// assign it to an ordered list of the depot
+	this->assignedCustomers[depotIndex]->addFrogObjectDoubleOrdered(customerPair);
+
+	return result;
+}
+
 bool DecodedFrogLeapSolution::decodeFrogLeapItemWithAngularCriteria(FrogLeapController * controller, float fvalue, int customerIndex, int numberOfDepots)
 {
 	bool result = true;
@@ -188,6 +276,11 @@ bool DecodedFrogLeapSolution::decodeFrogLeapItemWithAngularCriteria(FrogLeapCont
 	int remainingDepotCapacity = this->ptrController->getDepotRemainingCapacityByIndex(depotIndex);
 	int customerId = this->ptrController->getCustomerInternalId(customerIndex);
 
+	if(depotIndex == 6)
+	{
+		//printf("ojo 3");
+	}
+	
 	if (customerDemand > controller->getVehicleCapacity() || customerDemand > remainingDepotCapacity)
 	{
 		this->setIsFeasibleSolution(false);
@@ -244,6 +337,126 @@ bool DecodedFrogLeapSolution::decodeFrogLeapItemWithAngularCriteria(FrogLeapCont
 	veh_customerPair = NULL;
 	veh = NULL;
 	return result;
+}
+
+void DecodedFrogLeapSolution::assignDecodedCustomersToVehicles(FrogLeapController * controller)
+{
+	for (int i = 0; i < this->numDepots; i++)
+	{
+		assignDecodedCustomersToDepotVehicles(i, controller);
+	}
+}
+
+void DecodedFrogLeapSolution::assignDecodedCustomersToDepotVehicles(int depotIndex, FrogLeapController * controller)
+{
+	int size = this->assignedCustomers[depotIndex]->getSize();
+	Vehicle * veh = NULL;
+	Pair * customerPair;
+
+	for(int i = 0; i < size; i++)
+	{
+		customerPair = (Pair *) this->assignedCustomers[depotIndex]->getFrogObject(i);
+
+		//assign vehicle to customer	
+		//get the element with minimum remaining capacity enough		
+		float customerDemand = customerPair->get_i_IntValue();
+
+		veh = (Vehicle *)this->vehicles[depotIndex]->getFirstUpperValueFrogObject(customerDemand);		
+
+		int vehicleId;
+
+		if (veh == NULL)
+		{
+			vehicleId = controller->getGlobalVehicleId();
+
+			veh = new Vehicle(vehicleId, this->ptrController);
+
+			veh->decRemainingCapacity(customerDemand);
+
+			//int depotIndex = vehicleId / numberOfDepots;
+			veh->setDepotIndex(depotIndex);
+
+			this->vehicles[depotIndex]->addFrogObjectOrdered(veh);
+		}
+		else
+		{
+			veh->decRemainingCapacity(customerDemand);
+
+			//this->vehicles[depotIndex]->reorderFrogObject(veh);
+			this->vehicles[depotIndex]->reorderFrogObject(veh);
+		}
+
+		veh->addLastCustomerPair(customerPair);
+	}
+}
+
+void DecodedFrogLeapSolution::assignCustomersToDepotLists(FrogLeapController * controller, FrogLeapSolution * fls)
+{
+	int size = fls->getSize();
+
+	for (int i = 0; i < size; i++)
+	{
+		assignCustomerToDepotList(controller, fls, i);
+	}
+}
+
+void DecodedFrogLeapSolution::assignCustomerToDepotList(FrogLeapController * controller, FrogLeapSolution * fls, int customerIndex)
+{
+	int depotIndex = this->decodeFrogLeapValue(fls->getFLValue(customerIndex), controller->getNumberOfDepots());
+
+	Pair * customerPair = controller->getCustomerPairByIndex(customerIndex);
+
+	this->assignedCustomers[depotIndex]->addFrogObject(customerPair);
+}
+
+Pair * DecodedFrogLeapSolution::getClosestCustomerIndexToDepot(int depotIndex, FrogLeapController * controller) 
+{
+	// get the closest customerPair to depot with depotIndex
+	int closestCustomerIndexToDepot = controller->getClosestCustomerLocalIndexToDepot(depotIndex, 0, this->assignedCustomers[depotIndex]->getSize(), this->assignedCustomers[depotIndex]);
+	return (Pair *)this->assignedCustomers[depotIndex]->getFrogObject(closestCustomerIndexToDepot);	
+}
+
+Pair * DecodedFrogLeapSolution::getClosestCustomerIndexToCustomer(int customerInternalId, int depotIndex, FrogLeapController * controller)
+{
+	// get the closest customerPair to customer with depotindex
+	int closestCustomerIndexToCustomer = controller->getClosestCustomerLocalIndexToCustomer(customerInternalId, 0, this->assignedCustomers[depotIndex]->getSize(), this->assignedCustomers[depotIndex]);
+
+	return (Pair *)this->assignedCustomers[depotIndex]->getFrogObject(closestCustomerIndexToCustomer);
+}
+
+void DecodedFrogLeapSolution::orderDepotCustomersWithClosestNextCriteria(int depotIndex, FrogLeapController * controller)
+{
+	FrogObjectCol * customerDistanceOrderedCol = new FrogObjectCol();	
+	int customerInternalId;
+	
+	// get the closest customerPair to depot with depotIndex	
+	Pair * customerPair = this->getClosestCustomerIndexToDepot(depotIndex, controller);
+
+	//remove customerPair from original disordered customer list and assign it to a new ordered list
+	this->assignedCustomers[depotIndex]->removeFrogObject(customerPair);
+	customerDistanceOrderedCol->addLastFrogObject(customerPair);
+
+	while (this->assignedCustomers[depotIndex]->getSize() > 0)
+	{
+		customerInternalId = customerPair->getId();
+		customerPair = this->getClosestCustomerIndexToCustomer(customerInternalId, depotIndex, controller);
+
+		//remove customerPair from original disordered customer list and assign it to a new ordered list
+		this->assignedCustomers[depotIndex]->removeFrogObject(customerPair);
+		customerDistanceOrderedCol->addLastFrogObject(customerPair);
+	}	
+
+	this->assignedCustomers[depotIndex]->unReferenceFrogObjectCol();
+	delete this->assignedCustomers[depotIndex];
+	this->assignedCustomers[depotIndex] = customerDistanceOrderedCol;
+}
+
+void DecodedFrogLeapSolution::orderCustomersWithClosestNextCriteria(FrogLeapController * controller)
+{
+	for (int i = 0; i < controller->getNumberOfDepots(); i++)
+	{
+		this->orderDepotCustomersWithClosestNextCriteria(i, controller);
+	}
 }
 
 //bool DecodedFrogLeapSolution::decodeFrogLeapAssignCustomerToDepotWithAngularValues(FrogLeapController * controller, float fvalue, int customerIndex, int numberOfDepots)
@@ -366,6 +579,69 @@ void DecodedFrogLeapSolution::printFrogObj()
 	}
 
 	printf("DecodedFrogLeapSolution FINISHED \n");
+}
+
+void DecodedFrogLeapSolution::setUnReferenceBeforeDelete(bool v_bol)
+{
+	this->unReferenceItemsBeforeDelete = v_bol;
+}
+
+bool DecodedFrogLeapSolution::getUnReferenceBeforeDelete()
+{
+	return this->unReferenceItemsBeforeDelete;
+}
+
+void DecodedFrogLeapSolution::writeDecodedFrogLeapSolution(FrogLeapController * controller)
+{
+
+	Vehicle * vehPtr;
+	FILE * pFile = controller->getPFile();
+
+	fprintf(pFile, "Seed used: ", controller->getSeedUsed());
+	fprintf(pFile, "NAME : %s \n", controller->getTestCaseName());
+	fprintf(pFile, "COMMENT : %d \n", controller->getTestCaseComment());
+	fprintf(pFile, "DIMENSION : %d \n", controller->getTestCaseDimension());
+
+	fprintf(pFile, "TYPE : %s \n", controller->getTestCaseType());
+	fprintf(pFile, "CAPACITY : %d \n", controller->getTestCaseCapacity());
+	fprintf(pFile, "ASSIGNATION \n");
+
+	for (int i = 0; i < controller->getNumberOfDepots(); i++)
+	{
+		int numVehicles_i = this->vehicles[i]->getSize();
+
+		for (int j = 0; j < numVehicles_i; j++)
+		{
+			vehPtr = (Vehicle *)this->vehicles[i]->getFrogObject(j);
+			vehPtr->writeFrogObj(controller);
+		}
+	}
+
+	fprintf(pFile, "DecodedFrogLeapSolution FINISHED \n");
+
+
+}
+
+void DecodedFrogLeapSolution::writeDecodedFrogLeapSolutionWithCoordinates(FrogLeapController * controller)
+{
+
+	Vehicle * vehPtr;
+	FILE * pFile = controller->getPFile();
+
+	fprintf(pFile, "NODE_ID, X_COORD, Y_COORD, VEHICLE_ID, DEPOT_ID, IS_DEPOT, ORDER_IN_PATH, PREV_LABEL_ID, DISTANCE_FROM_PREV, DISTANCE_FROM_DEPOT\n");
+
+	for (int i = 0; i < controller->getNumberOfDepots(); i++)
+	{
+		int numVehicles_i = this->vehicles[i]->getSize();
+
+		for (int j = 0; j < numVehicles_i; j++)
+		{
+			vehPtr = (Vehicle *)this->vehicles[i]->getFrogObject(j);
+			vehPtr->writeFrogObjWithCoordinates(controller);
+		}
+	}
+
+	fprintf(pFile, "DecodedFrogLeapSolution FINISHED \n");
 }
 
 bool DecodedFrogLeapSolution::isTheSame(FrogObject * fs)

@@ -15,7 +15,7 @@ class Vehicle : public FrogObject
 		FrogObjectCol * customers;
 		int size;
 		int depotIndex;
-		int depotId;
+		int depotInternalId;
 		long int capacity;
 		long int remaining_capacity;
 		int demand;
@@ -45,9 +45,9 @@ class Vehicle : public FrogObject
 
 		int getDepotIndex();
 
-		void setDepotId(int v_depotId);
+		void setDepotInternalId(int v_depotId);
 
-		int getDepotId();
+		int getDepotInternalId();
 
 		float evalPath(FrogLeapController * controller);
 
@@ -79,9 +79,9 @@ class Vehicle : public FrogObject
 
 		float applyLocalSearch(FrogLeapController * controller);
 
-		int ObtainCustomerIdFromIndex(int position);
+		int ObtainCustomerInternalIdFromIndex(int position);
 
-		int ObtainDepotIdFromIndex();
+		int ObtainDepotInternalIdFromIndex();
 
 		bool generateLocalSolutionsAndEvaluate(FrogLeapController * controller);
 
@@ -98,6 +98,16 @@ class Vehicle : public FrogObject
 
 		Pair * getClosestIndexCustomerPairToCustomer(int depotInternalId, FrogLeapController * controller);
 		
+		void writeFrogObj(FrogLeapController * controller);
+
+		void writeSolution(FrogLeapController * controller);
+
+		void writeFrogObjWithCoordinates(FrogLeapController * controller);
+
+		void writeSolutionWithCoordinates(FrogLeapController * controller);
+
+		void writeNodeCoordinateInfo(FrogLeapController * controller, int nodeInternalId, int orderInPath, int prevInternalId);
+
 		// abstract methods
 		void printFrogObj();
 

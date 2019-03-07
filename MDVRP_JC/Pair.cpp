@@ -9,6 +9,8 @@ Pair::Pair(PairType type)
 
 	i_float = -1;
 	j_float = -1;
+
+	this->pairCol = NULL;
 }
 
 Pair::Pair(PairType type, int pairId):FrogObject(pairId)
@@ -19,11 +21,18 @@ Pair::Pair(PairType type, int pairId):FrogObject(pairId)
 
 	i_float = -1;
 	j_float = -1;
+
+	this->pairCol = NULL;
 }
 
 Pair::~Pair()
 {
 	//printf("Destroying Pair \n");
+
+	if(this->pairCol != NULL)
+	{
+		delete this->pairCol;
+	}
 }
 
 PairType Pair::getType()
@@ -84,6 +93,36 @@ int Pair::getAssignedDepotIndex()
 void Pair::setAssignedDepotIndex(int depotIndex)
 {
 	this->assignedDepotIndex = depotIndex;
+}
+
+FrogObjectCol * Pair::getPairCol()
+{
+	return this->pairCol;
+}
+
+void Pair::setPairCol(FrogObjectCol * v_pairCol)
+{
+	this->pairCol = v_pairCol;
+}
+
+void Pair::upDateRemainingCapacity(Pair * customerPair)
+{
+	int customerDemand = customerPair->get_i_IntValue();
+	int depotRemainingCap = this->get_j_IntValue();
+	int newCapacity = depotRemainingCap - customerDemand;
+	this->set_j_IntValue(newCapacity);
+}
+
+Pair * Pair::createCopy()
+{
+	Pair * copy = new Pair(this->getType(), this->getId());
+
+	copy->set_i_IntValue(this->get_i_IntValue());
+	copy->set_j_IntValue(this->get_j_IntValue());
+	copy->set_i_FloatValue(this->get_i_FloatValue());
+	copy->set_j_FloatValue(this->get_j_FloatValue());
+
+	return copy;
 }
 
 void Pair::printFrogObj()

@@ -93,14 +93,14 @@ int Vehicle::getDepotIndex()
 	return this->depotIndex;
 }
 
-void Vehicle::setDepotId(int v_depotId)
+void Vehicle::setDepotInternalId(int v_depotId)
 {
-	this->depotId = v_depotId;
+	this->depotInternalId = v_depotId;
 }
 
-int Vehicle::getDepotId()
+int Vehicle::getDepotInternalId()
 {
-	return this->depotId;
+	return this->depotInternalId;
 }
 
 float Vehicle::evalPath(FrogLeapController * controller)
@@ -119,8 +119,9 @@ float Vehicle::evalPath(FrogLeapController * controller)
 		for(int i = 0; i < this->customers->getSize(); i++)
 		{
 			destinationPair = (Pair *) this->customers->getFrogObject(i);
-			destinationIndex = destinationPair->get_i_IntValue();
-			destinationId = this->ptrController->getCustomerInternalId(destinationIndex);
+			//destinationIndex = controller->getDepotListIndexByInternal(destinationPair->getId());
+			//destinationId = this->ptrController->getCustomerInternalId(destinationIndex);
+			destinationId = destinationPair->getId();
 
 			vehiclePathResult = vehiclePathResult + dt->getEdge(originId, destinationId);
 
@@ -207,37 +208,37 @@ void Vehicle::setupLocalSearch()
 
 	for (int i = 0; i < n_customers; i++)
 	{
-		//obtaining the customerId (internal id) in the graph, from customer index (position) in customerList
-		vehicleCustomerArray[i] = this->ObtainCustomerIdFromIndex(i);
+		//obtaining the customerInternalId (internal id) in the graph, from customer index (position) in customerList
+		vehicleCustomerArray[i] = this->ObtainCustomerInternalIdFromIndex(i);
 	}
 
 	//obtaining the depotId in the graph, from depot index (position)
-	this->setDepotId(this->ObtainDepotIdFromIndex());	
+	this->setDepotInternalId(this->ObtainDepotInternalIdFromIndex());	
 }
 
-int Vehicle::ObtainDepotIdFromIndex()
+int Vehicle::ObtainDepotInternalIdFromIndex()
 {
 	// Aux variable
 	Pair * tmp = NULL;
-	int depotId, depotIndex;
+	int depotInternalId, depotIndex;
 	
 	depotIndex = this->getDepotIndex(); //obtaining Pair(CustomerIndex, flValue)	
-	depotId = this->ptrController->getDepotInternalId(depotIndex); //obtaining the customerId in the graph
+	depotInternalId = this->ptrController->getDepotInternalId(depotIndex); //obtaining the customerId in the graph
 
-	return depotId;
+	return depotInternalId;
 }
 
-int Vehicle::ObtainCustomerIdFromIndex(int position)
+int Vehicle::ObtainCustomerInternalIdFromIndex(int position)
 {
 	// Aux variable
 	Pair * tmp = NULL;
-	int customerId, customerIndex;
+	int customerInternalId, customerIndex;
 
 	tmp = (Pair *) this->customers->getFrogObject(position); //obtaining Pair(CustomerIndex, flValue)
 	customerIndex = tmp->get_i_IntValue();
-	customerId = this->ptrController->getCustomerInternalId(customerIndex); //obtaining the customerId
+	customerInternalId = this->ptrController->getCustomerInternalId(customerIndex); //obtaining the customerId
 
-	return customerId;
+	return customerInternalId;
 }
 
 //return the new cost found or the previous value instead
@@ -319,6 +320,94 @@ void Vehicle::printFrogObj()
 			printGlobalSolution();
 		}
 	}
+}
+
+void Vehicle::writeFrogObj(FrogLeapController * controller)
+{
+	setupLocalSearch();
+
+	writeSolution(controller);
+}
+
+void Vehicle::writeSolution(FrogLeapController * controller)
+{
+	FILE * pFile = controller->getPFile();
+
+	int depotIndex = this->getDepotIndex(), depotIddestinationId;
+	Pair * originPair, *destinationPair;
+	int originIndex, originId, destinationIndex, destinationId, originLabelId, destinationLabelId;
+
+	originId = this->ptrController->getDepotInternalId(depotIndex);
+	originLabelId = this->ptrController->getLabel(originId);
+
+	fprintf(pFile, "%d %.2f ", originLabelId, this->getPathCost());
+
+	for (int i = 0; i < this->customers->getSize(); i++)
+	{
+		destinationId = this->vehicleCustomerArray[i];
+		destinationLabelId = this->ptrController->getLabel(destinationId);
+
+		fprintf(pFile, "%d ", destinationLabelId);	
+
+		originId = destinationId;
+		originLabelId = this->ptrController->getLabel(originId);
+	}
+
+	fprintf(pFile, "\n");
+}
+
+void Vehicle::writeFrogObjWithCoordinates(FrogLeapController * controller)
+{
+	setupLocalSearch();
+
+	writeSolutionWithCoordinates(controller);
+}
+
+void Vehicle::writeSolutionWithCoordinates(FrogLeapController * controller)
+{
+	FILE * pFile = controller->getPFile();
+
+	int depotIndex = this->getDepotIndex(), depotIddestinationId;
+	Pair * originPair, *destinationPair;
+	int originIndex, originInternalId, destinationIndex, destinationInternalId, originLabelId, destinationLabelId;
+
+	// Write coordinate info of the node	
+	originInternalId = this->ptrController->getDepotInternalId(depotIndex);
+	writeNodeCoordinateInfo(controller, originInternalId, -1, -1);
+
+	for (int i = 0; i < this->customers->getSize(); i++)
+	{
+		//obtaining the nodeInternalId (internal id) in the graph, from customer index (position) in customerList
+		destinationInternalId = this->vehicleCustomerArray[i];
+		writeNodeCoordinateInfo(controller, destinationInternalId, i, originInternalId);
+
+		originInternalId = destinationInternalId;
+	}
+}
+
+void Vehicle::writeNodeCoordinateInfo(FrogLeapController * controller, int nodeInternalId, int orderInPath, int prevInternalId)
+{
+	FILE * pFile = controller->getPFile();
+
+	int nodeLabelId = controller->getLabel(nodeInternalId);
+	int prevLabelId = -1;
+	
+	if (prevInternalId != -1)
+		prevLabelId = controller->getLabel(prevInternalId);
+
+	int x_coord = controller->getX_Coord(nodeInternalId);
+	int y_coord = controller->getY_Coord(nodeInternalId);
+	int vehicleId = this->getId();
+	int depotInternalId = this->getDepotInternalId();
+	int depotLabelId = controller->getLabel(depotInternalId);
+	bool isDepot = (nodeLabelId == depotLabelId);
+	float distanceFromDepot = controller->getDistanceTable()->getEdge(nodeInternalId, depotInternalId);
+	float distanceFromPrev = 0;
+
+	if (prevInternalId != -1)
+		distanceFromPrev = controller->getDistanceTable()->getEdge(nodeInternalId, prevInternalId);
+	
+	fprintf(pFile, "%d, %d, %d, %d, %d, %d, %d, %d, %.2f, %.2f \n", nodeLabelId, x_coord, y_coord, vehicleId, depotLabelId, isDepot, orderInPath, prevLabelId, distanceFromPrev, distanceFromDepot);
 }
 
 void Vehicle::printLocalSolution()

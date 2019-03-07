@@ -289,7 +289,7 @@ bool FeasibleSolution::searchOneSwapFeasibleSolutionsAndEval(Vehicle * veh, Frog
 	bool improvement;
 	float currentCost = 0;
 	
-	int depotId = veh->getDepotId(); 
+	int depotId = veh->getDepotInternalId(); 
 	float bestVehicleCost = veh->getPathCost();
 
 	if (this->size == 1)

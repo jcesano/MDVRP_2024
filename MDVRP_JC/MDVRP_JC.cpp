@@ -125,9 +125,7 @@ int main()
 		controller->loadTSPEUC2D_Data(fileName);
 		controller->setUpCustomerAndDepotLists();
 		controller->setUpVehicleCapacity();
-		controller->loadDistanceTable();
-
-		//dfls_1 =  controller->loadTestCaseData(testCaseFileName);
+		controller->loadDistanceTable();		
 	}
 
 	//controller->setUpVehiclesPerDepot();	
@@ -195,26 +193,71 @@ int main()
 	printf("Program execution started ... \n");
 
 	controller->openOutPutFile();
-	controller->writeSeed();
+	//controller->writeSeed();
 	int counterAux = 0;
+	bool testMode = false;
+	
 	//while(execTime <= timeBound)
-	while (counterAux < 20)
-		//while(true)
-	{
-		isFeasibleFLS = fls->genSolution5(controller);
-
-		controller->writeFrogLeapSolution(fls);
+	while (counterAux < 10000000)	//while(true)
+	{		
+		//controller->writeFrogLeapSolution(fls);
 
 		//fls->printFrogObj();
 
-		if (isFeasibleFLS == true)
+		if (testMode == false)
 		{
-			dfls_1 = fls->decodeSolutionWithAngularCriteria(controller);
+			isFeasibleFLS = fls->genRandomSolution7(controller);
+
+			if (isFeasibleFLS == true)
+			{				
+				fls->writeFrogLeapSolution(controller);
+
+				dfls_1 = fls->decodeWholeSolutionWithClosestNextCriteria(controller);
+
+				if (dfls_1->getIsFeasibleSolution() == true)
+				{
+					controller->incSuccessAttempts();
+					evalSol = dfls_1->evalSolution();
+					//dfls_1->writeDecodedFrogLeapSolution(controller);
+					//dfls_1->writeDecodedFrogLeapSolutionWithCoordinates(controller);
+					
+					if (evalSol < controller->getMinCostValue())
+					{
+						printf("New solution found \n");
+						controller->incGlobalSearchImprovements();
+						controller->setBestDecodedFrogLeapSolution(dfls_1);
+						controller->setMinCostValue(evalSol);
+
+						//apply local search
+						//controller->applyLocalSearch();					
+						controller->printCtrl();
+					}
+					else
+					{
+						//dfls_1->printFrogObj();
+						delete dfls_1;
+					}
+				}
+				else
+				{
+					evalSol = -1;
+					//dfls_1->printFrogObj();
+					controller->incFailAttempts();
+					delete dfls_1;
+				}
+			}
+
+			printf("Iteration Number i = %lld MinCostValue = %.3f CurrentValue = %.3f\n", i, controller->getMinCostValue(), evalSol);
+		}
+		else
+		{
+			dfls_1 = controller->loadTestCaseData(testCaseFileName);
+
 			if (dfls_1->getIsFeasibleSolution() == true)
 			{
-				controller->incSuccessAttempts();
 				evalSol = dfls_1->evalSolution();
-				//evalSol = dfls_1->applyLocalSearch(controller);
+				//dfls_1->writeDecodedFrogLeapSolution(controller);
+				//dfls_1->writeDecodedFrogLeapSolutionWithCoordinates(controller);
 				if (evalSol < controller->getMinCostValue())
 				{
 					//printf("New solution found \n");
@@ -226,17 +269,8 @@ int main()
 					//controller->applyLocalSearch();					
 					controller->printCtrl();
 				}
-				else
-				{
 					//dfls_1->printFrogObj();
 					delete dfls_1;
-				}
-			}
-			else
-			{
-				//dfls_1->printFrogObj();
-				controller->incFailAttempts();
-				delete dfls_1;
 			}
 		}
 
@@ -244,9 +278,7 @@ int main()
 		time = end_time - start_time;
 		execTime = std::chrono::duration_cast<std::chrono::milliseconds>(time).count();
 
-		controller->writeIterationInfo(i, evalSol);
-
-		printf("Iteration Number i = %lld MinCostValue = %.3f CurrentValue = %.3f\n", i, controller->getMinCostValue(), evalSol);
+		//controller->writeIterationInfo(i, evalSol);		
 		i++;
 
 		counterAux++;
@@ -254,7 +286,11 @@ int main()
 
 	printf("TOTAL ITERATION NUMBER %lld", i);
 
-	controller->printCtrl();
+	DecodedFrogLeapSolution * bestSolution = controller->getBestDecodedFrogLeapSolution();
+	//bestSolution->writeDecodedFrogLeapSolution(controller);
+	//bestSolution->writeDecodedFrogLeapSolutionWithCoordinates(controller);
+
+	//controller->printCtrl();
 	controller->closeOutPutFile();
 
 	//delete g;

@@ -8,6 +8,7 @@
 #include "FrogObjectCol.h"
 #include "FrogObject.h"
 #include "Pair.h"
+#include "IndexList.h"
 #include <stdio.h>      /* printf */
 #include <math.h>       /* floor */
 #include <iostream>
@@ -190,7 +191,7 @@ bool FrogLeapSolution::genRandomSolution4(FrogLeapController * controller)
 		// here we need to change to select first the customer with bigger capacity
 		int rand_i = this->selectRandomCustomerIndex(i, controller);
 
-		u = assignRandomFeasibleDepot4(controller, localDepotCol, rand_i);
+		u = controller->assignRandomFeasibleDepot4(localDepotCol, rand_i);
 
 		// code to eliminate fixed random assignment of customers to depots
 		//u = this->normalRandomAssigment(controller);
@@ -217,30 +218,33 @@ bool FrogLeapSolution::genRandomSolution4(FrogLeapController * controller)
 	return result;
 }
 
-bool FrogLeapSolution::genSolution5(FrogLeapController * controller)
+//choose the closest item: available depot or the depot of the closest assigned customer
+// we use localCustomerColOrderedByDemand (capacity criteria)
+bool FrogLeapSolution::genRandomSolution5(FrogLeapController * controller)
 {
 	float u;
 	int a = this->size;
 
-	bool result = true;
-	int i = 0;
+	bool result = true;	
 
 	// put the same value of capacity in attributes i and j of Pair object in depotArray
 	controller->resetDepotRemainingCapacities();
 	FrogObjectCol * localDepotCol = controller->createDepotListOrderedByCapacity();
 
-	controller->resetCustomerRemainingDemands();
-
 	// create a list ordered by demand in descendant order
-	FrogObjectCol * localCustomerColOrderedByDemand = controller->createCustomerListOrderedByDemand();
+	controller->resetCustomerRemainingDemands();
+	FrogObjectCol * localCustomerColOrderedByDemand = controller->createCustomerListOrderedByDemandDesc();
+
+	//localCustomerColOrderedByDemand->printFrogObjCol();
 
 	// create a feasibleSolution object (an array) with value i in position i
 	// feasible is assigned to attribute randomCustomerSelectionList
-	this->customerSelectionList = new FeasibleSolution(controller->getNumberOfCustomers());
+	//this->customerSelectionList = new FeasibleSolution(controller->getNumberOfCustomers());
 	this->initCustomerSelection(controller);
 
 	controller->resetCustomersAsNotAssigned();
 
+	int i = 0;
 	while ((i < this->size) && (result == true))
 	{
 		// we select first the customer with bigger demand
@@ -248,8 +252,14 @@ bool FrogLeapSolution::genSolution5(FrogLeapController * controller)
 
 		int customerIndex = controller->getCustomerListIndexByInternal(customerPairOrderedByDemand_i->getId());
 
+		//if(customerIndex == 6)
+		//{
+			//printf("ojo acá");
+			//localDepotCol->printFrogObjCol();
+		//}
+
 		//choose the closest item: available depot or the depot of the closest assigned customer
-		u = assignRandomFeasibleDepot4(controller, localDepotCol, customerIndex);
+		u = controller->assignRandomFeasibleDepot4(localDepotCol, customerIndex);
 
 		// code to eliminate fixed random assignment of customers to depots
 		//u = this->normalRandomAssigment(controller);
@@ -268,8 +278,108 @@ bool FrogLeapSolution::genSolution5(FrogLeapController * controller)
 		i++;
 	};
 
+	
+	//this->writeFrogLeapSolution(controller);
+
 	localDepotCol->unReferenceFrogObjectCol();
 	delete localDepotCol;
+
+	this->destroyRandomCustomerSelectionList();
+
+	return result;
+}
+
+// Assigns each customer using the "match criteria"
+bool FrogLeapSolution::genRandomSolution6(FrogLeapController * controller)
+{
+	float u;
+	//int a = this->size;
+
+	bool result = true;
+	int i = 0;
+
+	// put the same value of capacity in attributes i and j of Pair object in depotArray
+	controller->resetDepotRemainingCapacities();
+	FrogObjectCol * depotListOrderedByCapacity = controller->createDepotListDescOrderedByCapacity();
+	
+	// put the same value of demand in attributes i and j of Pair object in customerArray
+	controller->resetCustomerRemainingDemands();
+
+	controller->resetCustomersAsNotAssigned();
+
+	//FrogObjectCol * localCustomerColOrderedByDemandDesc = controller->createCustomerListOrderedByDemandDesc();
+
+	// create a feasibleSolution object (an array) with value i in position i
+	// feasible is assigned to attribute randomCustomerSelectionList
+	//this->customerSelectionList = new FeasibleSolution(controller->getNumberOfCustomers());
+	this->initCustomerSelection(controller);
+	
+	int nDepots = controller->getNumberOfDepots();	
+
+	while ((i < nDepots) && (result == true))
+	{		
+		Pair * depotPairOrderedByCapacity_i = (Pair *)depotListOrderedByCapacity->getFrogObject(i);
+
+		//assign customers with "match" criteria
+		assignRandomFeasibleDepot5(controller, depotPairOrderedByCapacity_i);
+
+		i++;
+	};
+
+	assignRemainingCustomersToClosestCluster(controller);
+
+	//localDepotCol->unReferenceFrogObjectCol();
+	//delete localDepotCol;
+
+	this->destroyRandomCustomerSelectionList();
+
+	return result;
+}
+
+// assigns using the match and closer depot criteria
+bool FrogLeapSolution::genRandomSolution7(FrogLeapController * controller)
+{
+	float u;
+	//int a = this->size;
+
+	bool result = true;	
+
+	// put the same value of capacity in attributes i and j of Pair object in depotArray
+	controller->resetDepotRemainingCapacities();
+	FrogObjectCol * depotListOrderedByCapacity = controller->createDepotListOrderedByCapacity();
+
+
+	// put the same value of capacity in attributes i and j of Pair object in customerArray
+	controller->resetCustomerRemainingDemands();
+	controller->resetCustomersAsNotAssigned();
+
+	//FrogObjectCol * localCustomerColOrderedByDemandDesc = controller->createCustomerListOrderedByDemandDesc();
+
+	// create a feasibleSolution object (an array) with value i in position i
+	// feasible is assigned to attribute randomCustomerSelectionList
+	//this->customerSelectionList = new FeasibleSolution(controller->getNumberOfCustomers());
+	FeasibleSolution * depotFeasibleSolution = this->initDepotSelection(controller);	
+
+	int nDepots = controller->getNumberOfDepots();
+
+	
+	int i = 0;
+	while ((i < nDepots) && (result == true))
+	{
+		int randomDepotPair_i = this->selectRandomDepotIndex(i, depotFeasibleSolution, controller);
+
+		Pair * depotPairRandomSelected = controller->getDepotPairByIndex(randomDepotPair_i);
+
+		//assign customers with "match" criteria and closer cluster criteria
+		assignRandomFeasibleDepot6(controller, depotPairRandomSelected, depotListOrderedByCapacity);
+
+		i++;
+	};
+
+	assignRemainingCustomersToClosestCluster(controller);
+
+	//localDepotCol->unReferenceFrogObjectCol();
+	//delete localDepotCol;
 
 	this->destroyRandomCustomerSelectionList();
 
@@ -455,7 +565,7 @@ float FrogLeapSolution::assignRandomFeasibleDepot3(FrogLeapController * controll
 	int customerDemand = controller->getCustomerDemandByIndex(customerIndex);
 
 	// get the index of the first depot with capacity enough to attend customer demand
-	localDepotCol->getFirstUpperValueFrogObjectIndex(customerDemand, lowBoundIndex);
+	localDepotCol->getFirstHigherValueFrogObjectIndex(customerDemand, lowBoundIndex);
 
 	// if there is not any depot then return -1
 	if(lowBoundIndex == -1)
@@ -502,7 +612,8 @@ float FrogLeapSolution::assignRandomFeasibleDepot3(FrogLeapController * controll
 }
 
 //choose the closest item: available depot or the depot of the closest assigned customer
-float FrogLeapSolution::assignRandomFeasibleDepot4(FrogLeapController * controller, FrogObjectCol * localDepotCol, int customerIndex)
+// localDepotCol is ordered in ascendant order
+float FrogLeapSolution::assignRandomFeasibleDepot4(FrogLeapController * controller, FrogObjectCol * & localDepotCol, int customerIndex)
 {
 	float u = -1, result = -1;
 	Pair * depotPairSelected = NULL;
@@ -512,7 +623,7 @@ float FrogLeapSolution::assignRandomFeasibleDepot4(FrogLeapController * controll
 	int customerDemand = controller->getCustomerDemandByIndex(customerIndex);
 
 	// get the index of the first depot with capacity enough to attend customer demand
-	localDepotCol->getFirstUpperValueFrogObjectIndex(customerDemand, lowBoundIndex);
+	localDepotCol->getFirstHigherValueFrogObjectIndex(customerDemand, lowBoundIndex);
 
 	// if there is not any depot then return -1
 	if (lowBoundIndex == -1)
@@ -527,7 +638,9 @@ float FrogLeapSolution::assignRandomFeasibleDepot4(FrogLeapController * controll
 	int positionSelected = controller->getClosestLocalDepotIndexToCustomer(customerIndex, lowBoundIndex, localDepotCol->getSize(), localDepotCol, distanceToDepot);
 	
 	float distanceToDepotCustomer;
-	int closestCustomerDepotIndex = controller->getClosestDepotIndexOfAssignedCustomers(customerIndex, localDepotCol, lowBoundIndex, localDepotCol->getSize(), distanceToDepotCustomer);
+	
+	// get the depot index of the closest already assigned customer. Capacity of depot is checked
+	int closestCustomerDepotIndex = controller->getDepotIndexOfClosestAssignedCustomer(customerIndex, localDepotCol, lowBoundIndex, localDepotCol->getSize(), distanceToDepotCustomer);
 
 	if(closestCustomerDepotIndex != -1)
 	{
@@ -574,6 +687,121 @@ float FrogLeapSolution::assignRandomFeasibleDepot4(FrogLeapController * controll
 	return  result;
 }
 
+//choose the closest match item: from a given depot, we choose the closest customer that satisfies that the closest depot is also the same given depot
+// at the end, with the unassigned customer we choose randomly any of them and assign the closest cluster
+void FrogLeapSolution::assignRandomFeasibleDepot5(FrogLeapController * controller, Pair * currentDepotPair)
+{
+	float u = -1, result = -1;
+	Pair * depotPairSelected = NULL;
+	int lowCustomerBoundIndex = -1;
+	int n = 2;
+
+	// get the depot current capacity
+	//int depotCurrentCapacity = currentDepotPair->get_j_IntValue();
+
+	// get the index of the first customer with lower demand to be attended by current depot
+	FrogObjectCol * matchCustomerCol = controller->createMatchCustomerList(currentDepotPair);
+
+	int totalCustomerDemand = controller->getTotalDemandOrCapacity(matchCustomerCol);
+
+	int depotRemainingCapacity = currentDepotPair->get_j_IntValue();
+
+	if(totalCustomerDemand <= depotRemainingCapacity)
+	{
+		controller->assignDepotToCustomerPairs(currentDepotPair, matchCustomerCol);
+		this->assignMatchCustomerListToFLValues(matchCustomerCol, controller);
+	}
+	else 
+	{
+		matchCustomerCol = controller->orderCustomerPairListByNthClosestDepotDesc(n, matchCustomerCol);
+
+		matchCustomerCol = controller->assignDepotToCustomerPairsUntilDemandComplete(currentDepotPair, matchCustomerCol);
+		this->assignMatchCustomerListToFLValues(matchCustomerCol, controller);
+	}
+
+	matchCustomerCol->unReferenceFrogObjectCol();
+	delete matchCustomerCol;
+}
+
+//from a given depot, we choose the closest customer that satisfies that the closest depot is also the same given depot
+//after we take each customer of the matchcol list and assign the closest cluster.
+
+void FrogLeapSolution::assignRandomFeasibleDepot6(FrogLeapController * controller, Pair * currentDepotPair, FrogObjectCol * depotListOrderedByCapacity)
+{
+	float u = -1, result = -1;
+	Pair * depotPairSelected = NULL;
+	int lowCustomerBoundIndex = -1;
+	int n = 2;
+
+	//FrogObjectCol * localDepotCol = controller->createDepotListOrderedByCapacity();
+
+	// get the depot current capacity
+	//int depotCurrentCapacity = currentDepotPair->get_j_IntValue();
+
+	// get the index of the first customer with lower demand to be attended by current depot
+	FrogObjectCol * matchCustomerCol = controller->createMatchCustomerList(currentDepotPair);
+
+	int totalCustomerDemand = controller->getTotalDemandOrCapacity(matchCustomerCol);
+
+	int depotRemainingCapacity = currentDepotPair->get_j_IntValue();
+
+	if (totalCustomerDemand <= depotRemainingCapacity)
+	{
+		//controller->assignDepotToCustomerPairs(currentDepotPair, matchCustomerCol);
+		controller->assignCustomersToCluster(currentDepotPair, matchCustomerCol, depotListOrderedByCapacity, this);
+
+		//this->assignMatchCustomerList(matchCustomerCol, controller);
+	}
+	else
+	{
+		matchCustomerCol = controller->orderCustomerPairListByNthClosestDepotDesc(n, matchCustomerCol);
+
+		matchCustomerCol = controller->selectCustomerPairsUntilDemandComplete(currentDepotPair, matchCustomerCol);
+		controller->assignCustomersToCluster(currentDepotPair, matchCustomerCol, depotListOrderedByCapacity, this);
+
+		//this->assignMatchCustomerList(matchCustomerCol, controller);
+	}
+
+	matchCustomerCol->unReferenceFrogObjectCol();
+	delete matchCustomerCol;
+}
+
+void FrogLeapSolution::assignRemainingCustomersToClosestCluster(FrogLeapController * controller)
+{
+	int size = controller->getNumberOfCustomers();
+
+	FrogObjectCol * localDepotCol = controller->createDepotListOrderedByRemainingCapacity();
+
+	IndexList * notAssignedCustomerIndexes = new IndexList();
+	
+	for(int i = 0; i < size; i++)
+	{
+		Pair * currentCustomerPair = (Pair *)controller->getCustomerPairByIndex(i);
+		if(!controller->isCustomerPairAssigned(currentCustomerPair))
+		{			
+			notAssignedCustomerIndexes->addIndex(i);
+			//this->values[i] = controller->assignRandomFeasibleDepot4(localDepotCol, i);
+		}
+	}
+
+	int listSize = notAssignedCustomerIndexes->getSize();
+
+	for(int j = 0; j < listSize; j++)
+	{
+		int currentSize = notAssignedCustomerIndexes->getSize();
+		int rand_itemIndex = controller->genRandomIntNumber(0, currentSize);
+
+		if (notAssignedCustomerIndexes->getSize() == 114)
+		{
+			printf("hola");
+		}
+
+		int randCustomerIndex = notAssignedCustomerIndexes->removeIndexByPosition(rand_itemIndex);
+		this->values[randCustomerIndex] = controller->assignRandomFeasibleDepot4(localDepotCol, randCustomerIndex);
+	}
+
+}
+
 FrogObjectCol * FrogLeapSolution::initializeFeasibleDepotList(FrogLeapController *controller)
 {
 	Pair * depotPair = NULL;
@@ -596,6 +824,20 @@ DecodedFrogLeapSolution * FrogLeapSolution::decodeSolution(FrogLeapController * 
 {
 	controller->resetDepotRemainingCapacities();
 	return this->decodeFrogLeapSolution(controller, true);
+}
+
+DecodedFrogLeapSolution * FrogLeapSolution::decodeWholeSolutionWithClosestNextCriteria(FrogLeapController * controller)
+{
+	controller->resetDepotRemainingCapacities();
+
+	return this->decodeFrogLeapWholeSolutionWithClosestNextCriteria(controller, true);
+}
+
+// this uses the sweep algorithm to determine the routes for each depot
+DecodedFrogLeapSolution * FrogLeapSolution::decodeWholeSolutionWithAngularCriteria(FrogLeapController * controller)
+{
+	controller->resetDepotRemainingCapacities();
+	return this->decodeFrogLeapWholeSolutionWithAngularCriteria(controller);
 }
 
 // this uses the sweep algorithm to determine the routes for each depot
@@ -627,10 +869,55 @@ DecodedFrogLeapSolution * FrogLeapSolution::decodeFrogLeapSolution(FrogLeapContr
 	
 	if(adjustVehicleRoutes)
 	{
-		//decodedSolution->adjustVehicleRoutes(controller);
+		decodedSolution->adjustVehicleRoutes(controller);
 
 	}	
 
+	return decodedSolution;
+}
+
+
+//if generated instance of DecodedFrogLeapSolution is NULL then solution is not valid due to a vehicle capacity violation
+// This algorithm uses a float distance table
+DecodedFrogLeapSolution * FrogLeapSolution::decodeFrogLeapWholeSolutionWithClosestNextCriteria(FrogLeapController * controller, bool adjustVehicleRoutes)
+{
+	DecodedFrogLeapSolution * decodedSolution = new DecodedFrogLeapSolution(this->n_depots, controller);
+
+	decodedSolution->setUnReferenceBeforeDelete(true);
+
+	decodedSolution->assignCustomersToDepotLists(controller, this);
+
+	decodedSolution->orderCustomersWithClosestNextCriteria(controller);
+
+	decodedSolution->assignDecodedCustomersToVehicles(controller);
+
+	return decodedSolution;
+}
+
+// uses the sweep algorithm to assign customer order for each depot
+// Here we also assign vehicles to customer according to the angular order of customers
+DecodedFrogLeapSolution * FrogLeapSolution::decodeFrogLeapWholeSolutionWithAngularCriteria(FrogLeapController * controller)
+{
+
+	DecodedFrogLeapSolution * decodedSolution = new DecodedFrogLeapSolution(this->n_depots, controller);
+
+	controller->resetDepotRemainingCapacities();
+	
+	decodedSolution->setUnReferenceBeforeDelete(true);
+
+	int i = 0, rand_i;
+	bool feasible = true;
+
+	do
+	{
+		//rand_i = this->selectRandomCustomerIndex(i, controller);
+		feasible = decodedSolution->decodeFrogLeapItemToListWithAngularCriteria(controller, this->getFLValue(i), i, this->n_depots);
+		i++;
+	} while (i < this->getSize() && feasible == true);
+
+	decodedSolution->assignDecodedCustomersToVehicles(controller);
+	
+	//this->destroyRandomCustomerSelectionList();
 	return decodedSolution;
 }
 
@@ -653,44 +940,12 @@ DecodedFrogLeapSolution * FrogLeapSolution::decodeFrogLeapSolutionWithAngularCri
 		i++;
 	} while (i < this->getSize() && feasible == true);
 
-	this->destroyRandomCustomerSelectionList();
-
-	if (adjustVehicleRoutes)
-	{
-		//decodedSolution->adjustVehicleRoutes(controller);
-
-	}
+	//decodedSolution->assignDecodedCustomersToVehicles(controller);
 
 	return decodedSolution;
-
-	int customerSetSize = this->getSize();
-
-	// create a list array of doubleOrdered lists for the set of depots
-
-	// for each customer (element of the FrogLeapSolution)
-	for (int i = 0; i <= customerSetSize; i++)
-	{
-		// i is the customerIndex, so get the corresponding customerLabelId
-		// get the corresponding Pair with the customer coordinates
-
-		// get the corresponding depotIndex
-		// get the corresponding depotLabelId
-		// get the corresponding Pair with the depot coordinates
-
-		// calculate angular value and module of customer respect to the depot
-
-		// create a pair with (customerIndex, angle theta, module)
-
-		// add pair to doubleordered list for the corresponding depotIndex
-	}
-
-	// for each list in the array
-	// get the current customer in order
-	// assign customer to current vehicle
-	// if remaining cap of vehicle does not fit then create a new vehicle
-
-	return nullptr;
 }
+
+
 
 void FrogLeapSolution::setSolutionGenerationType(SolutionGenerationType v_sgt)
 {
@@ -756,6 +1011,56 @@ int FrogLeapSolution::selectRandomCustomerIndex(int i, FrogLeapController * cont
 	return customerIndex;
 }
 
+int FrogLeapSolution::selectRandomDepotIndex(int i, FeasibleSolution * fs, FrogLeapController * controller)
+{
+	// select a random depot between the set of customers
+	int size = fs->getSize();
+	int depotIndex;
+	float u;
+
+	do
+	{
+		u = controller->genRandomFloatingNumber(i, size);
+	} while (u >= size);
+
+	int positionSelected = floor(u);
+
+	depotIndex = fs->getSolFactValue(positionSelected);
+
+	fs->swapItems(i, positionSelected);
+
+	return depotIndex;
+}
+
+void FrogLeapSolution::assignMatchCustomerListToFLValues(FrogObjectCol * matchCustomerCol, FrogLeapController * controller)
+{
+	int size = matchCustomerCol->getSize();
+	for(int i = 0; i < size; i++)
+	{
+		Pair * customerPair = (Pair *)matchCustomerCol->getFrogObject(i);
+		int customerIndex = controller->getCustomerListIndexByInternal(customerPair->getId());
+
+		this->setFLValue(customerIndex, controller->addRandomNumberToInt(customerPair->getAssignedDepotIndex()));
+	}
+}
+
+void FrogLeapSolution::writeFrogLeapSolution(FrogLeapController * controller)
+{
+	FILE * pFile = controller->getPFile();
+
+	fprintf(pFile, "\nPrinting values of frog leaping solution \n");
+	fprintf(pFile, "Values are the following: \n");
+
+	for (int i = 0; i < this->getSize() - 1; i++)
+	{
+		fprintf(pFile, "%.4f \n ", this->values[i]);
+	}
+
+	//printing the last element (replacing the comma by the point)
+	fprintf(pFile, "%.4f. \n", this->values[this->getSize() - 1]);
+
+}
+
 // create a feasibleSolution object (an array) with value i in position i
 // feasible is assigned to attribute randomCustomerSelectionList
 void FrogLeapSolution::initCustomerSelection(FrogLeapController * controller)
@@ -773,3 +1078,17 @@ void FrogLeapSolution::destroyRandomCustomerSelectionList()
 	delete this->customerSelectionList;
 }
 
+// create a feasibleSolution object (an array) with value i in position i
+// feasible is assigned to attribute randomCustomerSelectionList
+FeasibleSolution * FrogLeapSolution::initDepotSelection(FrogLeapController * controller)
+{
+	int nDepots = controller->getNumberOfDepots();
+	FeasibleSolution * depotSelectionArray = new FeasibleSolution(nDepots);
+
+	for (int i = 0; i < nDepots; i++)
+	{
+		depotSelectionArray->setSolFactValue(i, i);
+	}
+
+	return depotSelectionArray;
+}

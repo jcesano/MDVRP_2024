@@ -18,6 +18,8 @@ class Pair : public FrogObject
 	float j_float;
 
 	int assignedDepotIndex;
+
+	FrogObjectCol * pairCol;
 	
 public:
 	Pair(PairType type);
@@ -45,6 +47,14 @@ public:
 	int getAssignedDepotIndex();
 
 	void setAssignedDepotIndex(int depotIndex);
+
+	FrogObjectCol * getPairCol();
+
+	void setPairCol(FrogObjectCol * v_pairCol);
+
+	void upDateRemainingCapacity(Pair * customerPair);
+
+	Pair * createCopy();
 
 	// abstract methods
 	void printFrogObj();

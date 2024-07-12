@@ -64,7 +64,11 @@ class DecodedFrogLeapSolution : public FrogObject
 
 		void assignDecodedCustomersToVehicles(FrogLeapController * controller);
 
+		void cw_assignDecodedCustomersToVehicles(FrogLeapController* controller, FrogLeapSolution * fls);
+
 		void assignDecodedCustomersToDepotVehicles(int depotIndex, FrogLeapController * controller);
+
+		void cw_assignDecodedCustomersToDepotVehicles(int depotIndex, FrogLeapController* controller, FrogLeapSolution* fls);
 
 		void assignCustomersToDepotLists(FrogLeapController * controller, FrogLeapSolution * fls);
 
@@ -108,6 +112,12 @@ class DecodedFrogLeapSolution : public FrogObject
 		void writeDecodedFrogLeapSolution(FrogLeapController * controller);
 
 		void writeDecodedFrogLeapSolutionWithCoordinates(FrogLeapController * controller);
+
+		void writeFrogObj();
+
+		void writeFrogObjWithSolutionData();
+
+		void printFrogObjWithSolutionData();
 
 		// abstract methods
 		void printFrogObj();

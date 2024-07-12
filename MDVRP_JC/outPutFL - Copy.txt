@@ -1,0 +1,217 @@
+MDVRP ALGORITHM OUTPUT 
+SEED USED: ; 1537280770 
+
+ 
+ SHOWING DATA OF FROGLEAPING CONTROLLER 
+
+ Showing DecodedFrogLeapSolution data results: Feasible 
+Vehiculos por deposito
+Deposito index: 0; internalId: 0 ; Capacity = 1000, RemainingCapacity = 115 
+Cantidad de vehiculos: 2 
+Deposito index: 1; internalId: 250 ; Capacity = 100, RemainingCapacity = 2 
+Cantidad de vehiculos: 1 
+Deposito index: 2; internalId: 251 ; Capacity = 200, RemainingCapacity = 41 
+Cantidad de vehiculos: 1 
+Deposito index: 3; internalId: 252 ; Capacity = 3000, RemainingCapacity = 77 
+Cantidad de vehiculos: 6 
+Deposito index: 4; internalId: 253 ; Capacity = 100, RemainingCapacity = 100 
+Cantidad de vehiculos: 0 
+Deposito index: 5; internalId: 254 ; Capacity = 60, RemainingCapacity = 1 
+Cantidad de vehiculos: 1 
+Deposito index: 6; internalId: 255 ; Capacity = 800, RemainingCapacity = 207 
+Cantidad de vehiculos: 2 
+Deposito index: 7; internalId: 256 ; Capacity = 80, RemainingCapacity = 1 
+Cantidad de vehiculos: 1 
+Deposito index: 8; internalId: 257 ; Capacity = 80, RemainingCapacity = 8 
+Cantidad de vehiculos: 1 
+Deposito index: 9; internalId: 258 ; Capacity = 80, RemainingCapacity = 0 
+Cantidad de vehiculos: 1 
+Deposito index: 10; internalId: 259 ; Capacity = 200, RemainingCapacity = 6 
+Cantidad de vehiculos: 1 
+Deposito index: 11; internalId: 260 ; Capacity = 10000, RemainingCapacity = 3251 
+Cantidad de vehiculos: 14 
+Deposito index: 12; internalId: 261 ; Capacity = 220, RemainingCapacity = 5 
+Cantidad de vehiculos: 1 
+DecodedFrogLeapSolution FINISHED 
+
+ Summary of Best Found Solution 
+	Time Seed used 1537280770 
+	Number of success attempts: 1 
+	Number of fail attempts: 0 
+	Number of TOTAL Improvements: 1 
+	Number of Global Search Improvements: 1 
+	Number of Local Search Improvements: 0 
+	Evaluation of best found solution is: 7559.580 
+ 
+
+ 
+ SHOWING DATA OF FROGLEAPING CONTROLLER 
+
+ Showing DecodedFrogLeapSolution data results: Feasible 
+Vehiculos por deposito
+Deposito index: 0; internalId: 0 ; Capacity = 1000, RemainingCapacity = 105 
+Cantidad de vehiculos: 2 
+Deposito index: 1; internalId: 250 ; Capacity = 100, RemainingCapacity = 16 
+Cantidad de vehiculos: 1 
+Deposito index: 2; internalId: 251 ; Capacity = 200, RemainingCapacity = 41 
+Cantidad de vehiculos: 1 
+Deposito index: 3; internalId: 252 ; Capacity = 3000, RemainingCapacity = 30 
+Cantidad de vehiculos: 6 
+Deposito index: 4; internalId: 253 ; Capacity = 100, RemainingCapacity = 100 
+Cantidad de vehiculos: 0 
+Deposito index: 5; internalId: 254 ; Capacity = 60, RemainingCapacity = 11 
+Cantidad de vehiculos: 1 
+Deposito index: 6; internalId: 255 ; Capacity = 800, RemainingCapacity = 207 
+Cantidad de vehiculos: 2 
+Deposito index: 7; internalId: 256 ; Capacity = 80, RemainingCapacity = 58 
+Cantidad de vehiculos: 1 
+Deposito index: 8; internalId: 257 ; Capacity = 80, RemainingCapacity = 8 
+Cantidad de vehiculos: 1 
+Deposito index: 9; internalId: 258 ; Capacity = 80, RemainingCapacity = 0 
+Cantidad de vehiculos: 1 
+Deposito index: 10; internalId: 259 ; Capacity = 200, RemainingCapacity = 95 
+Cantidad de vehiculos: 1 
+Deposito index: 11; internalId: 260 ; Capacity = 10000, RemainingCapacity = 3080 
+Cantidad de vehiculos: 14 
+Deposito index: 12; internalId: 261 ; Capacity = 220, RemainingCapacity = 63 
+Cantidad de vehiculos: 1 
+DecodedFrogLeapSolution FINISHED 
+
+ Summary of Best Found Solution 
+	Time Seed used 1537280770 
+	Number of success attempts: 3 
+	Number of fail attempts: 0 
+	Number of TOTAL Improvements: 2 
+	Number of Global Search Improvements: 2 
+	Number of Local Search Improvements: 0 
+	Evaluation of best found solution is: 7029.637 
+ 
+
+ 
+ SHOWING DATA OF FROGLEAPING CONTROLLER 
+
+ Showing DecodedFrogLeapSolution data results: Feasible 
+Vehiculos por deposito
+Deposito index: 0; internalId: 0 ; Capacity = 1000, RemainingCapacity = 284 
+Cantidad de vehiculos: 2 
+Deposito index: 1; internalId: 250 ; Capacity = 100, RemainingCapacity = 1 
+Cantidad de vehiculos: 1 
+Deposito index: 2; internalId: 251 ; Capacity = 200, RemainingCapacity = 41 
+Cantidad de vehiculos: 1 
+Deposito index: 3; internalId: 252 ; Capacity = 3000, RemainingCapacity = 11 
+Cantidad de vehiculos: 6 
+Deposito index: 4; internalId: 253 ; Capacity = 100, RemainingCapacity = 10 
+Cantidad de vehiculos: 1 
+Deposito index: 5; internalId: 254 ; Capacity = 60, RemainingCapacity = 23 
+Cantidad de vehiculos: 1 
+Deposito index: 6; internalId: 255 ; Capacity = 800, RemainingCapacity = 207 
+Cantidad de vehiculos: 2 
+Deposito index: 7; internalId: 256 ; Capacity = 80, RemainingCapacity = 58 
+Cantidad de vehiculos: 1 
+Deposito index: 8; internalId: 257 ; Capacity = 80, RemainingCapacity = 8 
+Cantidad de vehiculos: 1 
+Deposito index: 9; internalId: 258 ; Capacity = 80, RemainingCapacity = 0 
+Cantidad de vehiculos: 1 
+Deposito index: 10; internalId: 259 ; Capacity = 200, RemainingCapacity = 1 
+Cantidad de vehiculos: 1 
+Deposito index: 11; internalId: 260 ; Capacity = 10000, RemainingCapacity = 3165 
+Cantidad de vehiculos: 14 
+Deposito index: 12; internalId: 261 ; Capacity = 220, RemainingCapacity = 5 
+Cantidad de vehiculos: 1 
+DecodedFrogLeapSolution FINISHED 
+
+ Summary of Best Found Solution 
+	Time Seed used 1537280770 
+	Number of success attempts: 28 
+	Number of fail attempts: 0 
+	Number of TOTAL Improvements: 3 
+	Number of Global Search Improvements: 3 
+	Number of Local Search Improvements: 0 
+	Evaluation of best found solution is: 6980.658 
+ 
+
+ 
+ SHOWING DATA OF FROGLEAPING CONTROLLER 
+
+ Showing DecodedFrogLeapSolution data results: Feasible 
+Vehiculos por deposito
+Deposito index: 0; internalId: 0 ; Capacity = 1000, RemainingCapacity = 57 
+Cantidad de vehiculos: 2 
+Deposito index: 1; internalId: 250 ; Capacity = 100, RemainingCapacity = 1 
+Cantidad de vehiculos: 1 
+Deposito index: 2; internalId: 251 ; Capacity = 200, RemainingCapacity = 41 
+Cantidad de vehiculos: 1 
+Deposito index: 3; internalId: 252 ; Capacity = 3000, RemainingCapacity = 62 
+Cantidad de vehiculos: 6 
+Deposito index: 4; internalId: 253 ; Capacity = 100, RemainingCapacity = 100 
+Cantidad de vehiculos: 0 
+Deposito index: 5; internalId: 254 ; Capacity = 60, RemainingCapacity = 11 
+Cantidad de vehiculos: 1 
+Deposito index: 6; internalId: 255 ; Capacity = 800, RemainingCapacity = 207 
+Cantidad de vehiculos: 2 
+Deposito index: 7; internalId: 256 ; Capacity = 80, RemainingCapacity = 58 
+Cantidad de vehiculos: 1 
+Deposito index: 8; internalId: 257 ; Capacity = 80, RemainingCapacity = 8 
+Cantidad de vehiculos: 1 
+Deposito index: 9; internalId: 258 ; Capacity = 80, RemainingCapacity = 0 
+Cantidad de vehiculos: 1 
+Deposito index: 10; internalId: 259 ; Capacity = 200, RemainingCapacity = 95 
+Cantidad de vehiculos: 1 
+Deposito index: 11; internalId: 260 ; Capacity = 10000, RemainingCapacity = 3111 
+Cantidad de vehiculos: 14 
+Deposito index: 12; internalId: 261 ; Capacity = 220, RemainingCapacity = 63 
+Cantidad de vehiculos: 1 
+DecodedFrogLeapSolution FINISHED 
+
+ Summary of Best Found Solution 
+	Time Seed used 1537280770 
+	Number of success attempts: 32 
+	Number of fail attempts: 0 
+	Number of TOTAL Improvements: 4 
+	Number of Global Search Improvements: 4 
+	Number of Local Search Improvements: 0 
+	Evaluation of best found solution is: 6964.557 
+ 
+
+ 
+ SHOWING DATA OF FROGLEAPING CONTROLLER 
+
+ Showing DecodedFrogLeapSolution data results: Feasible 
+Vehiculos por deposito
+Deposito index: 0; internalId: 0 ; Capacity = 1000, RemainingCapacity = 191 
+Cantidad de vehiculos: 2 
+Deposito index: 1; internalId: 250 ; Capacity = 100, RemainingCapacity = 5 
+Cantidad de vehiculos: 1 
+Deposito index: 2; internalId: 251 ; Capacity = 200, RemainingCapacity = 41 
+Cantidad de vehiculos: 1 
+Deposito index: 3; internalId: 252 ; Capacity = 3000, RemainingCapacity = 27 
+Cantidad de vehiculos: 6 
+Deposito index: 4; internalId: 253 ; Capacity = 100, RemainingCapacity = 100 
+Cantidad de vehiculos: 0 
+Deposito index: 5; internalId: 254 ; Capacity = 60, RemainingCapacity = 23 
+Cantidad de vehiculos: 1 
+Deposito index: 6; internalId: 255 ; Capacity = 800, RemainingCapacity = 207 
+Cantidad de vehiculos: 2 
+Deposito index: 7; internalId: 256 ; Capacity = 80, RemainingCapacity = 58 
+Cantidad de vehiculos: 1 
+Deposito index: 8; internalId: 257 ; Capacity = 80, RemainingCapacity = 8 
+Cantidad de vehiculos: 1 
+Deposito index: 9; internalId: 258 ; Capacity = 80, RemainingCapacity = 0 
+Cantidad de vehiculos: 1 
+Deposito index: 10; internalId: 259 ; Capacity = 200, RemainingCapacity = 95 
+Cantidad de vehiculos: 1 
+Deposito index: 11; internalId: 260 ; Capacity = 10000, RemainingCapacity = 2996 
+Cantidad de vehiculos: 15 
+Deposito index: 12; internalId: 261 ; Capacity = 220, RemainingCapacity = 63 
+Cantidad de vehiculos: 1 
+DecodedFrogLeapSolution FINISHED 
+
+ Summary of Best Found Solution 
+	Time Seed used 1537280770 
+	Number of success attempts: 310 
+	Number of fail attempts: 0 
+	Number of TOTAL Improvements: 5 
+	Number of Global Search Improvements: 5 
+	Number of Local Search Improvements: 0 
+	Evaluation of best found solution is: 6815.931 
+ 

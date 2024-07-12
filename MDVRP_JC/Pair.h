@@ -18,8 +18,10 @@ class Pair : public FrogObject
 	float j_float;
 
 	int assignedDepotIndex;
+	int depotIndexToMatch;
 
 	FrogObjectCol * pairCol;
+	FrogObjectCol* clusterCol;
 	
 public:
 	Pair(PairType type);
@@ -52,13 +54,29 @@ public:
 
 	void setPairCol(FrogObjectCol * v_pairCol);
 
+	FrogObjectCol* getClusterCol();
+
+	void setClusterCol(FrogObjectCol* v_clusterCol);
+
 	void upDateRemainingCapacity(Pair * customerPair);
 
+	void restoreRemainingCapacity(Pair* customerPair);
+
 	Pair * createCopy();
+
+	void writeCoords(FILE* file);
+
+	void writeDemand(FILE* file);
+
+	void writeLabelId(FILE* file);
 
 	// abstract methods
 	void printFrogObj();
 
 	bool isTheSame(FrogObject * fs);
+
+	int getDepotIndexToMatch();
+
+	void setDepotIndexToMatch(int i);
 };
 #endif

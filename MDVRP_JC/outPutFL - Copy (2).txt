@@ -1,0 +1,379 @@
+MDVRP ALGORITHM OUTPUT 
+SEED USED: ; 1537280770 
+
+ 
+ SHOWING DATA OF FROGLEAPING CONTROLLER 
+
+ Showing DecodedFrogLeapSolution data results: Feasible 
+Vehiculos por deposito
+Deposito index: 0; internalId: 0 ; Capacity = 1000, RemainingCapacity = 115 
+Cantidad de vehiculos: 2 
+1 178.65 99 101 101 81 52 39 30 7 4 6 
+1 154.16 38 41 52 27 14 20 25 41 45 85 19 
+Deposito index: 1; internalId: 250 ; Capacity = 100, RemainingCapacity = 2 
+Cantidad de vehiculos: 1 
+251 76.14 21 67 5 13 
+Deposito index: 2; internalId: 251 ; Capacity = 200, RemainingCapacity = 41 
+Cantidad de vehiculos: 1 
+252 46.48 80 8 31 35 15 
+Deposito index: 3; internalId: 252 ; Capacity = 3000, RemainingCapacity = 77 
+Cantidad de vehiculos: 6 
+253 297.90 57 102 94 31 16 55 65 90 3 7 
+253 238.82 101 26 23 17 79 80 67 99 16 6 8 
+253 163.27 20 49 53 50 100 54 30 66 84 5 11 
+253 340.80 81 17 57 20 54 55 35 74 99 13 14 
+253 318.91 72 60 40 34 60 82 87 26 41 
+253 279.44 61 42 31 85 95 47 95 
+Deposito index: 4; internalId: 253 ; Capacity = 100, RemainingCapacity = 100 
+Cantidad de vehiculos: 0 
+Deposito index: 5; internalId: 254 ; Capacity = 60, RemainingCapacity = 1 
+Cantidad de vehiculos: 1 
+255 54.03 39 5 21 
+Deposito index: 6; internalId: 255 ; Capacity = 800, RemainingCapacity = 207 
+Cantidad de vehiculos: 2 
+256 154.36 13 81 52 46 35 20 89 79 19 21 4 49 
+256 32.28 87 26 
+Deposito index: 7; internalId: 256 ; Capacity = 80, RemainingCapacity = 1 
+Cantidad de vehiculos: 1 
+257 48.38 20 59 6 
+Deposito index: 8; internalId: 257 ; Capacity = 80, RemainingCapacity = 8 
+Cantidad de vehiculos: 1 
+258 38.59 44 24 10 
+Deposito index: 9; internalId: 258 ; Capacity = 80, RemainingCapacity = 0 
+Cantidad de vehiculos: 1 
+259 40.08 69 10 7 
+Deposito index: 10; internalId: 259 ; Capacity = 200, RemainingCapacity = 6 
+Cantidad de vehiculos: 1 
+260 45.38 98 11 91 
+Deposito index: 11; internalId: 260 ; Capacity = 10000, RemainingCapacity = 3251 
+Cantidad de vehiculos: 14 
+261 505.67 74 73 88 77 70 52 59 15 6 6 
+261 420.01 83 102 65 58 87 76 42 3 
+261 345.89 38 77 95 39 100 45 59 52 10 4 3 
+261 261.94 56 73 86 68 43 96 92 
+261 506.79 58 53 71 82 33 48 24 16 86 40 10 
+261 382.08 7 23 46 4 78 75 28 25 52 73 30 51 5 27 5 
+261 408.53 81 52 41 94 100 33 58 16 12 14 19 
+261 163.19 74 98 44 55 71 45 83 41 
+261 441.02 92 56 75 101 47 58 38 44 
+261 193.91 57 26 21 59 64 64 85 76 59 
+261 441.80 100 89 66 79 62 88 21 
+261 324.93 62 60 51 44 98 38 17 27 74 37 
+261 449.76 100 95 55 86 58 81 24 
+261 134.74 100 31 86 97 
+Deposito index: 12; internalId: 261 ; Capacity = 220, RemainingCapacity = 5 
+Cantidad de vehiculos: 1 
+262 71.65 50 7 12 96 60 
+DecodedFrogLeapSolution FINISHED 
+
+ Summary of Best Found Solution 
+	Time Seed used 1537280770 
+	Number of success attempts: 1 
+	Number of fail attempts: 0 
+	Number of TOTAL Improvements: 1 
+	Number of Global Search Improvements: 1 
+	Number of Local Search Improvements: 0 
+	Evaluation of best found solution is: 7559.580 
+ 
+
+ 
+ SHOWING DATA OF FROGLEAPING CONTROLLER 
+
+ Showing DecodedFrogLeapSolution data results: Feasible 
+Vehiculos por deposito
+Deposito index: 0; internalId: 0 ; Capacity = 1000, RemainingCapacity = 105 
+Cantidad de vehiculos: 2 
+1 90.73 99 101 101 81 52 39 30 6 
+1 136.63 38 41 77 38 25 20 95 41 45 
+Deposito index: 1; internalId: 250 ; Capacity = 100, RemainingCapacity = 16 
+Cantidad de vehiculos: 1 
+251 33.41 21 67 
+Deposito index: 2; internalId: 251 ; Capacity = 200, RemainingCapacity = 41 
+Cantidad de vehiculos: 1 
+252 46.48 80 8 31 35 15 
+Deposito index: 3; internalId: 252 ; Capacity = 3000, RemainingCapacity = 30 
+Cantidad de vehiculos: 6 
+253 285.33 81 90 57 54 55 35 74 59 13 
+253 238.82 101 26 23 17 79 80 67 99 16 6 8 
+253 163.27 20 49 53 50 100 54 30 66 84 5 11 
+253 272.19 57 102 94 31 16 55 65 60 17 20 3 
+253 293.79 99 91 72 60 40 38 24 89 
+253 339.36 100 66 58 6 10 47 82 87 13 26 
+Deposito index: 4; internalId: 253 ; Capacity = 100, RemainingCapacity = 100 
+Cantidad de vehiculos: 0 
+Deposito index: 5; internalId: 254 ; Capacity = 60, RemainingCapacity = 11 
+Cantidad de vehiculos: 1 
+255 69.56 39 12 4 
+Deposito index: 6; internalId: 255 ; Capacity = 800, RemainingCapacity = 207 
+Cantidad de vehiculos: 2 
+256 154.36 13 81 52 46 35 20 89 79 19 21 4 49 
+256 32.28 87 26 
+Deposito index: 7; internalId: 256 ; Capacity = 80, RemainingCapacity = 58 
+Cantidad de vehiculos: 1 
+257 37.04 20 6 
+Deposito index: 8; internalId: 257 ; Capacity = 80, RemainingCapacity = 8 
+Cantidad de vehiculos: 1 
+258 38.59 44 24 10 
+Deposito index: 9; internalId: 258 ; Capacity = 80, RemainingCapacity = 0 
+Cantidad de vehiculos: 1 
+259 40.08 69 10 7 
+Deposito index: 10; internalId: 259 ; Capacity = 200, RemainingCapacity = 95 
+Cantidad de vehiculos: 1 
+260 25.32 98 11 
+Deposito index: 11; internalId: 260 ; Capacity = 10000, RemainingCapacity = 3080 
+Cantidad de vehiculos: 14 
+261 212.85 83 57 26 21 59 64 64 85 59 
+261 180.75 88 74 98 44 55 71 45 41 
+261 232.28 76 87 21 37 58 65 83 74 17 
+261 284.26 86 68 43 14 96 92 62 51 5 3 
+261 520.62 95 47 95 42 31 81 92 16 14 6 
+261 391.68 81 48 41 94 71 82 53 42 5 
+261 317.41 74 27 52 59 45 100 39 27 52 44 
+261 401.76 7 23 46 4 78 75 28 25 52 73 30 51 4 7 7 5 14 3 5 
+261 423.24 76 100 31 86 97 85 34 
+261 386.65 58 40 44 86 55 95 100 24 10 
+261 408.01 60 19 73 56 15 33 100 58 16 52 33 
+261 248.29 102 27 19 85 38 98 58 62 21 
+261 332.51 86 52 59 70 77 88 73 
+261 359.08 56 61 41 101 75 79 60 
+Deposito index: 12; internalId: 261 ; Capacity = 220, RemainingCapacity = 63 
+Cantidad de vehiculos: 1 
+262 33.02 50 7 12 96 
+DecodedFrogLeapSolution FINISHED 
+
+ Summary of Best Found Solution 
+	Time Seed used 1537280770 
+	Number of success attempts: 3 
+	Number of fail attempts: 0 
+	Number of TOTAL Improvements: 2 
+	Number of Global Search Improvements: 2 
+	Number of Local Search Improvements: 0 
+	Evaluation of best found solution is: 7029.637 
+ 
+
+ 
+ SHOWING DATA OF FROGLEAPING CONTROLLER 
+
+ Showing DecodedFrogLeapSolution data results: Feasible 
+Vehiculos por deposito
+Deposito index: 0; internalId: 0 ; Capacity = 1000, RemainingCapacity = 284 
+Cantidad de vehiculos: 2 
+1 59.29 99 101 101 81 52 39 30 
+1 91.04 38 41 77 38 25 20 
+Deposito index: 1; internalId: 250 ; Capacity = 100, RemainingCapacity = 1 
+Cantidad de vehiculos: 1 
+251 70.96 21 67 5 14 
+Deposito index: 2; internalId: 251 ; Capacity = 200, RemainingCapacity = 41 
+Cantidad de vehiculos: 1 
+252 46.48 80 8 31 35 15 
+Deposito index: 3; internalId: 252 ; Capacity = 3000, RemainingCapacity = 11 
+Cantidad de vehiculos: 6 
+253 318.52 54 55 35 74 59 99 13 91 38 
+253 238.82 101 26 23 17 79 80 67 99 16 6 8 
+253 163.27 20 49 53 50 100 54 30 66 84 5 11 
+253 372.98 72 60 40 24 100 89 66 58 6 4 
+253 409.07 57 102 94 31 16 55 65 17 57 20 3 6 
+253 344.55 10 47 34 60 82 87 13 26 95 47 7 7 
+Deposito index: 4; internalId: 253 ; Capacity = 100, RemainingCapacity = 10 
+Cantidad de vehiculos: 1 
+254 29.73 92 
+Deposito index: 5; internalId: 254 ; Capacity = 60, RemainingCapacity = 23 
+Cantidad de vehiculos: 1 
+255 14.56 39 
+Deposito index: 6; internalId: 255 ; Capacity = 800, RemainingCapacity = 207 
+Cantidad de vehiculos: 2 
+256 154.36 13 81 52 46 35 20 89 79 19 21 4 49 
+256 32.28 87 26 
+Deposito index: 7; internalId: 256 ; Capacity = 80, RemainingCapacity = 58 
+Cantidad de vehiculos: 1 
+257 37.04 20 6 
+Deposito index: 8; internalId: 257 ; Capacity = 80, RemainingCapacity = 8 
+Cantidad de vehiculos: 1 
+258 38.59 44 24 10 
+Deposito index: 9; internalId: 258 ; Capacity = 80, RemainingCapacity = 0 
+Cantidad de vehiculos: 1 
+259 40.08 69 10 7 
+Deposito index: 10; internalId: 259 ; Capacity = 200, RemainingCapacity = 1 
+Cantidad de vehiculos: 1 
+260 169.76 98 11 41 56 3 
+Deposito index: 11; internalId: 260 ; Capacity = 10000, RemainingCapacity = 3165 
+Cantidad de vehiculos: 14 
+261 388.45 100 85 59 52 27 74 73 41 6 3 
+261 378.56 30 73 51 95 95 27 52 39 45 5 10 
+261 177.82 88 21 74 98 44 55 71 45 21 
+261 244.99 7 23 46 4 78 75 28 25 52 81 90 14 
+261 432.99 94 100 15 58 16 56 73 12 86 5 5 
+261 341.99 88 77 70 52 59 81 52 33 4 
+261 239.46 83 102 65 58 37 87 76 
+261 358.04 100 95 55 86 44 40 58 31 
+261 429.24 42 58 53 71 82 33 48 24 16 86 
+261 228.53 83 57 41 26 59 64 64 85 31 
+261 402.60 81 42 61 101 75 79 62 
+261 288.12 44 98 38 41 45 85 17 27 19 74 21 
+261 224.89 68 43 14 96 92 62 60 51 19 
+261 141.99 76 100 59 86 97 
+Deposito index: 12; internalId: 261 ; Capacity = 220, RemainingCapacity = 5 
+Cantidad de vehiculos: 1 
+262 71.65 50 7 12 96 60 
+DecodedFrogLeapSolution FINISHED 
+
+ Summary of Best Found Solution 
+	Time Seed used 1537280770 
+	Number of success attempts: 28 
+	Number of fail attempts: 0 
+	Number of TOTAL Improvements: 3 
+	Number of Global Search Improvements: 3 
+	Number of Local Search Improvements: 0 
+	Evaluation of best found solution is: 6980.658 
+ 
+
+ 
+ SHOWING DATA OF FROGLEAPING CONTROLLER 
+
+ Showing DecodedFrogLeapSolution data results: Feasible 
+Vehiculos por deposito
+Deposito index: 0; internalId: 0 ; Capacity = 1000, RemainingCapacity = 57 
+Cantidad de vehiculos: 2 
+1 59.29 99 101 101 81 52 39 30 
+1 158.82 38 41 77 38 25 20 27 52 14 85 17 27 19 
+Deposito index: 1; internalId: 250 ; Capacity = 100, RemainingCapacity = 1 
+Cantidad de vehiculos: 1 
+251 70.96 21 67 5 14 
+Deposito index: 2; internalId: 251 ; Capacity = 200, RemainingCapacity = 41 
+Cantidad de vehiculos: 1 
+252 46.48 80 8 31 35 15 
+Deposito index: 3; internalId: 252 ; Capacity = 3000, RemainingCapacity = 62 
+Cantidad de vehiculos: 6 
+253 318.52 54 55 35 74 59 99 13 91 38 
+253 238.82 101 26 23 17 79 80 67 99 16 6 8 
+253 163.27 20 49 53 50 100 54 30 66 84 5 11 
+253 409.07 57 102 94 31 16 55 65 17 57 20 3 6 
+253 338.56 72 60 40 24 100 89 66 58 6 
+253 290.83 10 47 101 34 60 82 87 13 26 
+Deposito index: 4; internalId: 253 ; Capacity = 100, RemainingCapacity = 100 
+Cantidad de vehiculos: 0 
+Deposito index: 5; internalId: 254 ; Capacity = 60, RemainingCapacity = 11 
+Cantidad de vehiculos: 1 
+255 69.56 39 12 4 
+Deposito index: 6; internalId: 255 ; Capacity = 800, RemainingCapacity = 207 
+Cantidad de vehiculos: 2 
+256 154.36 13 81 52 46 35 20 89 79 19 21 4 49 
+256 32.28 87 26 
+Deposito index: 7; internalId: 256 ; Capacity = 80, RemainingCapacity = 58 
+Cantidad de vehiculos: 1 
+257 37.04 20 6 
+Deposito index: 8; internalId: 257 ; Capacity = 80, RemainingCapacity = 8 
+Cantidad de vehiculos: 1 
+258 38.59 44 24 10 
+Deposito index: 9; internalId: 258 ; Capacity = 80, RemainingCapacity = 0 
+Cantidad de vehiculos: 1 
+259 40.08 69 10 7 
+Deposito index: 10; internalId: 259 ; Capacity = 200, RemainingCapacity = 95 
+Cantidad de vehiculos: 1 
+260 25.32 98 11 
+Deposito index: 11; internalId: 260 ; Capacity = 10000, RemainingCapacity = 3111 
+Cantidad de vehiculos: 14 
+261 332.47 7 23 46 4 78 75 28 25 52 81 90 4 7 7 3 
+261 306.94 60 30 73 51 95 47 95 5 45 19 
+261 431.54 59 62 60 96 92 73 56 15 3 
+261 225.63 45 83 57 41 26 59 64 64 76 
+261 167.25 62 88 74 98 44 55 71 21 
+261 270.63 98 41 45 74 83 102 65 5 
+261 388.81 42 56 61 41 75 79 44 95 21 
+261 321.54 70 77 88 73 74 27 52 51 
+261 331.68 85 100 39 43 68 86 44 38 6 5 
+261 338.67 95 55 86 40 58 81 92 
+261 368.31 58 37 21 87 76 42 58 53 71 10 
+261 427.45 33 100 58 16 48 24 16 86 100 31 
+261 379.89 82 33 94 41 52 81 59 52 14 
+261 148.88 85 100 59 31 86 97 
+Deposito index: 12; internalId: 261 ; Capacity = 220, RemainingCapacity = 63 
+Cantidad de vehiculos: 1 
+262 33.02 50 7 12 96 
+DecodedFrogLeapSolution FINISHED 
+
+ Summary of Best Found Solution 
+	Time Seed used 1537280770 
+	Number of success attempts: 32 
+	Number of fail attempts: 0 
+	Number of TOTAL Improvements: 4 
+	Number of Global Search Improvements: 4 
+	Number of Local Search Improvements: 0 
+	Evaluation of best found solution is: 6964.557 
+ 
+
+ 
+ SHOWING DATA OF FROGLEAPING CONTROLLER 
+
+ Showing DecodedFrogLeapSolution data results: Feasible 
+Vehiculos por deposito
+Deposito index: 0; internalId: 0 ; Capacity = 1000, RemainingCapacity = 191 
+Cantidad de vehiculos: 2 
+1 59.29 99 101 101 81 52 39 30 
+1 99.36 38 41 77 38 25 20 95 
+Deposito index: 1; internalId: 250 ; Capacity = 100, RemainingCapacity = 5 
+Cantidad de vehiculos: 1 
+251 67.81 21 67 13 
+Deposito index: 2; internalId: 251 ; Capacity = 200, RemainingCapacity = 41 
+Cantidad de vehiculos: 1 
+252 46.48 80 8 31 35 15 
+Deposito index: 3; internalId: 252 ; Capacity = 3000, RemainingCapacity = 27 
+Cantidad de vehiculos: 6 
+253 285.33 81 90 57 54 55 35 74 59 13 
+253 238.82 101 26 23 17 79 80 67 99 16 6 8 
+253 163.27 20 49 53 50 100 54 30 66 84 5 11 
+253 272.19 57 102 94 31 16 55 65 60 17 20 3 
+253 293.79 99 91 72 60 40 38 24 89 
+253 325.99 100 66 58 6 10 47 6 34 60 87 26 
+Deposito index: 4; internalId: 253 ; Capacity = 100, RemainingCapacity = 100 
+Cantidad de vehiculos: 0 
+Deposito index: 5; internalId: 254 ; Capacity = 60, RemainingCapacity = 23 
+Cantidad de vehiculos: 1 
+255 14.56 39 
+Deposito index: 6; internalId: 255 ; Capacity = 800, RemainingCapacity = 207 
+Cantidad de vehiculos: 2 
+256 154.36 13 81 52 46 35 20 89 79 19 21 4 49 
+256 32.28 87 26 
+Deposito index: 7; internalId: 256 ; Capacity = 80, RemainingCapacity = 58 
+Cantidad de vehiculos: 1 
+257 37.04 20 6 
+Deposito index: 8; internalId: 257 ; Capacity = 80, RemainingCapacity = 8 
+Cantidad de vehiculos: 1 
+258 38.59 44 24 10 
+Deposito index: 9; internalId: 258 ; Capacity = 80, RemainingCapacity = 0 
+Cantidad de vehiculos: 1 
+259 40.08 69 10 7 
+Deposito index: 10; internalId: 259 ; Capacity = 200, RemainingCapacity = 95 
+Cantidad de vehiculos: 1 
+260 25.32 98 11 
+Deposito index: 11; internalId: 260 ; Capacity = 10000, RemainingCapacity = 2996 
+Cantidad de vehiculos: 15 
+261 373.43 60 51 19 73 56 15 33 100 58 16 41 
+261 395.32 95 47 95 42 31 81 92 16 14 6 3 
+261 235.17 45 83 57 41 26 21 59 64 64 59 
+261 242.84 44 86 68 43 14 96 92 62 12 
+261 268.13 58 37 21 87 76 42 58 38 98 4 
+261 211.47 45 85 17 27 19 74 83 102 65 
+261 357.63 74 27 52 59 45 100 39 27 52 41 5 
+261 401.76 7 23 46 4 78 75 28 25 52 73 30 51 4 7 7 5 14 3 5 
+261 425.81 52 81 48 94 71 82 33 53 
+261 145.20 62 88 21 74 98 44 55 71 
+261 437.65 58 40 44 86 55 95 100 24 10 5 
+261 332.51 86 52 59 70 77 88 73 
+261 359.05 85 56 61 41 101 75 79 
+261 145.12 85 76 100 31 86 97 
+261 257.26 82 
+Deposito index: 12; internalId: 261 ; Capacity = 220, RemainingCapacity = 63 
+Cantidad de vehiculos: 1 
+262 33.02 50 7 12 96 
+DecodedFrogLeapSolution FINISHED 
+
+ Summary of Best Found Solution 
+	Time Seed used 1537280770 
+	Number of success attempts: 310 
+	Number of fail attempts: 0 
+	Number of TOTAL Improvements: 5 
+	Number of Global Search Improvements: 5 
+	Number of Local Search Improvements: 0 
+	Evaluation of best found solution is: 6815.931 
+ 

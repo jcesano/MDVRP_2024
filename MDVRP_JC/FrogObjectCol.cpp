@@ -17,19 +17,21 @@ FrogObjectCol::~FrogObjectCol()
 	//printf("Destroying FrogObjectCol:STARTED \n");
 
 	//destroy(this->head);
-	FrogObjNode * itemNode = this->head, *old;
-
-	this->head = NULL;
+	FrogObjNode * itemNode = this->head, *old = NULL;
+	FrogObject* objPtr;
 
 	while (itemNode != NULL)
 	{
 		old = itemNode;
 		itemNode = itemNode->getNextFrogObjNode();
+
+		// delete the node of the list
 		delete old;
 		old = NULL;
 	}
 
-	
+	this->head = NULL;
+
 	//---------------------------
 	//FrogObjNode * temp;
 
@@ -183,7 +185,7 @@ void FrogObjectCol::addFrogObjectOrdered(FrogObject * fs)
 				}
 			} while (!stopLoop && nodePtr != NULL);
 
-			//if I am in the end of the list
+			//if I am at the end of the list
 			if (nodePtr == NULL)
 			{
 				nodePtr = new FrogObjNode(fs, NULL);
@@ -354,7 +356,7 @@ FrogObject * FrogObjectCol::getFrogObject(int position)
 
 	if ((this->head != NULL) && (position < this->getSize()) && (position >= 0))
 	{
-		// if i == 0 then for is not executed, otherwise we start from i = 1
+		// if position == 0 then for is not executed, otherwise we start from i = 1
 		// cause result is pointing to the first Node already (first node is in position = 0)
 		for (int j = 0; j < position; j++)
 		{			
@@ -362,6 +364,7 @@ FrogObject * FrogObjectCol::getFrogObject(int position)
 		}
 
 		result = currentNode->getFrogItem();
+		return result;
 	}
 	else
 	{
@@ -386,7 +389,7 @@ void FrogObjectCol::removeFrogObjects(FrogObjectCol * sourceSolutionCol)
 
 void FrogObjectCol::removeFrogObject(FrogObject * fs)
 {
-	FrogObjNode * nodePtr = this->head, *nodePtrPrev = NULL, *nodePtrTemp;
+	FrogObjNode * nodePtr = this->head, *nodePtrPrev = NULL, *nodePtrTemp = NULL;
 
 	if (fs != NULL)
 	{
@@ -434,6 +437,48 @@ void FrogObjectCol::removeFrogObject(FrogObject * fs)
 		nodePtrPrev = NULL;
 
 	} // end if(fs != NULL)
+}
+
+void FrogObjectCol::removeFrogObjectByPosition(int position)
+{
+	FrogObjNode* nodePtr = this->head, * nodePtrPrev = NULL, * nodePtrTemp = NULL;
+
+	if (position >= 0 && position < this->colSize)
+	{
+
+		if (position == 0)
+		{
+			nodePtrTemp = head;
+			head = head->getNextFrogObjNode();
+			nodePtr = head;
+
+			nodePtrTemp->setFrogItem(NULL);
+			delete nodePtrTemp;
+
+			this->colSize--;
+			return;
+		}
+
+		for (int i = 0; i < position; i++)
+		{
+			nodePtrPrev = nodePtr;
+			nodePtr = nodePtr->getNextFrogObjNode();
+		}
+
+		nodePtrTemp = nodePtr;
+		nodePtrPrev->setNextFrogObjNode(nodePtr->getNextFrogObjNode());
+		nodePtr = nodePtrTemp->getNextFrogObjNode();
+
+		nodePtrTemp->setFrogItem(NULL);
+		delete nodePtrTemp;
+		nodePtrTemp = NULL;
+
+		this->colSize--;
+
+		return;
+	}
+
+	return;
 }
 
 void FrogObjectCol::reorderFrogObject(FrogObject * fs)
@@ -501,6 +546,16 @@ void FrogObjectCol ::addAllFrogObjects(FrogObjectCol * elementsToAdd)
 	for(int i = 0; i < size; i++)
 	{
 		this->addFrogObject(elementsToAdd->getFrogObject(i));
+	}
+}
+
+void FrogObjectCol::addLastAllFrogObjects(FrogObjectCol* elementsToAdd)
+{
+	int size = elementsToAdd->getSize();
+
+	for (int i = 0; i < size; i++)
+	{
+		this->addLastFrogObject(elementsToAdd->getFrogObject(i));
 	}
 }
 
@@ -684,6 +739,18 @@ void FrogObjectCol::reverse()
 		this->removeFrogObject(object);
 		this->addLastFrogObject(object);
 	}
+}
+
+void FrogObjectCol::removeFirstItem()
+{
+	this->removeFrogObjectByPosition(0);
+}
+
+void FrogObjectCol::removeLastItem()
+{
+	int lastPosition = this->getSize() - 1;
+
+	this->removeFrogObjectByPosition(lastPosition);
 }
 
 

@@ -430,11 +430,14 @@ float FeasibleSolution::Evaluate(FrogLeapController * controller, int depotId)
 	}
 
 	destinationId = depotId;
-
+	
 	result = result  + dt->getEdge(originId, destinationId);
-
+	
 	return result;	
 }
+
+
+
 
 
 

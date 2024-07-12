@@ -46,6 +46,8 @@ public:
 
 	void removeFrogObject(FrogObject * fs);
 
+	void removeFrogObjectByPosition(int position);
+
 	FrogObjectCol * removeRepetedItems();
 
 	int areThereRepetedItems();
@@ -69,6 +71,12 @@ public:
 	void removeAllLowerValueFrogObject(int value, FrogObjectCol * deletedFrogObjects);
 
 	void addAllFrogObjects(FrogObjectCol * elementsToAdd);
+
+	void addLastAllFrogObjects(FrogObjectCol* elementsToAdd);
+
+	void removeFirstItem();
+
+	void removeLastItem();
 
 	void unReferenceFrogObjectCol();
 };

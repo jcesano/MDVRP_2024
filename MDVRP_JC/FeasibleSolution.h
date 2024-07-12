@@ -65,7 +65,7 @@ public:
 
 	int factorial(int n);
 
-	float Evaluate(FrogLeapController * controller, int depotId);
+	float Evaluate(FrogLeapController * controller, int depotId);	
 };
 
 #endif

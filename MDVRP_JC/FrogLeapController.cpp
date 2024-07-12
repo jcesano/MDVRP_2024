@@ -15,15 +15,18 @@
 #include "FloatDistanceTable.h"
 #include "Graph.h"
 #include "FrogLeapSolution.h"
+#include "FeasibleSolution.h"
 #include "Pair.h"
 #include "IndexList.h"
 #include "Vehicle.h"
+#include "Cluster.h"
 #include <limits>
 #include <iostream>
 #include <string>
 #include <functional>
 #include <random>
 #include <utility>
+#include <cstdlib> // for exit and abort
 
 //using std::string;
 //using std::cout;
@@ -67,6 +70,8 @@ FrogLeapController::FrogLeapController()
 	this->ptrBestSolution = NULL;
 
 	this->globalVehicleId = 0;	
+
+	this->reassignCustomers = true;
 }
 
 FrogLeapController::~FrogLeapController()
@@ -171,18 +176,66 @@ void FrogLeapController::applyLocalSearch()
 	this->setMinCostValue(newCost);
 }
 
+void FrogLeapController::printCtrlSolutionData(FrogLeapController * controller)
+{
+	FILE* pFile = this->getPFile();
+	
+	//fprintf(pFile, "\n \n SHOWING DATA OF FROGLEAPING CONTROLLER \n");
+	if(this->ptrBestSolution != NULL)
+	{
+		this->ptrBestSolution->printFrogObjWithSolutionData();
+	}
+	else
+	{
+		fprintf(pFile, "\n NO FEASIBLE SOLUTION FOUND: ptrBestSolution IS NULL \n");
+	}
+	
+	//fprintf(pFile, "\n Summary of Best Found Solution \n");
+	//fprintf(pFile, "	Time Seed used %lld \n", (long long)this->timeSeedUsed);
+	//fprintf(pFile, "	Number of success attempts: %d \n", this->successAttempts);
+	//fprintf(pFile, "	Number of fail attempts: %d \n", this->failAttempts);
+	//fprintf(pFile, "	Number of TOTAL Improvements: %d \n", this->getTotalImprovements());
+	//fprintf(pFile, "	Number of Global Search Improvements: %d \n", this->globalImprovements);
+	//fprintf(pFile, "	Number of Local Search Improvements: %d \n", this->localSearchImprovements);
+	//fprintf(pFile, "	Evaluation of best found solution is: %.3f \n \n", this->getMinCostValue());
+}
+
+void FrogLeapController::writeCtrl()
+{
+	FILE* pFile = this->getPFile();
+
+	//fprintf(pFile, "\n \n SHOWING DATA OF FROGLEAPING CONTROLLER \n");
+	if (this->ptrBestSolution != NULL)
+	{
+		this->ptrBestSolution->writeFrogObjWithSolutionData();
+	}
+	else
+	{
+		fprintf(pFile, "\n NO FEASIBLE SOLUTION FOUND: ptrBestSolution IS NULL \n");
+	}
+
+	//fprintf(pFile, "\n Summary of Best Found Solution \n");
+	//fprintf(pFile, "	Time Seed used %lld \n", (long long)this->timeSeedUsed);
+	//fprintf(pFile, "	Number of success attempts: %d \n", this->successAttempts);
+	//fprintf(pFile, "	Number of fail attempts: %d \n", this->failAttempts);
+	//fprintf(pFile, "	Number of TOTAL Improvements: %d \n", this->getTotalImprovements());
+	//fprintf(pFile, "	Number of Global Search Improvements: %d \n", this->globalImprovements);
+	//fprintf(pFile, "	Number of Local Search Improvements: %d \n", this->localSearchImprovements);
+	//fprintf(pFile, "	Evaluation of best found solution is: %.3f \n \n", this->getMinCostValue());
+}
+
 void FrogLeapController::printCtrl()
 {
 	printf("\n \n SHOWING DATA OF FROGLEAPING CONTROLLER \n");
-	if(this->ptrBestSolution != NULL)
+	if (this->ptrBestSolution != NULL)
 	{
-		this->ptrBestSolution->printFrogObj();
+		//this->ptrBestSolution->printFrogObj();
 	}
 	else
 	{
 		printf("\n NO FEASIBLE SOLUTION FOUND: ptrBestSolution IS NULL \n");
 	}
-	
+
 	printf("\n Summary of Best Found Solution \n");
 	printf("	Time Seed used %lld \n", (long long)this->timeSeedUsed);
 	printf("	Number of success attempts: %d \n", this->successAttempts);
@@ -726,7 +779,7 @@ FrogLeapSolution * FrogLeapController::loadAssignations3(FILE * filePtr, TestCas
 	bool stopLoop = false, vehicleDataLoaded = false, assignationBlockLoaded = false;
 	int depotLabelId = 0, vehicle_cost = 0, vehicle_load = 0, v_dimension = testCaseObjPtr->getDimension();
 	char buf[LINE_MAX];
-	Pair * currPair;
+	Pair * currPair = NULL;
 	float globalCounter = 0, fvalue;
 	int depotIndex, customerLabelId, customerIndex;
 	FrogLeapSolution * frogLeapSolution = new FrogLeapSolution(SolutionGenerationType::FrogLeaping, this->getSourceType(), this->getNumberOfCustomers(), this->getNumberOfDepots(), 0);
@@ -969,14 +1022,15 @@ FloatDistanceTable * FrogLeapController::getFloatDistanceTable()
 
 int FrogLeapController::getNumberOfDepots()
 {
-	if(this->source_t == SourceType::Graph)
-	{
-		return this->depotList->getSize();
-	}
-	else
-	{
-		return this->tspLibEud2DPtr->getNumberOfDepots();
-	}	
+	//if(this->source_t == SourceType::Graph)
+	//{
+	//	return this->depotList->getSize();
+	//}
+	//else
+	//{
+	//	return this->tspLibEud2DPtr->getNumberOfDepots();
+	//}	
+	return this->depotList->getSize();
 }
 
 Pair * FrogLeapController::getDepotPairByIndex(int position)
@@ -984,6 +1038,25 @@ Pair * FrogLeapController::getDepotPairByIndex(int position)
 	return this->depotArray[position];
 }
 
+
+//Pair * FrogLeapController::getMatchedDepotPair(Pair* customerPair) 
+//{
+//	// search for the i_th (depotToMatch) closest depot to customerPair
+//	//int depotToMatch = customerPair->getDepotIndexToMatch();
+//
+//	// create a depot list ordered by distance from customerPair
+//	FrogObjectCol* depotList = this->createDepotListOrderedByDistanceFromCustomer(customerPair);
+//	
+//	// get the i_th(depotToMatch) closest depot to customerPair
+//	//Pair * matchedDepotPair = (Pair *)depotList->getFrogObject(depotToMatch);
+//
+//	
+//	FrogObjectCol* customerList = this->createCustomerListOrderedByDistanceFromDepot(matchedDepotPair);
+//	Pair* closestCustPair = (Pair *)customerList->getFrogObject(0);
+//
+//	// check if the (depotIndexToMatch)th closest depot has the customerPair as the closest
+//	bool doesItMatch = (closestCustPair->getId() == customerPair->getId());
+//}
 
 Pair * FrogLeapController::getCustomerPairByIndex(int position)
 {
@@ -1052,14 +1125,15 @@ void FrogLeapController::assignVehiclesToDepots(int depotId, int depotDemand)
 
 int FrogLeapController::getNumberOfCustomers()
 {
-	if (this->source_t == SourceType::Graph)
-	{
-		return this->customerList->getSize();
-	}
-	else
-	{
-		return this->tspLibEud2DPtr->getNumberOfCustomers();
-	}
+	//if (this->source_t == SourceType::Graph)
+	//{
+	//	return this->customerList->getSize();
+	//}
+	//else
+	//{
+	//	return this->tspLibEud2DPtr->getNumberOfCustomers();
+	//}
+	return this->customerList->getSize();
 }
 
 void FrogLeapController::setGraph(Graph * gPtr)
@@ -1257,8 +1331,12 @@ void FrogLeapController::loadCustomerAndDepotList()
 		{
 			demandOrCapacity = demandPair->get_j_IntValue();
 		}		
+		else 
+		{
+			demandOrCapacity = -1;
+		}
 
-		//if does not exist then it is a customer
+		//if does not exist, then it is a customer
 		if (depotListSection->getItemById(nodeIdLabel) == -1)
 		{				
 			this->setAsCustomer(i, demandOrCapacity);
@@ -1270,7 +1348,7 @@ void FrogLeapController::loadCustomerAndDepotList()
 	}
 }
 
-int FrogLeapController::getLabel(int internalId)
+int FrogLeapController::getLabelId(int internalId)
 {
 	if(this->source_t == SourceType::Graph)
 	{
@@ -1278,7 +1356,23 @@ int FrogLeapController::getLabel(int internalId)
 	}
 	else
 	{
-		return this->tspLibEud2DPtr->getNodeCoordSection()->getFrogObject(internalId)->getId();
+		if(this->source_t == SourceType::Tsp2DEuc)
+		{
+			return this->tspLibEud2DPtr->getNodeCoordSection()->getFrogObject(internalId)->getId();
+		}
+		else
+		{
+			FrogObject * item = this->customerList->getFrogObjectById(internalId);
+			if(item != NULL)
+			{
+				return item->getId();
+			}
+			else
+			{
+				item = this->depotList->getFrogObjectById(internalId);
+				return item->getId();
+			}
+		}		
 	}
 	
 }
@@ -1286,7 +1380,9 @@ int FrogLeapController::getLabel(int internalId)
 int FrogLeapController::getDepotListIndexByInternal(int depotInternalId)
 {
 
-	for (int i = 0; i < this->depotList->getSize(); i++)
+	int size = this->depotList->getSize();
+
+	for (int i = 0; i < size; i++)
 	{
 		if (this->depotArray[i]->getId() == depotInternalId)
 		{			
@@ -1317,8 +1413,9 @@ int FrogLeapController::getDepotIndexByLabelId(int depotLabelId)
 	int depotInternalIndex = -1;
 	Pair * depotPair = NULL;
 	Pair * nodeCoord = NULL;
+	int nDepots = this->getNumberOfDepots();
 
-	for(int i = 0; i < this->getNumberOfDepots(); i++)
+	for(int i = 0; i < nDepots; i++)
 	{
 		depotPair = (Pair *)this->depotArray[i];
 
@@ -1338,6 +1435,24 @@ int FrogLeapController::getDepotIndexByLabelId(int depotLabelId)
 	}
 
 	return -1;
+}
+
+Pair * FrogLeapController::getNodeCoordPairById(int pairId)
+{
+	Pair* nodeCoord = NULL;
+
+	nodeCoord = (Pair*)this->tspLibEud2DPtr->getNodeCoordSection()->getFrogObject(pairId);
+
+	return nodeCoord;
+}
+
+Pair* FrogLeapController::getNodeDemandPairById(int pairId)
+{
+	Pair* nodeCoord = NULL;
+
+	nodeCoord = (Pair*)this->tspLibEud2DPtr->getDemandSection()->getFrogObject(pairId);
+
+	return nodeCoord;
 }
 
 int FrogLeapController::getCustomerIndexByLabelId(int customerLabelId)
@@ -1389,6 +1504,11 @@ void FrogLeapController::setUpVehicleCapacity()
 	this->vehicle_capacity = this->tspLibEud2DPtr->getCapacity();
 }
 
+void FrogLeapController::setUpVehicleCapacity(int vehicleCapacity)
+{
+	this->vehicle_capacity = vehicleCapacity;
+}
+
 long int FrogLeapController::getVehicleCapacity()
 {
 	return this->vehicle_capacity;
@@ -1419,7 +1539,7 @@ int FrogLeapController::getCustomerInternalId(int position)
 
 int FrogLeapController::getCustomerDemandByIndex(int position)
 {
-	return this->customerArray[position]->get_j_IntValue();
+	return this->customerArray[position]->get_i_IntValue();
 }
 
 int FrogLeapController::getDepotInternalId(int position)
@@ -1540,7 +1660,8 @@ FrogObjectCol * FrogLeapController::createCustomerListOrderedByDemand()
 
 void FrogLeapController::resetDepotRemainingCapacities()
 {
-	for (int i = 0; i < this->getNumberOfDepots(); i++)
+	int numberOfDepots = this->getNumberOfDepots();
+	for (int i = 0; i < numberOfDepots; i++)
 	{		
 		resetCapacityOrDemand(this->depotArray[i]);
 	}
@@ -1548,7 +1669,8 @@ void FrogLeapController::resetDepotRemainingCapacities()
 
 void FrogLeapController::resetCustomerRemainingDemands()
 {
-	for (int i = 0; i < this->getNumberOfCustomers(); i++)
+	int nCustomers = this->getNumberOfCustomers();
+	for (int i = 0; i < nCustomers; i++)
 	{
 		resetCapacityOrDemand(this->customerArray[i]);
 	}
@@ -1712,6 +1834,75 @@ int FrogLeapController::getDepotIndexOfClosestAssignedCustomer (int targetCustom
 	return result;
 }
 
+bool FrogLeapController::unassignedCustomerPairExists() 
+{
+	int nCustomers = this->getNumberOfCustomers();
+	bool result = false;
+
+	int i = 0;
+
+	while (i < nCustomers && result == false)
+	{
+		int currentDepotIndex = this->customerArray[i]->getAssignedDepotIndex();
+		if (currentDepotIndex == -1) {
+			result = true;
+		}
+		
+		i++;
+	}
+
+	return result;
+}
+
+int FrogLeapController::numberOfUnassignedCustomers()
+{
+	int nCustomers = this->getNumberOfCustomers();
+	int result = 0;
+
+	int i = 0;
+
+	while (i < nCustomers)
+	{
+		int currentDepotIndex = this->customerArray[i]->getAssignedDepotIndex();
+		if (currentDepotIndex == -1) {
+			result++;
+		}
+		i++;
+	}
+
+	return result;
+}
+
+FrogObjectCol * FrogLeapController::getListOfUnassignedCustomers()
+{
+	FrogObjectCol* unassignedCustomers = new FrogObjectCol();
+	int nCustomers = this->getNumberOfCustomers();
+	int result = 0;
+
+	int i = 0;
+
+	while (i < nCustomers)
+	{
+		int currentDepotIndex = this->customerArray[i]->getAssignedDepotIndex();
+		if (currentDepotIndex == -1) {
+			unassignedCustomers->addLastFrogObject(this->customerArray[i]);
+		}
+		i++;
+	}
+
+	return unassignedCustomers;
+}
+
+bool FrogLeapController::getReassignCustomersSettings()
+{
+	return this->reassignCustomers;
+}
+
+void FrogLeapController::setRassignCustomerSettings(bool reassignCustomers)
+{
+	this->reassignCustomers = reassignCustomers;
+}
+
 void FrogLeapController::setCustomerPairAsAssigned(int customerIndex, int depotIndex)
 {
 	Pair * customerPair = this->customerArray[customerIndex];
@@ -1719,10 +1910,12 @@ void FrogLeapController::setCustomerPairAsAssigned(int customerIndex, int depotI
 	customerPair->setAssignedDepotIndex(depotIndex);
 }
 
-// Set every pair in customerArray as not assigned
+// Set every pair in customerArray as not assigned. -1 value is assigned in each item.
 void FrogLeapController::resetCustomersAsNotAssigned()
 {
-	for(int i = 0; i < this->getNumberOfCustomers(); i++)
+	int nCustomers = this->getNumberOfCustomers();
+
+	for(int i = 0; i < nCustomers; i++)
 	{
 		Pair * customerPair = this->customerArray[i];
 		customerPair->setAssignedDepotIndex(-1);
@@ -1799,7 +1992,7 @@ int FrogLeapController::getY_Coord(int nodeInternalId)
 }
 
 // create a list of customers that satisfies for each customer of the list that 
-// 1) the depotPair is the closest one of all.
+// 1) the depotPair is the closest available one of all.
 // The returned list is ordered by distance from the depotpair to all customers that satisfy condition 1)
 FrogObjectCol * FrogLeapController::createMatchCustomerList(Pair * currentDepotPair)
 {
@@ -1827,6 +2020,159 @@ FrogObjectCol * FrogLeapController::createMatchCustomerList(Pair * currentDepotP
 	return matchCol;
 }
 
+// create a list of customers that satisfies for each customer of the list that 
+// 1) the depotPair is the closest available (with remaining capacity enough) one of all.
+// The returned list is ordered by distance from the depotpair to all customers that satisfy condition 1)
+FrogObjectCol* FrogLeapController::createFullMatchCustomerList(Pair* currentDepotPair)
+{
+	FrogObjectCol* matchCol = new FrogObjectCol();
+
+	// creates a customer list ordered by distance from depot considering only not assigned customers
+	// we do not create copies so we need to unreference the list before deleting it.
+	FrogObjectCol* distanceCustList = createCustomerListOrderedByDistanceFromDepot(currentDepotPair);
+
+	int size = distanceCustList->getSize();
+
+	for (int i = 0; i < size; i++)
+	{
+		Pair* currentCustomerPair = (Pair*)distanceCustList->getFrogObject(i);
+
+		// get the demand of current customer pair 
+		int customerDemand = this->getCustomerDemandByIndex(this->getCustomerListIndexByInternal(currentCustomerPair->getId()));
+
+		// get remaining capacity of current depot
+		int depotRemainingCapacity = this->getDepotRemainingCapacityByIndex(this->getDepotListIndexByInternal(currentDepotPair->getId()));
+
+		if(depotRemainingCapacity >= customerDemand)
+		{
+			bool itIsAMatch = isAFullMatch(currentCustomerPair, currentDepotPair);
+
+			if (itIsAMatch)
+			{
+				matchCol->addLastFrogObject(currentCustomerPair);
+			}
+		}
+	}
+
+	distanceCustList->unReferenceFrogObjectCol();
+	delete distanceCustList;
+
+	return matchCol;
+}
+
+// create a list of customers that satisfies for each customer of the list that 
+// 1) the depotPair is the closest one of all.
+// The returned list is ordered by distance from the depotpair to all customers that satisfy condition 1)
+FrogObjectCol* FrogLeapController::createMatchCustomerList_Cluster(Cluster* currentCluster, FrogLeapSolution* fls)
+{
+	FrogObjectCol* matchCol = new FrogObjectCol();
+
+	FrogObjectCol* distanceCustList = createCustomerListOrderedByDistanceFromCluster(currentCluster, fls);
+
+	int size = distanceCustList->getSize();
+
+	for (int i = 0; i < size; i++)
+	{
+		Pair* currentCustomerPair = (Pair*)distanceCustList->getFrogObject(i);
+
+		if(currentCustomerPair->getId() == 5)
+		{
+			//printf("Parar acá \n");
+		}
+
+		bool itIsAMatch = fls->isAMatch_Cluster(currentCustomerPair, currentCluster, this);
+
+		if (itIsAMatch)
+		{
+			if (this->getCustomerListIndexByInternal(currentCustomerPair->getId()) == 19)
+			{
+				//printf("Stop in createMatchCustomerList: customer 19 found \n");
+			}
+
+			matchCol->addLastFrogObject(currentCustomerPair);
+		}
+	}
+
+	distanceCustList->unReferenceFrogObjectCol();
+	delete distanceCustList;
+
+	return matchCol;
+}
+
+FrogObjectCol* FrogLeapController::createCustomerListOrderedByDistanceFromCluster(Cluster* currentCluster, FrogLeapSolution * fls)
+{
+	FrogObjectCol * distanceCustomerList = new FrogObjectCol();
+	Pair * customerPair_i = NULL;
+	Pair * clusterDepot = NULL;
+	int nCustomers = this->getNumberOfCustomers();
+	float currentDistance;
+
+	for (int i = 0; i < nCustomers; i++)
+	{
+		customerPair_i = this->getCustomerPairByIndex(i);
+		
+		clusterDepot = currentCluster->getDepotPair();
+		int clusterDepotIndex = this->getDepotListIndexByInternal(clusterDepot->getId());
+
+		if(this->getReassignCustomersSettings() == true)
+		{
+			if (customerPair_i->getAssignedDepotIndex() == clusterDepotIndex)
+			{ //si ya está asignado, verifico si está asignado al currentCluster. Si es, desasigno momentáneamente para hacer el cálculo y vuelvo a asignar
+
+				// this is momentarily just to recalculate the distance from currentCustomer to the rest of members of its cluster.
+				unassignCustomerFromCluster(customerPair_i, currentCluster);
+
+				currentDistance = currentCluster->getDistanceToCustomer(i, this);
+				customerPair_i->setValue(currentDistance);
+				distanceCustomerList->addFrogObjectOrdered(customerPair_i);
+
+				// assigning again the customer to its original cluster
+				assignCustomerToClusterByCustomerIndex(currentCluster, i);
+			}
+			else
+			{
+				currentDistance = currentCluster->getDistanceToCustomer(i, this);
+				customerPair_i->setValue(currentDistance);
+				distanceCustomerList->addFrogObjectOrdered(customerPair_i);				
+			}
+		}
+		else
+		{
+			if (customerPair_i->getAssignedDepotIndex() == -1)
+			{
+				currentDistance = currentCluster->getDistanceToCustomer(i, this);
+				customerPair_i->setValue(currentDistance);
+				distanceCustomerList->addFrogObjectOrdered(customerPair_i);
+			}
+		}
+	}
+
+	return distanceCustomerList;
+}
+
+void FrogLeapController::assignCustomerToClusterByCustomerIndex(Cluster* currentCluster, int customerIndex)
+{
+	// we need to assign the customer with customerIndex to the depot of the currentCluster
+	Pair * customerPair = this->getCustomerPairByIndex(customerIndex);
+	Pair* clusterDepotPair = currentCluster->getDepotPair();
+	int clusterDepotIndex = this->getDepotListIndexByInternal(clusterDepotPair->getId());
+	
+
+	customerPair->setAssignedDepotIndex(clusterDepotIndex);
+	clusterDepotPair->upDateRemainingCapacity(customerPair);
+	currentCluster->addCustomer(customerIndex, this);	
+}
+
+void FrogLeapController::unassignCustomerFromCluster(Pair* customerPair, Cluster* currentCluster)
+{
+	int depotIndex = customerPair->getAssignedDepotIndex();
+	Pair* depotPair = this->getDepotPairByIndex(depotIndex);
+	depotPair->restoreRemainingCapacity(customerPair);
+	customerPair->setAssignedDepotIndex(-1);
+	currentCluster->unassignCustomerFromCluster(customerPair);
+}
+
+/// revisado
 FrogObjectCol * FrogLeapController::createCustomerListOrderedByDistanceFromDepot(Pair * currentDepotPair)
 {
 	FrogObjectCol * distanceCustomerList = new FrogObjectCol();
@@ -1837,6 +2183,7 @@ FrogObjectCol * FrogLeapController::createCustomerListOrderedByDistanceFromDepot
 	{
 		Pair * customerPair = this->customerArray[i];
 
+		// check if customerPair is already assigned
 		int assignedDepotIndex = customerPair->getAssignedDepotIndex();
 
 		if (assignedDepotIndex == -1)
@@ -1847,6 +2194,7 @@ FrogObjectCol * FrogLeapController::createCustomerListOrderedByDistanceFromDepot
 
 			float currentDistance = dt->getEdge(currentDepotInternalId, customerInternalId);
 
+			// add customerPair ordered by distance
 			customerPair->setValue(currentDistance);
 
 			distanceCustomerList->addFrogObjectOrdered(customerPair);
@@ -1856,6 +2204,9 @@ FrogObjectCol * FrogLeapController::createCustomerListOrderedByDistanceFromDepot
 	return distanceCustomerList;
 }
 
+// revisado
+// this collection must be completely destroyed since it creates copies of elements. 
+// values of objects represents the distance from currentCustomer
 FrogObjectCol * FrogLeapController::createDepotListOrderedByDistanceFromCustomer(Pair * currentCustomerPair)
 {
 	FrogObjectCol * distanceDepotList = new FrogObjectCol();
@@ -1881,24 +2232,109 @@ FrogObjectCol * FrogLeapController::createDepotListOrderedByDistanceFromCustomer
 	};
 
 	return distanceDepotList;
-
 }
 
-bool FrogLeapController::isAMatch(Pair * currentCustomerPair, Pair * currentDepotPair)
+// checks if currentDepotPair = the closest Depot to currentCustomerPair
+bool FrogLeapController::isAMatch(Pair* currentCustomerPair, Pair* currentDepotPair)
 {
 	bool result = false;
-	FrogObjectCol * depotListOrdered = currentCustomerPair->getPairCol();
+	FrogObjectCol* depotListOrdered = currentCustomerPair->getPairCol();
 
-	if(depotListOrdered == NULL)
+	if (depotListOrdered == NULL)
 	{
 		depotListOrdered = this->createDepotListOrderedByDistanceFromCustomer(currentCustomerPair);
 		currentCustomerPair->setPairCol(depotListOrdered);
 	}
-	
-	Pair * closestDepotPair = (Pair *) depotListOrdered->getFrogObject(0);
-		
+
+	Pair* closestDepotPair = (Pair*)depotListOrdered->getFrogObject(0);
+
 	result = (currentDepotPair->getId() == closestDepotPair->getId());
 	return result;
+}
+
+// checks if currentDepotPair = the closest Depot to currentCustomerPair with remaining capacity enough 
+bool FrogLeapController::isAFullMatch(Pair * currentCustomerPair, Pair * currentDepotPair)
+{
+	bool result = false;
+	FrogObjectCol* depotListOrdered = currentCustomerPair->getPairCol();
+
+	if (depotListOrdered == NULL)
+	{
+		// this list has copies of depotPair. They must be destroyed
+		depotListOrdered = this->createDepotListOrderedByDistanceFromCustomer(currentCustomerPair);
+		currentCustomerPair->setPairCol(depotListOrdered);
+	}
+	else {
+		result = false; // código para debug solamente
+	};
+
+	// get the demand of current customer
+	int customerDemand = this->getCustomerDemandByIndex(this->getCustomerListIndexByInternal(currentCustomerPair->getId()));
+	
+	// get the closest depot with remaining capacity enough to attend currentCustomer
+	Pair* closestDepotPairWithCapacity = (Pair *)this->getFirstDepotPairWithRemainingCapacity(depotListOrdered, customerDemand);
+
+	if (closestDepotPairWithCapacity != nullptr) {
+		result = (currentDepotPair->getId() == closestDepotPairWithCapacity->getId());
+	}
+	else {
+		result = false;
+	}
+	
+	return result;
+}
+
+Pair * FrogLeapController::getFirstDepotPairWithRemainingCapacity(FrogObjectCol* depotListOrdered, int customerDemand)
+{
+	int size = depotListOrdered->getSize();
+
+	for (int i = 0; i < size; i++)
+	{
+		Pair * currentDepot = (Pair *)depotListOrdered->getFrogObject(i);
+		
+		int currentDepotRemainingCapacity = this->getDepotRemainingCapacityByIndex(this->getDepotListIndexByInternal(currentDepot->getId()));
+
+		if(currentDepotRemainingCapacity >= customerDemand)
+		{
+			return currentDepot;
+		}
+	}
+
+	return nullptr;
+}
+
+Cluster * FrogLeapController::getFirstClusterWithRemainingCapacity(FrogObjectCol* clusterListOrdered, Pair * currentCustomerPair, FrogLeapController * controller)
+{
+	int customerIndex = controller->getCustomerListIndexByInternal(currentCustomerPair->getId());
+	int customerDemand = controller->getCustomerDemandByIndex(customerIndex);
+	
+	int customerDepotIndex = currentCustomerPair->getAssignedDepotIndex();
+
+	int size = clusterListOrdered->getSize();
+
+	for (int i = 0; i < size; i++)
+	{
+		Cluster* currentCluster = (Cluster*)clusterListOrdered->getFrogObject(i);
+
+		Pair* currentClusterDepot = currentCluster->getDepotPair();
+		int clusterDepotIndex = this->getDepotListIndexByInternal(currentClusterDepot->getId());
+
+		if(customerDepotIndex == clusterDepotIndex)
+		{
+			return currentCluster;
+		}
+		else
+		{
+			int currentDepotRemainingCapacity = this->getDepotRemainingCapacityByIndex(this->getDepotListIndexByInternal(currentClusterDepot->getId()));
+
+			if (currentDepotRemainingCapacity >= customerDemand)
+			{
+				return currentCluster;
+			}
+		}
+	}
+
+	return nullptr;
 }
 
 int FrogLeapController::getTotalDemandOrCapacity(FrogObjectCol * pairCol)
@@ -1930,18 +2366,154 @@ void FrogLeapController::assignDepotToCustomerPairs(Pair * depotPair, FrogObject
 	}
 }
 
-FrogObjectCol * FrogLeapController::assignDepotToCustomerPairsUntilDemandComplete(Pair * depotPair, FrogObjectCol * customerCol)
+float FrogLeapController::assignRandomToDepotSelected(int depotIndex)
 {
-	int size = customerCol->getSize();
+	float randnum, result;
+
+	do
+	{
+		randnum = this->genRandomFloatingNumber(0, 1);
+	} while (randnum >= 1);
+
+	result = depotIndex + randnum;
+
+	return  result;
+}
+
+bool FrogLeapController::isCustomerAssignedToCluster(Pair* customerPair, Cluster* cluster)
+{
+	bool result = false;
+
+	int customerDepotIndex = customerPair->getAssignedDepotIndex();
+	Pair* clusterDepot = cluster->getDepotPair();
+	int clusterDepotIndex = this->getDepotListIndexByInternal(clusterDepot->getId());
+
+	result = (customerDepotIndex == clusterDepotIndex);
+
+	return result;
+}
+
+// assigns each customer to depot until remaining capacity = 0 and return a list of all assigned customers
+// assigns each customer of the list until remaining capacity = 0
+FrogObjectCol * FrogLeapController::assignDepotToCustomerPairsUntilCapacityIsComplete(Pair * depotPair, FrogObjectCol * customerCol, FrogLeapSolution * fs)
+{
+	int size = customerCol->getSize(), i = 0;
+	Pair* customerPair;
+
 
 	bool demandCompleted = false;
-	int i = 0;
+	
 	FrogObjectCol * newCol = new FrogObjectCol();
+
+	while (i < size  && demandCompleted == false)
+	{
+		
+		customerPair = (Pair*)customerCol->getFrogObject(i);
+		
+		int customerDemand = customerPair->get_i_IntValue();
+		int currentDepotRemainingCapacity = depotPair->get_j_IntValue();
+
+		if (currentDepotRemainingCapacity == 0)
+		{
+			demandCompleted = true;
+		}
+		else
+		{
+			if (customerDemand <= currentDepotRemainingCapacity)
+			{
+				this->assignDepotToCustomerAndUpdateRemainingCapacity(depotPair, customerPair, fs);
+				
+				newCol->addLastFrogObject(customerPair);
+			}
+	
+			//customerCol->removeFrogObject(customerPair);	
+
+		}	
+
+		i++;
+	}
+
+	//customerCol->unReferenceFrogObjectCol();
+	//delete customerCol;
+
+	return newCol;
+}
+
+FrogObjectCol* FrogLeapController::assignCustomersToClusterUntilCapacityIsComplete(Cluster* cluster, FrogObjectCol* customerCol, FrogLeapSolution* fls)
+{
+	float u;	
+	float remainingDepotCapacity = -1;
+	Pair* customerPair = NULL;
+	Pair* clusterDepotPair = NULL;
+	int depotIndex = -1;
+	int customerIndex = -1;
+	float customerDemand = -1;
+	FrogObjectCol* assignedCustomersInCurrentPhase = new FrogObjectCol();
+
+	int size = customerCol->getSize();
+	for (int i = 0; i < size; i++)
+	{
+		customerPair = (Pair*)customerCol->getFrogObject(i);
+
+		clusterDepotPair = cluster->getDepotPair();
+		depotIndex = this->getDepotListIndexByInternal(clusterDepotPair->getId());
+		customerIndex = this->getCustomerListIndexByInternal(customerPair->getId());
+
+		if(!this->isCustomerAssignedToCluster(customerPair, cluster))
+		{			
+			remainingDepotCapacity = this->getDepotRemainingCapacityByIndex(depotIndex);			
+			customerDemand = this->getCustomerDemandByIndex(customerIndex);
+
+			if (remainingDepotCapacity >= customerDemand) {
+				// if its fits then customer needs to be assigned to this cluster
+
+				if (customerPair->getAssignedDepotIndex() != -1)
+				{ //if it is previously assigned to another cluster, then it needs to be unassigned.
+					this->unassignCustomerFromItsCluster(customerPair, fls);					
+				}
+
+				cluster->addCustomer(customerIndex, this);
+				this->assignDepotToCustomer(clusterDepotPair, customerPair);
+				clusterDepotPair->upDateRemainingCapacity(customerPair);
+				
+				u = this->assignRandomToDepotSelected(depotIndex);
+				fls->setFLValue(customerIndex, u);
+
+				assignedCustomersInCurrentPhase->addFrogObject(customerPair);
+			}
+
+			if (customerIndex == 8)
+			{
+				//printf("Stop: customer 8 found in assignCustomersToCluster \n");
+			}
+		}
+		else // if it is already a member of the cluster
+		{
+			u = this->assignRandomToDepotSelected(depotIndex);
+			fls->setFLValue(customerIndex, u);
+			assignedCustomersInCurrentPhase->addFrogObject(customerPair);
+		}				
+	}
+
+	return assignedCustomersInCurrentPhase;
+}
+
+FrogObjectCol* FrogLeapController::assignDepotRndToCustomerPairsUntilCapacityIsComplete(Pair* depotPair, FrogObjectCol* customerCol, FrogLeapSolution* fs)
+{
+	int size = customerCol->getSize(), i = 0, rnd_i;
+	Pair* customerPair;
+
+	FeasibleSolution* indexRndArray = this->initFeasibleSolution(size);
+
+	bool demandCompleted = false;
+
+	FrogObjectCol* newCol = new FrogObjectCol();
 
 	while (i < size && demandCompleted == false)
 	{
+		rnd_i = this->selectRandomIndex(i, indexRndArray);
 		
-		Pair * customerPair = (Pair *)customerCol->getFrogObject(0);
+		customerPair = (Pair*)customerCol->getFrogObject(rnd_i);
 
 		int customerDemand = customerPair->get_i_IntValue();
 		int currentDepotRemainingCapacity = depotPair->get_j_IntValue();
@@ -1954,20 +2526,32 @@ FrogObjectCol * FrogLeapController::assignDepotToCustomerPairsUntilDemandComplet
 		{
 			if (customerDemand <= currentDepotRemainingCapacity)
 			{
-				depotPair->upDateRemainingCapacity(customerPair);
-				this->assignDepotToCustomer(depotPair, customerPair);
+				this->assignDepotToCustomerAndUpdateRemainingCapacity(depotPair, customerPair, fs);
+
 				newCol->addLastFrogObject(customerPair);
 			}
-	
-			customerCol->removeFrogObject(customerPair);
-			i++;
-		}		
+
+			//customerCol->removeFrogObject(customerPair);	
+
+		}
+
+		i++;
 	}
 
-	customerCol->unReferenceFrogObjectCol();
-	delete customerCol;
+	//customerCol->unReferenceFrogObjectCol();
+	//delete customerCol;
+	delete indexRndArray;
 
 	return newCol;
+
+}
+
+void FrogLeapController::upDateRemainingCapacity(Pair * depotPair, Pair * customerPair)
+{
+	int depotIndex = this->getDepotListIndexByInternal(depotPair->getId());
+	Pair* localDepotPair = this->getDepotPairByIndex(depotIndex);
+
+	localDepotPair->upDateRemainingCapacity(customerPair);
 }
 
 FrogObjectCol * FrogLeapController::selectCustomerPairsUntilDemandComplete(Pair * depotPair, FrogObjectCol * customerCol)
@@ -2013,7 +2597,7 @@ FrogObjectCol * FrogLeapController::selectCustomerPairsUntilDemandComplete(Pair 
 	return newCol;
 }
 
-void FrogLeapController::assignCustomersToCluster(Pair * depotPair, FrogObjectCol * & customerCol, FrogObjectCol * depotListOrderedByCapacity, FrogLeapSolution * fs)
+void FrogLeapController::assignCustomersToDepot(Pair * depotPair, FrogObjectCol * & customerCol, FrogObjectCol * depotListOrderedByCapacity, FrogLeapSolution * fs)
 {
 	int size = customerCol->getSize();
 
@@ -2023,6 +2607,27 @@ void FrogLeapController::assignCustomersToCluster(Pair * depotPair, FrogObjectCo
 	{
 		int rand_int = this->genRandomIntNumber(0, customerCol->getSize());
 		Pair * customerPair = (Pair *)customerCol->getFrogObject(rand_int);
+
+		int customerIndex = this->getCustomerListIndexByInternal(customerPair->getId());
+
+		float u = fs->assignRandomFeasibleDepot4(this, depotListOrderedByCapacity, customerIndex);
+
+		fs->setFLValue(customerIndex, u);
+
+		customerCol->removeFrogObject(customerPair);
+	}
+}
+
+void FrogLeapController::assignCustomersToDepot2(Pair* depotPair, FrogObjectCol*& customerCol, FrogObjectCol* depotListOrderedByCapacity, FrogLeapSolution* fs)
+{
+	int size = customerCol->getSize();
+
+
+
+	for (int i = 0; i < size; i++)
+	{
+		int rand_int = this->genRandomIntNumber(0, customerCol->getSize());
+		Pair* customerPair = (Pair*)customerCol->getFrogObject(rand_int);
 
 		int customerIndex = this->getCustomerListIndexByInternal(customerPair->getId());
 
@@ -2071,6 +2676,17 @@ void FrogLeapController::assignDepotToCustomer(Pair * depotPair, Pair * customer
 	customerPair->setAssignedDepotIndex(depotIndex);
 }
 
+void FrogLeapController::unassignCustomerFromItsCluster(Pair* customerPair, FrogLeapSolution * fls)
+{
+	int depotIndex = customerPair->getAssignedDepotIndex();
+	Pair* depotPair = this->getDepotPairByIndex(depotIndex);
+	depotPair->restoreRemainingCapacity(customerPair);
+	customerPair->setAssignedDepotIndex(-1);
+	
+	Cluster* currentCluster = fls->getClusterByIndex(depotIndex);
+	currentCluster->unassignCustomerFromCluster(customerPair);	
+}
+
 float FrogLeapController::addRandomNumberToInt(int index)
 {
 	float result = 0;
@@ -2089,9 +2705,38 @@ float FrogLeapController::addRandomNumberToInt(int index)
 bool FrogLeapController::isCustomerPairAssigned(Pair * customerPair)
 {
 	if (customerPair->getAssignedDepotIndex() == -1)
+	{
+		return false;
+	}
+	else
+	{
+		return true;
+	};		
+}
+
+bool FrogLeapController::isCustomerPairAssigned(int customerIndex)
+{
+	Pair * customerPair = this->getCustomerPairByIndex(customerIndex);
+
+	if (customerPair->getAssignedDepotIndex() == -1)
 		return false;
 	else
 		return true;
+}
+
+// Assigns depot index to customerPair. 
+// Assigns depot value into FrogLeaping FL solution in customer index. This means that into the array of customers represented by
+// the FL solution, in customer index we assign the depot index plus a value between 0 and 1.
+void FrogLeapController::assignDepotToCustomerAndUpdateRemainingCapacity(Pair* depotPair, Pair * customerPair, FrogLeapSolution * fs)
+{
+	this->upDateRemainingCapacity(depotPair, customerPair);
+	// assing the depot index to customerPair in its attribute
+	this->assignDepotToCustomer(depotPair, customerPair);
+	int depotIndex = this->getDepotListIndexByInternal(depotPair->getId());
+	int customerIndex = this->getCustomerListIndexByInternal(customerPair->getId());
+
+	// assing the depot index to customer index place in the customer array represented by fs 
+	fs->setFLValue(customerIndex, depotIndex);
 }
 
 //void FrogLeapController::setEngine(std::default_random_engine * generator)
@@ -2106,7 +2751,7 @@ bool FrogLeapController::isCustomerPairAssigned(Pair * customerPair)
 
 void FrogLeapController::openOutPutFile()
 {
-	outPutFileName = "outPutFL.txt";
+	outPutFileName = "outPutFL2.txt";
 	pFile = fopen(outPutFileName, "w");
 
 	if(pFile != NULL)
@@ -2119,6 +2764,26 @@ void FrogLeapController::closeOutPutFile()
 {
 	fclose(this->pFile);
 }
+
+FILE * FrogLeapController::openFile(char* fileName)
+{
+	FILE * pFile = fopen(fileName, "w");
+
+	if (pFile == NULL)
+	{
+		std::cerr << "Error: Null pointer detected. Terminating program." << std::endl;
+		// Terminate the program
+		exit(EXIT_FAILURE);
+	}
+
+	return pFile;
+}
+
+void FrogLeapController::closeFile(FILE* filePtr)
+{
+	fclose(filePtr);
+}
+
 
 FILE * FrogLeapController::getPFile()
 {
@@ -2148,6 +2813,109 @@ char * FrogLeapController::getTestCaseType()
 int FrogLeapController::getTestCaseCapacity()
 {
 	return this->tspLibEud2DPtr->getCapacity();
+}
+
+void FrogLeapController::cw_loadDistanceTable()
+{
+	int vertCount = 8;
+	this->distTablePtr = new DistanceTable(vertCount);
+
+	this->distTablePtr->addEdge(0, 1, 14.2);
+	this->distTablePtr->addEdge(0, 2, 11.4);
+	this->distTablePtr->addEdge(0, 3, 13.9);
+	this->distTablePtr->addEdge(0, 4, 8.0);
+	this->distTablePtr->addEdge(0, 5, 14.6);
+	this->distTablePtr->addEdge(0, 6, 8.2);
+	this->distTablePtr->addEdge(0, 7, 11.2);
+	this->distTablePtr->addEdge(1, 2, 12.0);
+	this->distTablePtr->addEdge(1, 3, 7.2);
+	this->distTablePtr->addEdge(1, 4, 21.0);
+	this->distTablePtr->addEdge(1, 5, 8.6);
+	this->distTablePtr->addEdge(1, 6, 13.0);
+	this->distTablePtr->addEdge(1, 7, 11.0);
+	this->distTablePtr->addEdge(2, 3, 17.1);
+	this->distTablePtr->addEdge(2, 4, 19.2);
+	this->distTablePtr->addEdge(2, 5, 18.4);
+	this->distTablePtr->addEdge(2, 6, 17.0);
+	this->distTablePtr->addEdge(2, 7, 1.0);
+	this->distTablePtr->addEdge(3, 4, 18.4);
+	this->distTablePtr->addEdge(3, 5, 1.4);
+	this->distTablePtr->addEdge(3, 6, 8.6);
+	this->distTablePtr->addEdge(3, 7, 16.2);
+	this->distTablePtr->addEdge(4, 5, 18.4);
+	this->distTablePtr->addEdge(4, 6, 10.0);
+	this->distTablePtr->addEdge(4, 7, 19.1);
+	this->distTablePtr->addEdge(5, 6, 8.5);
+	this->distTablePtr->addEdge(5, 7, 17.5);
+	this->distTablePtr->addEdge(6, 7, 16.4);
+
+	int nVertices = this->distTablePtr->getNumberOfVertices();
+	for (int i = 0; i < nVertices; i++)
+	{
+		this->distTablePtr->addDiagEdge(i, 0.0);
+	}
+}
+
+void FrogLeapController::cw_loadDistanceTableValues(DistanceTable * dt)
+{
+	dt->addEdge(0, 1, 14.2);
+	dt->addEdge(0, 2, 11.4);
+	dt->addEdge(0, 3, 13.9);
+	dt->addEdge(0, 4, 8.0);
+	dt->addEdge(0, 5, 14.6);
+	dt->addEdge(0, 6, 8.2);
+	dt->addEdge(0, 7, 11.2);
+	dt->addEdge(1, 2, 12.0);
+	dt->addEdge(1, 3, 7.2);
+	dt->addEdge(1, 4, 21.0);
+	dt->addEdge(1, 5, 8.6);
+	dt->addEdge(1, 6, 13.0);
+	dt->addEdge(1, 7, 11.0);
+	dt->addEdge(2, 3, 17.1);
+	dt->addEdge(2, 4, 19.2);
+	dt->addEdge(2, 5, 18.4);
+	dt->addEdge(2, 6, 17.0);
+	dt->addEdge(2, 7, 1.0);
+	dt->addEdge(3, 4, 18.4);
+	dt->addEdge(3, 5, 1.4);
+	dt->addEdge(3, 6, 8.6);
+	dt->addEdge(3, 7, 16.2);
+	dt->addEdge(4, 5, 18.4);
+	dt->addEdge(4, 6, 10.0);
+	dt->addEdge(4, 7, 19.1);
+	dt->addEdge(5, 6, 8.5);
+	dt->addEdge(5, 7, 17.5);
+	dt->addEdge(6, 7, 16.4);
+
+	int nVertices = dt->getNumberOfVertices();
+	for(int i = 0; i < nVertices;i++)
+	{
+		dt->addDiagEdge(i, 0.0);
+	}
+}
+
+void FrogLeapController::cw_loadCustomersAndDepots()
+{
+	// the first node corresponds to the unique depot for testing this example of Clark and Wright algorithm
+	this->setAsDepot(0, 1000);
+	
+	// loading 7 customers.
+	this->setAsCustomer(1, 46);
+	this->setAsCustomer(2, 30);
+	this->setAsCustomer(3, 34);
+	this->setAsCustomer(4, 49);
+	this->setAsCustomer(5, 18);
+	this->setAsCustomer(6, 34);
+	this->setAsCustomer(7, 28);
+
+	// create the arrays of customers and depots
+	this->setUpCustomerList();
+	this->setUpDepotList();
+}
+
+void FrogLeapController::cw_loadVehicleCapacity()
+{
+	this->setUpVehicleCapacity(150);
 }
 
 void FrogLeapController::writeSeed()
@@ -2246,6 +3014,7 @@ void FrogLeapController::writeExecutionInfo()
 	fputs(buffer, this->pFile);
 }
 
+
 //choose the closest item: available depot or the depot of the closest assigned customer
 float FrogLeapController::assignRandomFeasibleDepot4(FrogObjectCol * & localDepotCol, int customerIndex)
 {
@@ -2265,7 +3034,7 @@ float FrogLeapController::assignRandomFeasibleDepot4(FrogObjectCol * & localDepo
 		return result;
 	}
 
-	// choose between the available depots with suffiecient capacity to attend the customer demand
+	// choose between the available depots with sufficient capacity to attend the customer demand
 	int numberOfDepots = this->getNumberOfDepots();
 
 	float distanceToDepot;
@@ -2330,3 +3099,103 @@ time_t FrogLeapController::getSeedUsed()
 {
 	return this->timeSeedUsed;
 }
+
+int FrogLeapController::getDemandFromCustomerList(FrogObjectCol* customerList)
+{
+	int totalDemand = 0, nSize = customerList->getSize();
+	
+	for(int i = 0; i < nSize; i++)
+	{
+		Pair* customer = (Pair*)customerList->getFrogObject(i);
+		totalDemand += customer->get_i_IntValue();
+	}
+
+	return totalDemand;
+}
+
+bool FrogLeapController::isCurrentSolutionFeasibleForCustomer(int customerIndex)
+{		
+	int nDepots = this->getNumberOfDepots();
+	int customerDemand = this->getCustomerDemandByIndex(customerIndex);
+
+	bool isCustomerAssigned = this->isCustomerPairAssigned(customerIndex);
+
+	if (isCustomerAssigned == false) 
+	{
+		for (int i = 0; i < nDepots; i++)
+		{
+			int remainingCapacity = this->getDepotRemainingCapacityByIndex(i);
+
+			if (remainingCapacity >= customerDemand)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	return true;
+}
+
+bool FrogLeapController::isCurrentSolutionFeasible()
+{	
+	int nCustomers = this->getNumberOfCustomers();
+	for (int i = 0; i < nCustomers; i++)
+	{
+		bool currentResult = isCurrentSolutionFeasibleForCustomer(i);
+
+		if (currentResult == false) 
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+// create a feasibleSolution object (an array) with value i in position i
+FeasibleSolution * FrogLeapController::initFeasibleSolution(int size) {
+
+	FeasibleSolution * selectionArray = new FeasibleSolution(size);
+
+	for (int i = 0; i < size; i++)
+	{
+		selectionArray->setSolFactValue(i, i);
+	}
+
+	return selectionArray;
+}
+
+int FrogLeapController::selectRandomIndex(int i, FeasibleSolution* fs)
+{
+	// select a random depot between the set of customers
+	int size = fs->getSize();
+	int randomIndex;
+	float u;
+
+	do
+	{
+		u = this->genRandomFloatingNumber(i, size);
+	} while (u >= size);
+
+	int positionSelected = floor(u);
+
+	randomIndex = fs->getSolFactValue(positionSelected);
+
+	fs->swapItems(i, positionSelected);
+
+	return randomIndex;
+}
+
+int FrogLeapController::getMinValueIteration()
+{
+	return this->minValueIteration;
+}
+
+void FrogLeapController::setMinValueIteration(int min_i)
+{
+	this->minValueIteration = min_i;
+}
+
+

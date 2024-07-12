@@ -22,32 +22,32 @@
     <ProjectGuid>{0BB67B0D-908D-4B4E-A73C-4FE56BF6E342}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>MDVRP_JC</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -145,6 +145,8 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ClarkWrightHandler.h" />
+    <ClInclude Include="Cluster.h" />
     <ClInclude Include="DecodedFrogLeapSolution.h" />
     <ClInclude Include="DistanceTable.h" />
     <ClInclude Include="DistVect.h" />
@@ -160,7 +162,9 @@
     <ClInclude Include="Graph.h" />
     <ClInclude Include="IndexList.h" />
     <ClInclude Include="IndexListNode.h" />
+    <ClInclude Include="MDVRP_JC.h" />
     <ClInclude Include="Pair.h" />
+    <ClInclude Include="SolutionData.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TestCaseObj.h" />
@@ -169,6 +173,8 @@
     <ClInclude Include="Vertex.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ClarkWrightHandler.cpp" />
+    <ClCompile Include="Cluster.cpp" />
     <ClCompile Include="DecodedFrogLeapSolution.cpp" />
     <ClCompile Include="DistanceTable.cpp" />
     <ClCompile Include="DistVect.cpp" />
@@ -186,6 +192,7 @@
     <ClCompile Include="IndexListNode.cpp" />
     <ClCompile Include="MDVRP_JC.cpp" />
     <ClCompile Include="Pair.cpp" />
+    <ClCompile Include="SolutionData.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

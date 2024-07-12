@@ -10,10 +10,12 @@ class DistanceTable;
 class FloatDistanceTable;
 class Graph;
 class FrogLeapSolution;
+class FeasibleSolution;
 class Pair;
 class IndexList;
+class Cluster;
 
-enum class SourceType { Graph, Tsp2DEuc};
+enum class SourceType { Graph, Tsp2DEuc, ClarkWright, Sweep};
 
 enum class SolutionGenerationType { FrogLeaping, FixedFrogLeaping};
 
@@ -35,6 +37,8 @@ class FrogLeapController
 		long int vehicle_capacity;
 
 		long long int globalVehicleId;
+
+		int minValueIteration;
 
 		float minCostValue;
 
@@ -73,7 +77,9 @@ class FrogLeapController
 
 		FILE * pFile;
 		
-		char * outPutFileName;		
+		char * outPutFileName;	
+
+		bool reassignCustomers;
 
 	public:
 
@@ -119,6 +125,8 @@ class FrogLeapController
 
 		void printCtrl();
 
+		void writeCtrl();
+
 		void loadTSPEUC2D_Data(char * fileName);
 
 		DecodedFrogLeapSolution * loadTestCaseData(char * fileName);
@@ -155,6 +163,8 @@ class FrogLeapController
 
 		Pair * getDepotPairByIndex(int position);
 
+		Pair* getMatchedDepotPair(Pair* customerPair);
+
 		Pair * getCustomerPairByIndex(int position);
 
 		Pair * getPairByInternalId(int position);
@@ -184,6 +194,8 @@ class FrogLeapController
 		void setUpCustomerAndDepotLists();
 
 		void setUpVehicleCapacity();
+
+		void setUpVehicleCapacity(int vehicleCapacity);
 
 		long int getVehicleCapacity();
 
@@ -231,13 +243,17 @@ class FrogLeapController
 
 		void loadCustomerAndDepotList();
 
-		int getLabel(int internalId);
+		int getLabelId(int internalId);
 
 		int getDepotListIndexByInternal(int depotInternalId);
 
 		int getCustomerListIndexByInternal(int customerInternalId);
 
 		int getDepotIndexByLabelId(int depotLabelId);
+
+		Pair * getNodeCoordPairById(int pairId);
+
+		Pair* getNodeDemandPairById(int pairId);
 
 		int getCustomerIndexByLabelId(int depotLabelId);
 
@@ -257,6 +273,10 @@ class FrogLeapController
 
 		int getDepotIndexOfClosestAssignedCustomer(int customerIndex, FrogObjectCol * localDepotCol, int low, int top, float & distanceToCustomer);
 
+		bool unassignedCustomerPairExists();
+
+		int numberOfUnassignedCustomers();
+
 		void setCustomerPairAsAssigned(int customerIndex, int depotIndex);
 
 		void resetCustomersAsNotAssigned();
@@ -271,25 +291,61 @@ class FrogLeapController
 		
 		FrogObjectCol * createMatchCustomerList(Pair * currentDepotPair);
 
+		FrogObjectCol* createFullMatchCustomerList(Pair* currentDepotPair);
+
+		FrogObjectCol* createMatchCustomerList_Cluster(Cluster* currentCluster, FrogLeapSolution* fls);
+
 		FrogObjectCol * createCustomerListOrderedByDistanceFromDepot(Pair * currentDepotPair);
 
 		FrogObjectCol * createDepotListOrderedByDistanceFromCustomer(Pair * currentCustomerPair);
 
+		FrogObjectCol* createCustomerListOrderedByDistanceFromCluster(Cluster* currentCluster, FrogLeapSolution * fls);
+
+		FrogObjectCol* getListOfUnassignedCustomers();
+
+		bool getReassignCustomersSettings();
+
+		void setRassignCustomerSettings(bool reassignCustomers);
+
+		void assignCustomerToClusterByCustomerIndex(Cluster* currentCluster, int i);
+
+		void unassignCustomerFromCluster(Pair* customerPair, Cluster* currentCluster);
+
 		bool isAMatch(Pair * currentCustomerPair, Pair * currentDepotPair);
+				
+		bool isAFullMatch(Pair* currentCustomerPair, Pair* currentDepotPair);
+
+		void FrogLeapController::upDateRemainingCapacity(Pair* depotPair, Pair* customerPair);
+
+		Pair * getFirstDepotPairWithRemainingCapacity(FrogObjectCol * depotListOrderded, int customerDemand);
+
+		Cluster* FrogLeapController::getFirstClusterWithRemainingCapacity(FrogObjectCol* clusterListOrdered, Pair * customerPair, FrogLeapController* controller);
 
 		int getTotalDemandOrCapacity(FrogObjectCol * pairCol);
 
 		void assignDepotToCustomerPairs(Pair * depotPair, FrogObjectCol * customerCol);
 
-		FrogObjectCol * assignDepotToCustomerPairsUntilDemandComplete(Pair * depotPair, FrogObjectCol * customerCol);
+		float assignRandomToDepotSelected(int depotIndex);
+
+		bool isCustomerAssignedToCluster(Pair * customerPair, Cluster * cluster);		
+
+		FrogObjectCol* assignDepotToCustomerPairsUntilCapacityIsComplete(Pair* depotPair, FrogObjectCol* customerCol, FrogLeapSolution* fs);
+
+		FrogObjectCol* assignCustomersToClusterUntilCapacityIsComplete(Cluster* cluster, FrogObjectCol* matchCustomerCol, FrogLeapSolution* fs);
+
+		FrogObjectCol* assignDepotRndToCustomerPairsUntilCapacityIsComplete(Pair* depotPair, FrogObjectCol* customerCol, FrogLeapSolution* fs);
 
 		FrogObjectCol * selectCustomerPairsUntilDemandComplete(Pair * depotPair, FrogObjectCol * customerCol);
 
-		void assignCustomersToCluster(Pair * depotPair, FrogObjectCol * & customerCol, FrogObjectCol * depotListOrderedByCapacity, FrogLeapSolution * fs);
-		
+		void assignCustomersToDepot(Pair * depotPair, FrogObjectCol * & customerCol, FrogObjectCol * depotListOrderedByCapacity, FrogLeapSolution * fs);
+						
+		void assignCustomersToDepot2(Pair* depotPair, FrogObjectCol*& customerCol, FrogObjectCol* depotListOrderedByCapacity, FrogLeapSolution* fs);
+
 		FrogObjectCol * orderCustomerPairListByNthClosestDepotDesc(int n, FrogObjectCol * customerPairCol);
 
 		void assignDepotToCustomer(Pair * depotPair, Pair * customerPair);
+
+		void unassignCustomerFromItsCluster(Pair* customerPair, FrogLeapSolution * fls);
 
 		float addRandomNumberToInt(int index);
 
@@ -297,12 +353,26 @@ class FrogLeapController
 
 		float assignRandomFeasibleDepot4(FrogObjectCol * & localDepotCol, int customerIndex);
 
+		bool isCurrentSolutionFeasibleForCustomer(int customerIndex);
+
+		bool isCurrentSolutionFeasible();
+
+		bool isCustomerPairAssigned(int customerIndex);
+
+		void assignDepotToCustomerAndUpdateRemainingCapacity(Pair * depotPair, Pair * , FrogLeapSolution * fs);
+
 		time_t getSeedUsed();
 
+		int getDemandFromCustomerList(FrogObjectCol* assignedCustomers);
+		
 		// functions for writing information in an output file
 		void openOutPutFile();
 
 		void closeOutPutFile();
+
+		FILE * openFile (char* fileName);
+
+		void closeFile(FILE* filePtr);
 
 		FILE * getPFile();
 
@@ -316,10 +386,26 @@ class FrogLeapController
 
 		int getTestCaseCapacity();
 
+		FeasibleSolution * initFeasibleSolution(int size);
+
+		int selectRandomIndex(int i, FeasibleSolution* fs);
+
+		int getMinValueIteration();
+
+		void setMinValueIteration(int min_i);
+
+		// functions for testing the Clark and Wright Algorithm
+		void cw_loadDistanceTable();
+		void cw_loadDistanceTableValues(DistanceTable * dt);
+		void cw_loadCustomersAndDepots();
+		void cw_loadVehicleCapacity();
+
+		void printCtrlSolutionData(FrogLeapController* controller);
+
 		void writeSeed();
 		void writeFrogLeapSolution(FrogLeapSolution * fls);		
 		void writeIterationInfo(long long int i, float currentValue);
 		void writeRandomInfo(float a, float b, float finalRandom);
-		void writeExecutionInfo();
+		void writeExecutionInfo();		
 };
 #endif

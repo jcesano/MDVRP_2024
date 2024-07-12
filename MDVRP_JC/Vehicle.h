@@ -8,6 +8,7 @@ class Graph;
 class Pair;
 class FeasibleSolution;
 class FrogLeapController;
+class SolutionData;
 
 class Vehicle : public FrogObject
 {
@@ -98,15 +99,25 @@ class Vehicle : public FrogObject
 
 		Pair * getClosestIndexCustomerPairToCustomer(int depotInternalId, FrogLeapController * controller);
 		
-		void writeFrogObj(FrogLeapController * controller);
+		void writeFrogObj(FrogLeapController * controller, SolutionData * sd);
 
 		void writeSolution(FrogLeapController * controller);
+
+		void writeSolutionData(SolutionData * sd);
+
+		void writeVehicleRoute(FILE* pFile, SolutionData* sd);
 
 		void writeFrogObjWithCoordinates(FrogLeapController * controller);
 
 		void writeSolutionWithCoordinates(FrogLeapController * controller);
 
 		void writeNodeCoordinateInfo(FrogLeapController * controller, int nodeInternalId, int orderInPath, int prevInternalId);
+
+		void printFrogObj(FrogLeapController* controller, SolutionData* sd);
+
+		void printVehicleRoute(SolutionData* sd);
+
+		void printSolutionData(SolutionData* sd);
 
 		// abstract methods
 		void printFrogObj();

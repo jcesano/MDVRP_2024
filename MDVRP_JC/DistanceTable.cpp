@@ -195,6 +195,11 @@ bool DistanceTable::allEdgesFilled()
 	return true;
 }
 
+int DistanceTable::getNumberOfVertices()
+{
+	return this->V;
+}
+
 void DistanceTable::printDistanceTable()
 {
 	printf("Printing Distance Table \n");

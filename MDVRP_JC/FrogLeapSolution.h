@@ -12,8 +12,12 @@ class FrogLeapController;
 class FrogObjectCol;
 class FrogObject;
 class Pair;
+class Cluster;
+class ClarkWrigthHandler;
+
 enum class SolutionGenerationType;
 enum class SourceType;
+enum class DistanceType;
 
 class FrogLeapSolution: public FrogObject
 {
@@ -30,8 +34,11 @@ class FrogLeapSolution: public FrogObject
 
 		FeasibleSolution * customerSelectionList;
 
+		FrogObjectCol * clusterCol;
+		FrogObjectCol * cw_handler_col;
+
 	public:
-	
+			
 		FrogLeapSolution(SolutionGenerationType v_sgt, SourceType v_sourceType, int ncustomers, int n_depots_v, int id);
 
 		~FrogLeapSolution();
@@ -58,6 +65,38 @@ class FrogLeapSolution: public FrogObject
 
 		bool genRandomSolution7(FrogLeapController * controller);
 
+		bool genRandomSolution7_5(FrogLeapController* controller);
+
+		bool genRandomSolution8_0(FrogLeapController* controller);	
+
+		bool genRandomSolution9_0(FrogLeapController* controller);
+
+		bool genRandomSolution10_0(FrogLeapController* controller);
+
+		bool genRandomSolution11_0(FrogLeapController* controller);
+
+		bool genRandomSolution12_0(FrogLeapController* controller);
+
+		bool genRandomSolution13_0(FrogLeapController* controller);
+
+		bool genRandomSolution14_0(FrogLeapController* controller);
+
+		bool genRandomSolution15_0(FrogLeapController* controller);
+
+		bool genRandomSolution16_0(FrogLeapController* controller);
+
+		bool genRandomSolution17_0(FrogLeapController* controller);
+
+		bool genRandomSolution18_0(FrogLeapController* controller);
+
+		bool genRandomSolution19_0(FrogLeapController* controller);
+
+		bool genRandomSolution20_0(FrogLeapController* controller);
+
+		bool genRandomSolution21_0(FrogLeapController* controller);
+
+		Cluster* getClusterByIndex(int i);
+
 		bool genRandomSolutionFromTestCase(FrogLeapController * controller);
 
 		float normalRandomAssigment(FrogLeapController * controller);
@@ -74,7 +113,37 @@ class FrogLeapSolution: public FrogObject
 
 		void assignRandomFeasibleDepot6(FrogLeapController * controller, Pair * currentDepotPair, FrogObjectCol * depotListOrderedByCapacity);
 
-		void assignRemainingCustomersToClosestCluster(FrogLeapController * controller);
+		void assignRandomFeasibleDepot7(FrogLeapController* controller, Pair* currentDepotPair, FrogObjectCol* depotListOrderedByCapacity);
+
+		void assignRandomFeasibleDepot8(FrogLeapController* controller, Cluster* currentCluster, FrogObjectCol* depotListOrderedByCapacity);
+
+		void assignRandomFeasibleDepot9(FrogLeapController* controller, Cluster* currentCluster, FrogObjectCol* depotListOrderedByCapacity);
+		
+		void assignRandomFeasibleDepot10(FrogLeapController* controller, Cluster* currentCluster, FrogObjectCol* depotListOrderedByCapacity);
+
+		void assignRandomFeasibleDepot11(FrogLeapController* controller, Cluster* currentCluster, FrogObjectCol* depotListOrderedByCapacity);
+
+		void assignRandomFeasibleDepot12(FrogLeapController* controller, Cluster* currentCluster, FrogObjectCol* depotListOrderedByCapacity);
+
+		void assignRandomFeasibleDepot13(FrogLeapController* controller, Cluster* currentCluster, FrogObjectCol* depotListOrderedByCapacity);
+
+		void assignRandomFeasibleDepot14(FrogLeapController* controller, Cluster* currentCluster, FrogObjectCol* depotListOrderedByCapacity);
+
+		void assignRandomFeasibleDepot15(FrogLeapController* controller, Cluster* currentCluster, FrogObjectCol* depotListOrderedByCapacity);
+
+		void assignRandomFeasibleDepot16(FrogLeapController* controller, Cluster* currentCluster, FrogObjectCol* depotListOrderedByCapacity);
+
+		void assignRandomFeasibleDepot17(FrogLeapController* controller, Cluster* currentCluster, FrogObjectCol* depotListOrderedByCapacity);
+
+		void assignRandomFeasibleDepot18(FrogLeapController* controller, Cluster* currentCluster, FrogObjectCol* depotListOrderedByCapacity);
+
+		void assignRandomFeasibleDepot19(FrogLeapController* controller, Cluster* currentCluster, FrogObjectCol* depotListOrderedByCapacity);
+
+		void assignRandomFeasibleDepot20(FrogLeapController* controller, Cluster* currentCluster, FrogObjectCol* depotListOrderedByCapacity);
+
+		void assignRandomFeasibleDepot21(FrogLeapController* controller, Cluster* currentCluster, FrogObjectCol* depotListOrderedByCapacity);
+
+		void assignRemainingCustomersToClosestCluster(FrogLeapController * controller);		
 
 		FrogObjectCol * initializeFeasibleDepotList(FrogLeapController * controller);
 
@@ -91,6 +160,8 @@ class FrogLeapSolution: public FrogObject
 		DecodedFrogLeapSolution * decodeFrogLeapSolutionWithAngularCriteria(FrogLeapController * controller, bool adjustVehicleRoutes);		
 
 		DecodedFrogLeapSolution * decodeWholeSolutionWithClosestNextCriteria(FrogLeapController * controller);
+
+		DecodedFrogLeapSolution* decodeWholeSolutionWithClarkWrightCriteria(FrogLeapController* controller);		
 
 		DecodedFrogLeapSolution * decodeFrogLeapWholeSolutionWithClosestNextCriteria(FrogLeapController * controller, bool adjustVehicleRoutes);		
 
@@ -111,6 +182,42 @@ class FrogLeapSolution: public FrogObject
 		void assignMatchCustomerListToFLValues(FrogObjectCol * matchCustomerCol, FrogLeapController * controller);		
 
 		void writeFrogLeapSolution(FrogLeapController * controller);
+
+		void writeFLSWithSolutionDataHeader(FrogLeapController* controller);
+
+		void printFLSWithSolutionDataHeader(FrogLeapController* controller);
+
+		void writeFrogLeapSolutionWithSolutionData(FrogLeapController* controller);
+
+		void printFrogLeapSolutionWithSolutionData(FrogLeapController* controller);
+
+		void writeAssignedCustomers(Cluster * cluster, FILE * pFile);
+	
+		void printAssignedCustomers(Cluster* cluster);
+
+		void printFrogLeapSolutionArray(FrogLeapController* controller);
+
+		void printFLS_ArrayHeader();
+
+		void printFLS_ArrayFooter();
+
+		void printFLS_Record(int i, FrogLeapController * controller);
+
+		void setAllFLSWithValue(float value);
+
+		void initClusterCollection(FrogLeapController* controller);
+
+		void updateClusterCollectionWithDistanceType(DistanceType distance_t);
+
+		bool isAMatch_Cluster(Pair* currentCustomerPair, Cluster* currentCluster, FrogLeapController* controller);
+		
+		FrogObjectCol* createClusterListOrderedByDistanceFromCustomer(Pair* currentCustomerPair, FrogLeapController* controller);
+		
+		int getCWHandlerColSize();
+
+		FrogObjectCol * getCWHandlerCol();
+
+		void exportClusterColToVRP(FrogLeapController * controlller);
 
 		// abstract methods
 		void printFrogObj();

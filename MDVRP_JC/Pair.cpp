@@ -105,11 +105,29 @@ void Pair::setPairCol(FrogObjectCol * v_pairCol)
 	this->pairCol = v_pairCol;
 }
 
+FrogObjectCol* Pair::getClusterCol()
+{
+	return this->clusterCol;
+}
+
+void Pair::setClusterCol(FrogObjectCol* v_clusterCol)
+{
+	this->clusterCol = v_clusterCol;
+}
+
 void Pair::upDateRemainingCapacity(Pair * customerPair)
 {
 	int customerDemand = customerPair->get_i_IntValue();
 	int depotRemainingCap = this->get_j_IntValue();
 	int newCapacity = depotRemainingCap - customerDemand;
+	this->set_j_IntValue(newCapacity);
+}
+
+void Pair::restoreRemainingCapacity(Pair* customerPair)
+{
+	int customerDemand = customerPair->get_i_IntValue();
+	int depotRemainingCap = this->get_j_IntValue();
+	int newCapacity = depotRemainingCap + customerDemand;
 	this->set_j_IntValue(newCapacity);
 }
 
@@ -162,6 +180,31 @@ bool Pair::isTheSame(FrogObject * fs)
 	//}
 
 	//return true;
+}
+
+void Pair::writeCoords(FILE * file)
+{
+	fprintf(file, "%d %d %d \n", this->getId(), this->get_i_IntValue(), this->get_j_IntValue());
+}
+
+void Pair::writeDemand(FILE* file)
+{
+	fprintf(file, "%d %d\n", this->getId(), this->get_j_IntValue());
+}
+
+void Pair::writeLabelId(FILE* file)
+{
+	fprintf(file, "%d\n", this->getId());
+}
+
+int Pair::getDepotIndexToMatch()
+{
+	return depotIndexToMatch;
+}
+
+void Pair::setDepotIndexToMatch(int i)
+{
+	this->depotIndexToMatch = i;
 }
 
 

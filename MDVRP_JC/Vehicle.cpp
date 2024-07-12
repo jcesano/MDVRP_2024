@@ -7,6 +7,8 @@
 #include "FrogObject.h"
 #include "FeasibleSolution.h"
 #include "FrogLeapController.h"
+#include "SolutionData.h"
+
 #include <limits>
 
 Vehicle::Vehicle(int id):FrogObject(id)
@@ -20,6 +22,7 @@ Vehicle::Vehicle(int id):FrogObject(id)
 	this->isFeasible = true;  // used for testing purpose in printing information
 	localSearchApplied = false;
 	this->vehicleCustomerArray = NULL;
+	this->demand = 0;
 }
 
 Vehicle::Vehicle(int id, FrogLeapController * controller) :FrogObject(id)
@@ -34,6 +37,7 @@ Vehicle::Vehicle(int id, FrogLeapController * controller) :FrogObject(id)
 	this->isFeasible = true;  // used for testing purpose in printing information
 	localSearchApplied = false;	
 	this->vehicleCustomerArray = NULL;
+	this->demand = 0;
 }
 
 Vehicle::~Vehicle()
@@ -302,11 +306,12 @@ void Vehicle::printFrogObj()
 	printf("\n SHOWING VEHICLE INFORMATION \n");
 	if (this->getIsFeasible() == true)
 	{
-		printf(" Vehicle Id (feasible): %d with number of customers assigned = %d and path cost %.3f \n", this->getId(), this->customers->getSize(), this->getPathCost());
+		//printf(" Vehicle Id (feasible): %d; number of customers assigned = %d ; path cost %.3f ; total path demand = %d\n", this->getId(), this->customers->getSize(), this->getPathCost(), this->getDemand());
+		  printf(" Vehicle Id (feasible): %d; number of customers assigned = %d ; path cost %.3f ; Vehicle Capacity = %d, Remaining Capacity = %d; total path demand = %d \n", this->getId(), this->customers->getSize(), this->getPathCost(), this->getCapacity(), this->getRemainingCapacity(), this->getDemand());
 	}
 	else 
 	{
-		printf(" Vehicle Id (NOT feasible): %d with number of customers assigned = %d \n", this->getId(), this->customers->getSize());
+		printf(" Vehicle Id (NOT feasible): %d; number of customers assigned = %d ; Remaining Capacity = %d\n", this->getId(), this->customers->getSize(), this->getRemainingCapacity());
 	}
 	
 	if (this->customers->getSize() > 0)
@@ -322,38 +327,127 @@ void Vehicle::printFrogObj()
 	}
 }
 
-void Vehicle::writeFrogObj(FrogLeapController * controller)
+void Vehicle::writeFrogObj(FrogLeapController * controller, SolutionData * sd)
 {
 	setupLocalSearch();
 
-	writeSolution(controller);
+	//writeSolution(controller);
+	writeSolutionData(sd);
 }
 
-void Vehicle::writeSolution(FrogLeapController * controller)
+void Vehicle::printFrogObj(FrogLeapController* controller, SolutionData* sd)
 {
-	FILE * pFile = controller->getPFile();
+	setupLocalSearch();
 
-	int depotIndex = this->getDepotIndex(), depotIddestinationId;
+	//writeSolution(controller);
+	printSolutionData(sd);
+}
+
+void Vehicle::writeSolutionData(SolutionData * sd)
+{
+	FILE * pFile = this->ptrController->getPFile();
+	
+	/*sd->setDepotIndex(this->getDepotIndex());*/
+	
 	Pair * originPair, *destinationPair;
 	int originIndex, originId, destinationIndex, destinationId, originLabelId, destinationLabelId;
 
+	//sd->setDepotInternalId(this->ptrController->getDepotInternalId(depotIndex));
+	//sd->setDepotLabelId(this->ptrController->getLabelId(sd->getDepotInternalId()));	
+	sd->setRouteCost(this->getPathCost());
+
+	//fprintf(pFile, "Total cost of route = %.2f \n", this->getPathCost());
+	
+	sd->writeSolutionData(pFile);
+
+	writeVehicleRoute(pFile, sd);
+}
+
+void Vehicle::printSolutionData(SolutionData* sd)
+{
+	/*sd->setDepotIndex(this->getDepotIndex());*/
+
+	Pair* originPair, * destinationPair;
+	int originIndex, originId, destinationIndex, destinationId, originLabelId, destinationLabelId;
+
+	//sd->setDepotInternalId(this->ptrController->getDepotInternalId(depotIndex));
+	//sd->setDepotLabelId(this->ptrController->getLabelId(sd->getDepotInternalId()));	
+	sd->setRouteCost(this->getPathCost());
+
+	//fprintf(pFile, "Total cost of route = %.2f \n", this->getPathCost());
+
+	sd->printSolutionData();
+
+	printVehicleRoute(sd);
+}
+
+void Vehicle::writeVehicleRoute(FILE* pFile, SolutionData* sd)
+{
+	int destinationId, destinationLabelId;
+
+	int nCustomers = this->customers->getSize();
+	int totalRouteDemand = 0;
+	// Write the route of vehicle
+	fprintf(pFile, " %d - ", sd->getDepotLabelId());
+	for (int i = 0; i < nCustomers; i++)
+	{
+		destinationId = this->vehicleCustomerArray[i];
+		destinationLabelId = this->ptrController->getLabelId(destinationId);
+		int destinationDemand = this->ptrController->getCustomerDemandByIndex(this->ptrController->getCustomerIndexByLabelId(destinationLabelId));
+		totalRouteDemand += destinationDemand;
+		fprintf(pFile, "%d(%d) - ", destinationLabelId, destinationDemand);
+	}
+	fprintf(pFile, "%d. End; %d\n", sd->getDepotLabelId(), totalRouteDemand);
+	
+}
+
+void Vehicle::printVehicleRoute(SolutionData* sd)
+{
+	int destinationId, destinationLabelId;
+
+	int nCustomers = this->customers->getSize();
+	int totalRouteDemand = 0;
+	// Write the route of vehicle
+	printf(" %d - ", sd->getDepotLabelId());
+	for (int i = 0; i < nCustomers; i++)
+	{
+		Pair * destinationPair = (Pair *)this->customers->getFrogObject(i);
+		int destinationId = destinationPair->getId();
+		destinationLabelId = this->ptrController->getLabelId(destinationId);
+		int destinationIndex = this->ptrController->getCustomerListIndexByInternal(destinationId);
+		int destinationDemand = this->ptrController->getCustomerDemandByIndex(destinationIndex);
+		totalRouteDemand += destinationDemand;
+		printf("%d(%d) - ", destinationLabelId, destinationDemand);
+	}
+
+	printf("%d. End; %d\n", sd->getDepotLabelId(), totalRouteDemand);
+
+}
+
+void Vehicle::writeSolution(FrogLeapController* controller)
+{
+	FILE* pFile = controller->getPFile();
+
+	int depotIndex = this->getDepotIndex(), depotIddestinationId;
+	Pair* originPair, * destinationPair;
+	int originIndex, originId, destinationIndex, destinationId, originLabelId, destinationLabelId;
+
 	originId = this->ptrController->getDepotInternalId(depotIndex);
-	originLabelId = this->ptrController->getLabel(originId);
+	originLabelId = this->ptrController->getLabelId(originId);
 
-	fprintf(pFile, "%d %.2f ", originLabelId, this->getPathCost());
-
+	fprintf(pFile, "Total cost of route = %.2f \n", this->getPathCost());
+	fprintf(pFile, "Route: %d, originLabelId");
 	for (int i = 0; i < this->customers->getSize(); i++)
 	{
 		destinationId = this->vehicleCustomerArray[i];
-		destinationLabelId = this->ptrController->getLabel(destinationId);
+		destinationLabelId = this->ptrController->getLabelId(destinationId);
 
-		fprintf(pFile, "%d ", destinationLabelId);	
+		fprintf(pFile, " %d", destinationLabelId);
 
-		originId = destinationId;
-		originLabelId = this->ptrController->getLabel(originId);
+
 	}
 
-	fprintf(pFile, "\n");
+	fprintf(pFile, " %d .End\n", originLabelId);
 }
 
 void Vehicle::writeFrogObjWithCoordinates(FrogLeapController * controller)
@@ -389,17 +483,17 @@ void Vehicle::writeNodeCoordinateInfo(FrogLeapController * controller, int nodeI
 {
 	FILE * pFile = controller->getPFile();
 
-	int nodeLabelId = controller->getLabel(nodeInternalId);
+	int nodeLabelId = controller->getLabelId(nodeInternalId);
 	int prevLabelId = -1;
 	
 	if (prevInternalId != -1)
-		prevLabelId = controller->getLabel(prevInternalId);
+		prevLabelId = controller->getLabelId(prevInternalId);
 
 	int x_coord = controller->getX_Coord(nodeInternalId);
 	int y_coord = controller->getY_Coord(nodeInternalId);
 	int vehicleId = this->getId();
 	int depotInternalId = this->getDepotInternalId();
-	int depotLabelId = controller->getLabel(depotInternalId);
+	int depotLabelId = controller->getLabelId(depotInternalId);
 	bool isDepot = (nodeLabelId == depotLabelId);
 	float distanceFromDepot = controller->getDistanceTable()->getEdge(nodeInternalId, depotInternalId);
 	float distanceFromPrev = 0;
@@ -417,7 +511,7 @@ void Vehicle::printLocalSolution()
 	int originIndex, originId, destinationIndex, destinationId, originLabelId, destinationLabelId;
 
 	originId = this->ptrController->getDepotInternalId(depotIndex);
-	originLabelId = this->ptrController->getLabel(originId);
+	originLabelId = this->ptrController->getLabelId(originId);
 
 	printf("\n SHOWING LOCAL SOLUTION \n");
 	printf("		List of customers Ids (depot and customers): ");
@@ -425,17 +519,17 @@ void Vehicle::printLocalSolution()
 	for (int i = 0; i < this->customers->getSize(); i++)
 	{
 		destinationId = this->vehicleCustomerArray[i];
-		destinationLabelId = this->ptrController->getLabel(destinationId);
+		destinationLabelId = this->ptrController->getLabelId(destinationId);
 
 		printf("(%d - %d) = %.3f  ", originLabelId, destinationLabelId, this->ptrController->getDistanceTable()->getEdge(originId, destinationId));
 
 		originId = destinationId;
-		originLabelId = this->ptrController->getLabel(originId);
+		originLabelId = this->ptrController->getLabelId(originId);
 	}
 
 	// add the last edgde from the last customer to the depot
 	destinationId = this->ptrController->getDepotInternalId(depotIndex);
-	destinationLabelId = this->ptrController->getLabel(destinationId);
+	destinationLabelId = this->ptrController->getLabelId(destinationId);
 	printf("(%d - %d) = %.3f  \n", originLabelId, destinationLabelId, this->ptrController->getDistanceTable()->getEdge(originId, destinationId));	
 }
 
@@ -446,28 +540,31 @@ void Vehicle::printGlobalSolution()
 	int originIndex, originId, destinationIndex, destinationId, originLabelId, destinationLabelId;
 
 	originId = this->ptrController->getDepotInternalId(depotIndex);
-	originLabelId = this->ptrController->getLabel(originId);
+	originLabelId = this->ptrController->getLabelId(originId);
 
 	printf("\n SHOWING GLOBAL SOLUTION \n");
 	printf("		List of customers Ids (depot and customers): ");
 
-	for (int i = 0; i < this->customers->getSize(); i++)
+	int nCustomers = this->customers->getSize();
+	for (int i = 0; i < nCustomers; i++)
 	{
 		Pair * customerPair = (Pair *) this->customers->getFrogObject(i);
-		int customerIndex = customerPair->get_i_IntValue();
-		destinationId = this->ptrController->getCustomerInternalId(customerIndex);
-		destinationLabelId = this->ptrController->getLabel(destinationId);
+		//int customerIndex = customerPair->get_i_IntValue();
+		// int customerIndex = this->ptrController->getCustomerListIndexByInternal(customerPair->getId());			
+		// destinationId = this->ptrController->getCustomerInternalId(customerIndex);
+		destinationId = customerPair->getId();
+		destinationLabelId = this->ptrController->getLabelId(destinationId);
 		printf("(%d - %d) = %.3f  ", originLabelId, destinationLabelId, this->ptrController->getDistanceTable()->getEdge(originId, destinationId));
 
 		originId = destinationId;
-		originLabelId = this->ptrController->getLabel(originId);
+		originLabelId = this->ptrController->getLabelId(originId);
 	}
 
 	if (this->getIsFeasible() == true)
 	{
 		// add the last edgde from the last customer to the depot
 		destinationId = this->ptrController->getDepotInternalId(depotIndex);
-		destinationLabelId = this->ptrController->getLabel(destinationId);
+		destinationLabelId = this->ptrController->getLabelId(destinationId);
 		printf("(%d - %d) = %.3f  \n", originLabelId, destinationLabelId, this->ptrController->getDistanceTable()->getEdge(originId, destinationId));
 	}
 }

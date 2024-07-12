@@ -42,6 +42,8 @@ public:
 	int getNextSourceForDijkstra();
 
 	bool allEdgesFilled();
+
+	int getNumberOfVertices();
 };
 
 #endif

@@ -279,7 +279,7 @@ void Cluster::writeCustomerColNodeDemands(FILE * file, FrogLeapController * cont
 	for (int i = 0; i < this->customerPairCol->getSize(); i++)
 	{
 		customerPair = (Pair *) this->customerPairCol->getFrogObject(i);
-		customerDemandPair = (Pair *) controller->getNodeCoordPairById(customerPair->getId());
+		customerDemandPair = (Pair *) controller->getNodeDemandPairById(customerPair->getId());
 		customerDemandPair->writeDemand(file);
 	}
 }

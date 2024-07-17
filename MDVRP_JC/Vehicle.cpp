@@ -239,10 +239,11 @@ int Vehicle::ObtainCustomerInternalIdFromIndex(int position)
 	int customerInternalId, customerIndex;
 
 	tmp = (Pair *) this->customers->getFrogObject(position); //obtaining Pair(CustomerIndex, flValue)
-	customerIndex = tmp->get_i_IntValue();
-	customerInternalId = this->ptrController->getCustomerInternalId(customerIndex); //obtaining the customerId
+	//customerIndex = tmp->get_i_IntValue();
+	//customerInternalId = this->ptrController->getCustomerInternalId(customerIndex); //obtaining the customerId
 
-	return customerInternalId;
+	//return customerInternalId;
+	return tmp->getId();
 }
 
 //return the new cost found or the previous value instead

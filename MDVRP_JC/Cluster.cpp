@@ -231,15 +231,15 @@ void Cluster::exportClusterToVRP(FrogLeapController * controller)
 		return;
 	}
 
-	fprintf(file, "NAME: %s \n", clusterName);
+	fprintf(file, "NAME : %s \n", clusterName);
 	
 	fprintf(file, "COMMENT : (Gillet and Johnson) \n");
 	fprintf(file,"TYPE : CVRP \n");
-	fprintf(file, "DIMENSION: %d \n", this->getCustomerCol()->getSize());
+	fprintf(file, "DIMENSION : %d \n", this->getCustomerCol()->getSize()+1);
 
 	
-	fprintf(file, "EDGE_WEIGHT_TYPE: EUC_2D \n");
-	fprintf(file, "CAPACITY: %d \n", controller->getVehicleCapacity());
+	fprintf(file, "EDGE_WEIGHT_TYPE : EUC_2D \n");
+	fprintf(file, "CAPACITY : %d \n", controller->getVehicleCapacity());
 	fprintf(file, "NODE_COORD_SECTION \n");
 	
 	writeDepotNodeCoords(file, controller);

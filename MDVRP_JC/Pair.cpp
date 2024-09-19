@@ -22,6 +22,8 @@ Pair::Pair(PairType type, int pairId):FrogObject(pairId)
 	i_float = -1;
 	j_float = -1;
 
+	assignedToVehicle = -1;
+
 	this->pairCol = NULL;
 }
 
@@ -83,6 +85,16 @@ float Pair::get_j_FloatValue()
 float Pair::set_j_FloatValue(float floatValue)
 {
 	return this->j_float = floatValue;
+}
+
+void Pair::setLabelId(int labelId)
+{
+	this->labed_id = labelId;
+}
+
+int Pair::getLabelId()
+{
+	return this->labed_id;
 }
 
 int Pair::getAssignedDepotIndex()
@@ -205,6 +217,21 @@ int Pair::getDepotIndexToMatch()
 void Pair::setDepotIndexToMatch(int i)
 {
 	this->depotIndexToMatch = i;
+}
+
+void Pair::setCustomerAssignedToVehicle(int vehicle_id)
+{
+	this->assignedToVehicle = vehicle_id;
+}
+
+bool Pair::isAlreadyAssignedToVehicle()
+{
+	return (this->assignedToVehicle != -1);
+}
+
+int Pair::getCustomerDemand()
+{
+	return this->get_j_IntValue();
 }
 
 

@@ -2638,6 +2638,19 @@ DecodedFrogLeapSolution * FrogLeapSolution::decodeWholeSolutionWithClosestNextCr
 	return this->decodeFrogLeapWholeSolutionWithClosestNextCriteria(controller, true);
 }
 
+DecodedFrogLeapSolution* FrogLeapSolution::decodeWholeSolutionWithSimplifiedClosestNextCriteria(FrogLeapController* controller)
+{
+	// al pedo
+	//controller->resetDepotRemainingCapacities();
+
+	return this->decodeFrogLeapWholeSolutionWithSimplifiedClosestNextCriteria(controller, true);
+}
+
+DecodedFrogLeapSolution* FrogLeapSolution::decodeWholeSolutionWithMixedCriteria(FrogLeapController* controller)
+{
+	return this->decodeFrogLeapWholeSolutionWithMixedCriteria(controller, true);
+}
+
 DecodedFrogLeapSolution * FrogLeapSolution::decodeWholeSolutionWithClarkWrightCriteria(FrogLeapController * controller)
 {
 	int nSize = this->clusterCol->getSize();
@@ -2734,6 +2747,36 @@ DecodedFrogLeapSolution * FrogLeapSolution::decodeFrogLeapWholeSolutionWithClose
 	decodedSolution->orderCustomersWithClosestNextCriteria(controller);
 
 	decodedSolution->assignDecodedCustomersToVehicles(controller);
+
+	return decodedSolution;
+}
+
+DecodedFrogLeapSolution* FrogLeapSolution::decodeFrogLeapWholeSolutionWithSimplifiedClosestNextCriteria(FrogLeapController* controller, bool adjustVehicleRoutes)
+{
+	DecodedFrogLeapSolution* decodedSolution = new DecodedFrogLeapSolution(this->n_depots, controller);
+
+	decodedSolution->setUnReferenceBeforeDelete(true);
+
+	decodedSolution->assignCustomersToDepotLists(controller, this);
+
+	decodedSolution->orderCustomersWithClosestNextCriteria(controller);
+
+	decodedSolution->scn_assignDecodedCustomersToVehicles(controller);
+
+	return decodedSolution;
+}
+
+DecodedFrogLeapSolution* FrogLeapSolution::decodeFrogLeapWholeSolutionWithMixedCriteria(FrogLeapController* controller, bool adjustVehicleRoutes)
+{
+	DecodedFrogLeapSolution* decodedSolution = new DecodedFrogLeapSolution(this->n_depots, controller);
+
+	decodedSolution->setUnReferenceBeforeDelete(true);
+
+	decodedSolution->assignCustomersToDepotLists(controller, this);
+
+	decodedSolution->orderCustomersWithClosestNextCriteria(controller);
+
+	decodedSolution->mixed_assignDecodedCustomersToVehicles(controller);
 
 	return decodedSolution;
 }

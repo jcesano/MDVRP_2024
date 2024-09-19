@@ -1267,16 +1267,42 @@ void FrogLeapController::setSuccessAttempts(int vsucessAttempts)
 
 void FrogLeapController::setAsCustomer(int customerInternalId, int demand)
 {
+	Pair* customerPair = new Pair(PairType::IntVsInt);
+	customerPair->set_i_IntValue(demand);
+	customerPair->set_j_IntValue(demand);
+	customerPair->setValue(customerInternalId);
+	customerPair->setId(customerInternalId);
+	customerPair->setLabelId(-1);
+
+	this->customerList->addFrogObjectOrdered(customerPair);
+}
+
+void FrogLeapController::setAsCustomer(int customerInternalId, int demand, int labelId)
+{
 	Pair * customerPair = new Pair(PairType::IntVsInt);
 	customerPair->set_i_IntValue(demand);
 	customerPair->set_j_IntValue(demand);
 	customerPair->setValue(customerInternalId);
 	customerPair->setId(customerInternalId);
+	customerPair->setLabelId(labelId);
 
-	this->customerList->addFrogObjectOrdered(customerPair);
+	this->customerList->addLastFrogObject(customerPair);
 }
 
 void FrogLeapController::setAsDepot(int depotInternalId, int capacity)
+{
+
+	Pair* depotPair = new Pair(PairType::IntVsInt);
+	depotPair->set_i_IntValue(capacity);
+	depotPair->set_j_IntValue(capacity);
+	depotPair->setValue(depotInternalId);
+	depotPair->setId(depotInternalId);
+	depotPair->setLabelId(-1);
+
+	this->depotList->addLastFrogObject(depotPair);
+}
+
+void FrogLeapController::setAsDepot(int depotInternalId, int capacity, int labelId)
 {
 
 	Pair * depotPair = new Pair(PairType::IntVsInt);
@@ -1284,8 +1310,9 @@ void FrogLeapController::setAsDepot(int depotInternalId, int capacity)
 	depotPair->set_j_IntValue(capacity);
 	depotPair->setValue(depotInternalId);
 	depotPair->setId(depotInternalId);
+	depotPair->setLabelId(labelId);
 
-	this->depotList->addFrogObjectOrdered(depotPair);
+	this->depotList->addLastFrogObject(depotPair);
 }
 
 void FrogLeapController::setUpCustomerList()
@@ -1339,11 +1366,11 @@ void FrogLeapController::loadCustomerAndDepotList()
 		//if does not exist, then it is a customer
 		if (depotListSection->getItemById(nodeIdLabel) == -1)
 		{				
-			this->setAsCustomer(i, demandOrCapacity);
+			this->setAsCustomer(i, demandOrCapacity, nodeIdLabel);
 		}
 		else //is a depot
 		{
-			this->setAsDepot(i, demandOrCapacity);
+			this->setAsDepot(i, demandOrCapacity, nodeIdLabel);
 		}
 	}
 }
@@ -1727,6 +1754,42 @@ int FrogLeapController::getCloserIndexToDepot(int depotIndex, int lowBoundIndex,
 	return closerNodeIndex;
 }
 
+
+// returns the index in the local collection passed as parameter
+int FrogLeapController::getClosestCustomerLocalIndexWithCapacityToDepot(int depotIndex, int lowBoundIndex, int topBoundIndex, FrogObjectCol* localCustomerIndexesCol, int veh_rem_capacity)
+{
+	float closerDistance = FLT_MAX;
+	int closerNodeIndex = -1;
+		
+	for (int i = lowBoundIndex; i < topBoundIndex; i++)
+	{
+		Pair* customerPair = (Pair*)localCustomerIndexesCol->getFrogObject(i);
+		
+		if(!customerPair->isAlreadyAssignedToVehicle())
+		{
+			int customerDemand = customerPair->getCustomerDemand();
+
+			if (customerDemand <= veh_rem_capacity)
+			{
+				Pair* depotPair = (Pair*)this->depotArray[depotIndex];
+				int customerInternalId = customerPair->getId();
+				int depotInternalId = depotPair->getId();
+				DistanceTable* dt = this->getDistanceTable();
+
+				float currentDistance = dt->getEdge(customerInternalId, depotInternalId);
+				if (currentDistance < closerDistance)
+				{
+					closerDistance = currentDistance;
+					closerNodeIndex = i;
+				}
+			}
+		}
+	}
+
+	return closerNodeIndex;
+}
+
+
 // returns the index in the local collection passed as parameter
 int FrogLeapController::getClosestCustomerLocalIndexToDepot(int depotIndex, int lowBoundIndex, int topBoundIndex, FrogObjectCol * localCustomerIndexesCol)
 {
@@ -1752,6 +1815,37 @@ int FrogLeapController::getClosestCustomerLocalIndexToDepot(int depotIndex, int 
 	return closerNodeIndex;
 }
 
+// returns the index in the local collection passed as parameter considering the remaining capacity of the vehicle
+int FrogLeapController::getClosestCustomerLocalIndexWithCapacityToCustomer(int targetCustomerInternalId, int lowBoundIndex, int topBoundIndex, FrogObjectCol* localCustomerIndexesCol, int veh_rem_capacity)
+{
+	float closerDistance = FLT_MAX;
+	int closerNodeIndex = -1;
+
+	for (int i = lowBoundIndex; i < topBoundIndex; i++)
+	{
+		Pair* customerPair = (Pair*)localCustomerIndexesCol->getFrogObject(i);
+
+		if(!customerPair->isAlreadyAssignedToVehicle())
+		{
+			int customerDemand = customerPair->getCustomerDemand();
+
+			if (customerDemand <= veh_rem_capacity && customerPair->isAlreadyAssignedToVehicle() == false)
+			{
+				int customerInternalId = customerPair->getId();			DistanceTable* dt = this->getDistanceTable();
+				float currentDistance = dt->getEdge(customerInternalId, targetCustomerInternalId);
+
+				if (currentDistance < closerDistance)
+				{
+					closerDistance = currentDistance;
+					closerNodeIndex = i;
+				}
+			}
+		}
+	}
+
+	return closerNodeIndex;
+}
+
 // returns the index in the local collection passed as parameter
 int FrogLeapController::getClosestCustomerLocalIndexToCustomer(int targetCustomerInternalId, int lowBoundIndex, int topBoundIndex, FrogObjectCol * localCustomerIndexesCol)
 {
@@ -1770,6 +1864,36 @@ int FrogLeapController::getClosestCustomerLocalIndexToCustomer(int targetCustome
 		{
 			closerDistance = currentDistance;
 			closerNodeIndex = i;
+		}
+	}
+	
+	return closerNodeIndex;
+}
+
+int FrogLeapController::getNextClosestFittingCustomerIndexFrom(Pair* item_pair, int remaining_capacity, int depotIndex, int lowBoundIndex, int topBoundIndex, FrogObjectCol* localCustomerIndexesCol, FrogLeapController* controller)
+{
+	float closerDistance = FLT_MAX;
+	int closerNodeIndex = -1;
+
+	for (int i = lowBoundIndex; i < topBoundIndex; i++)
+	{
+		Pair* customerPair = (Pair*)localCustomerIndexesCol->getFrogObject(i);
+
+		int customer_demand = customerPair->getCustomerDemand();
+
+		if (customer_demand <= remaining_capacity)
+		{
+			int customerInternalId = customerPair->getId();
+			DistanceTable* dt = this->getDistanceTable();
+			int targetCustomerInternalId = item_pair->getId();
+
+			float currentDistance = dt->getEdge(customerInternalId, targetCustomerInternalId);
+
+			if (currentDistance < closerDistance)
+			{
+				closerDistance = currentDistance;
+				closerNodeIndex = i;
+			}
 		}
 	}
 

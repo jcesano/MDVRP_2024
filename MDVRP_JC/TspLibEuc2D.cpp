@@ -85,12 +85,12 @@ int TspLibEuc2D::getCapacity()
 
 void TspLibEuc2D::AddNodeCoordItem(Pair * v_pair_coord)
 {
-	this->nodeCoordSection->addFrogObjectOrdered(v_pair_coord);
+	this->nodeCoordSection->addLastFrogObject(v_pair_coord);
 }
 
 void TspLibEuc2D::AddDemandItem(Pair * v_pair_demand)
 {
-	this->demand_section->addFrogObjectOrdered(v_pair_demand);
+	this->demand_section->addLastFrogObject(v_pair_demand);
 }
 
 void TspLibEuc2D::AddDepotItem(int depotId)

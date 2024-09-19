@@ -184,9 +184,13 @@ class FrogLeapController
 		SolutionGenerationType getSolutionGenerationType();
 
 		void setAsCustomer(int customerId, int demand);
+		
+		void setAsCustomer(int customerId, int demand, int labelId);
 
 		void setAsDepot(int depotId, int capacity);
-				
+		
+		void setAsDepot(int depotId, int capacity, int labelId);
+		
 		void setUpCustomerList();
 
 		void setUpDepotList();
@@ -265,9 +269,15 @@ class FrogLeapController
 
 		int getClosestLocalDepotIndexToCustomer(int customerIndex, int lowBoundIndex, int topBoundIndex, FrogObjectCol * localDepotCol, float & distance);
 
+		int getClosestCustomerLocalIndexWithCapacityToDepot(int depotIndex, int lowBoundIndex, int topBoundIndex, FrogObjectCol* localCustomerIndexesCol, int capacity);
+
 		int getClosestCustomerLocalIndexToDepot(int depotIndex, int lowBoundIndex, int topBoundIndex, FrogObjectCol * localNodeCol);
 
+		int getClosestCustomerLocalIndexWithCapacityToCustomer(int customerIndex, int lowBoundIndex, int topBoundIndex, FrogObjectCol* localCustomerIndexesCol, int veh_rem_capacity);
+
 		int getClosestCustomerLocalIndexToCustomer(int customerIndex, int lowBoundIndex, int topBoundIndex, FrogObjectCol * localCustomerIndexesCol);
+
+		int getNextClosestFittingCustomerIndexFrom(Pair* item_pair, int remaining_capacity, int depotIndex, int lowBoundIndex, int topBoundIndex, FrogObjectCol* localCustomerIndexesCol, FrogLeapController* controller);
 
 		bool existInLocalDepotList(int assignedDepotIndex, FrogObjectCol * localDepotCol, int low, int top);
 

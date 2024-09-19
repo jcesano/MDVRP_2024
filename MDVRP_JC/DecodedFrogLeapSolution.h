@@ -62,9 +62,23 @@ class DecodedFrogLeapSolution : public FrogObject
 
 		bool decodeFrogLeapItemToListWithClosestNextCriteria(FrogLeapController * controller, float fvalue, int customerIndex, int numberOfDepots);
 
+		void mixed_assignDecodedCustomersToVehicles(FrogLeapController* controller);
+		
+		void scn_assignDecodedCustomersToVehicles(FrogLeapController* controller);
+
 		void assignDecodedCustomersToVehicles(FrogLeapController * controller);
 
 		void cw_assignDecodedCustomersToVehicles(FrogLeapController* controller, FrogLeapSolution * fls);
+
+		bool unassignedCustomerToVehicleExists(int depotIndex, FrogLeapController* controller);		
+		
+		FrogObjectCol * copyVehicles(int depotIndex);
+				
+		void resetCustomersToDepotVehicles(int depotIndex, FrogLeapController* controller);
+		
+		void mixed_assignDecodedCustomersToDepotVehicles(int depotIndex, FrogLeapController* controller);
+
+		void scn_assignDecodedCustomersToDepotVehicles(int depotIndex, FrogLeapController* controller);
 
 		void assignDecodedCustomersToDepotVehicles(int depotIndex, FrogLeapController * controller);
 
@@ -78,11 +92,21 @@ class DecodedFrogLeapSolution : public FrogObject
 
 		void orderCustomersWithClosestNextCriteria(FrogLeapController * controller);
 
+		Pair* getClosestCustomerWithCapacityIndexToDepot(int depotIndex, int capacity, FrogLeapController* controller);
+
 		Pair * getClosestCustomerIndexToDepot(int depotIndex, FrogLeapController * controller);
+
+		Pair * getClosestCustomerIndexWithCapacityToCustomer(int customerIndex, int depotIndex, FrogLeapController* controller, int veh_rem_capacity);
 
 		Pair * getClosestCustomerIndexToCustomer(int customerIndex, int depotIndex, FrogLeapController * controller);
 
 		float evalSolution();
+
+		void unreferenceAndDeleteVehicles(FrogObjectCol*& vehicles);
+
+		int evalVehiclePaths(FrogObjectCol* vehicles);
+
+		int evalDepotSolution(int depotIndex);
 
 		void setController(FrogLeapController * controller);
 
@@ -118,6 +142,20 @@ class DecodedFrogLeapSolution : public FrogObject
 		void writeFrogObjWithSolutionData();
 
 		void printFrogObjWithSolutionData();
+
+		void setCustomersAsNotAssignedToVehicles(FrogLeapController* controller);
+
+		void setDepotCustomersAsNotAssignedToVehicles(int depotIndex, FrogLeapController * controller);
+
+		//FrogObjectCol * extractCustomersWithClosestNextCriteriaAndCapacity(int depotIndex, FrogLeapController* controller);
+
+		void addCustomerToVehicleRoute(Pair * nextClosestCustomer, Vehicle * veh);
+
+		void assignCustomersToVehicle(Vehicle* veh, int depotIndex, FrogLeapController* controller);
+
+		Vehicle * createVehicleAssignedToDepot(int depotIndex, FrogLeapController* controller);
+
+		Vehicle * createVehicleWithCustomersAssigned(int depotIndex, FrogLeapController* controller);
 
 		// abstract methods
 		void printFrogObj();

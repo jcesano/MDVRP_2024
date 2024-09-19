@@ -14,10 +14,12 @@ class Pair : public FrogObject
 	PairType pairtype;
 	int i_int;
 	int j_int;
+	int labed_id;
 	float i_float;
 	float j_float;
 
 	int assignedDepotIndex;
+	int assignedToVehicle;
 	int depotIndexToMatch;
 
 	FrogObjectCol * pairCol;
@@ -46,6 +48,12 @@ public:
 	float get_j_FloatValue();
 	float set_j_FloatValue(float floatValue);
 
+	void setLabelId(int labelId);
+
+	int getLabelId();
+
+	int getCustomerDemand();
+
 	int getAssignedDepotIndex();
 
 	void setAssignedDepotIndex(int depotIndex);
@@ -61,6 +69,10 @@ public:
 	void upDateRemainingCapacity(Pair * customerPair);
 
 	void restoreRemainingCapacity(Pair* customerPair);
+
+	void setCustomerAssignedToVehicle(int vehicle_id);
+
+	bool isAlreadyAssignedToVehicle();
 
 	Pair * createCopy();
 

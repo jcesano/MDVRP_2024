@@ -44,6 +44,8 @@ class Vehicle : public FrogObject
 
 		void setDepotIndex(int depot_v);
 
+		void unreferenceAndDeleteCustomerList();
+
 		int getDepotIndex();
 
 		void setDepotInternalId(int v_depotId);
@@ -93,6 +95,8 @@ class Vehicle : public FrogObject
 		void printGlobalSolution();
 
 		void adjustCustomerRoute(FrogLeapController * controller);
+
+		Vehicle* copy();
 
 		
 		Pair * getClosestIndexCustomerPairToDepot(int depotInternalId, FrogLeapController * controller);

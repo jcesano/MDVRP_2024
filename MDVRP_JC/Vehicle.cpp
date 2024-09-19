@@ -44,6 +44,7 @@ Vehicle::~Vehicle()
 {
 	if(this->customers != NULL)
 	{
+		this->customers->unReferenceFrogObjectCol();
 		delete this->customers;
 		this->customers = NULL;
 	}
@@ -612,4 +613,27 @@ Pair * Vehicle::getClosestIndexCustomerPairToCustomer(int customerIndex, FrogLea
 bool Vehicle::isTheSame(FrogObject * fs)
 {
 	return (this == fs);
+}
+
+Vehicle * Vehicle::copy()
+{
+	Vehicle* v_copy = new Vehicle(this->getId());
+
+	int customer_size = this->customers->getSize();
+
+	for(int i=0; i<customer_size;i++)
+	{
+		v_copy->addLastCustomerPair((Pair*)this->customers->getFrogObject(i));
+	}
+
+	return v_copy;
+}
+
+void Vehicle::unreferenceAndDeleteCustomerList()
+{
+	this->customers->unReferenceFrogObjectCol();
+
+	delete this->customers;
+
+	this->customers = NULL;
 }

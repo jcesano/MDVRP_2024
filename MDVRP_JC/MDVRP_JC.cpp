@@ -57,8 +57,8 @@ int main()
 
 	FrogLeapController * controller = new FrogLeapController();
 
-	//char * fileName = "casog01.vrp";
-	char* fileName = "ClusterId_0_Input.vrp";
+	char * fileName = "casog01.vrp";
+	//char* fileName = "ClusterId_0_Input.vrp";
 	//char* fileName = "casoch01.vrp";
 	//char* fileName = "casoch02swp.txt";
 	char *testCaseFileName = "TestCase01Casog01 - copia.txt";
@@ -244,7 +244,9 @@ int main()
 			{				
 				//fls->writeFrogLeapSolution(controller);
 
-				dfls_1 = fls->decodeWholeSolutionWithClosestNextCriteria(controller);
+				dfls_1 = fls->decodeWholeSolutionWithSimplifiedClosestNextCriteria(controller);
+				//dfls_1 = fls->decodeWholeSolutionWithClosestNextCriteria(controller);
+				dfls_1 = fls->decodeWholeSolutionWithMixedCriteria(controller);
 				//dfls_1 = fls->decodeWholeSolutionWithAngularCriteria(controller);
 				//dfls_1 = fls->decodeWholeSolutionWithClarkWrightCriteria(controller);
 				if (dfls_1->getIsFeasibleSolution() == true)

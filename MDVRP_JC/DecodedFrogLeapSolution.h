@@ -104,9 +104,9 @@ class DecodedFrogLeapSolution : public FrogObject
 
 		void unreferenceAndDeleteVehicles(FrogObjectCol*& vehicles);
 
-		int evalVehiclePaths(FrogObjectCol* vehicles);
+		float evalVehiclePaths(FrogObjectCol* vehicles);
 
-		int evalDepotSolution(int depotIndex);
+		float evalDepotSolution(int depotIndex);
 
 		void setController(FrogLeapController * controller);
 

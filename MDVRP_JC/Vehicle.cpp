@@ -121,7 +121,8 @@ float Vehicle::evalPath(FrogLeapController * controller)
 
 	if(this->customers->getSize() > 0)
 	{
-		for(int i = 0; i < this->customers->getSize(); i++)
+		int cust_size = this->customers->getSize();
+		for(int i = 0; i < cust_size; i++)
 		{
 			destinationPair = (Pair *) this->customers->getFrogObject(i);
 			//destinationIndex = controller->getDepotListIndexByInternal(destinationPair->getId());
@@ -626,6 +627,7 @@ Vehicle * Vehicle::copy()
 		v_copy->addLastCustomerPair((Pair*)this->customers->getFrogObject(i));
 	}
 
+	v_copy->ptrController = this->ptrController;
 	return v_copy;
 }
 

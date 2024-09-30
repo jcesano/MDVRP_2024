@@ -462,7 +462,7 @@ Vehicle * DecodedFrogLeapSolution::createVehicleAssignedToDepot(int depotIndex, 
 {
 	int vehicleId = controller->getGlobalVehicleId();
 
-	Vehicle * veh = new Vehicle(vehicleId, this->ptrController);
+	Vehicle * veh = new Vehicle(vehicleId, controller);
 	veh->setDepotIndex(depotIndex);
 	return veh;
 }
@@ -565,7 +565,7 @@ void DecodedFrogLeapSolution::resetCustomersToDepotVehicles(int depotIndex, Frog
 	}
 
 	delete this->vehicles[depotIndex];
-	this->vehicles[depotIndex] = NULL;
+	this->vehicles[depotIndex] = new FrogObjectCol();
 }
 
 void DecodedFrogLeapSolution::unreferenceAndDeleteVehicles(FrogObjectCol * & vehicles)
@@ -591,21 +591,25 @@ void DecodedFrogLeapSolution::mixed_assignDecodedCustomersToDepotVehicles(int de
 
 	this->resetCustomersToDepotVehicles(depotIndex, controller);
 
-	int scn_value = this->evalVehiclePaths(scn);
+	float scn_value = this->evalVehiclePaths(scn);
 
 	this->assignDecodedCustomersToDepotVehicles(depotIndex, controller);	
 
 	FrogObjectCol* nn = this->copyVehicles(depotIndex);
 
-	int nn_value = this->evalVehiclePaths(nn);
+	this->resetCustomersToDepotVehicles(depotIndex, controller);
+
+	float nn_value = this->evalVehiclePaths(nn);
 
 	if(scn_value < nn_value)
 	{
+		delete this->vehicles[depotIndex];
 		this->vehicles[depotIndex] = scn;
 		this->unreferenceAndDeleteVehicles(nn);
 	}
 	else
 	{
+		delete this->vehicles[depotIndex];
 		this->vehicles[depotIndex] = nn;
 		this->unreferenceAndDeleteVehicles(scn);
 	}
@@ -828,7 +832,7 @@ void DecodedFrogLeapSolution::assignCustomerToDepotList(FrogLeapController * con
 
 	Pair * customerPair = controller->getCustomerPairByIndex(customerIndex);
 
-	this->assignedCustomers[depotIndex]->addFrogObject(customerPair);
+	this->assignedCustomers[depotIndex]->addLastFrogObject(customerPair);
 }
 
 Pair * DecodedFrogLeapSolution::getClosestCustomerWithCapacityIndexToDepot(int depotIndex, int capacity, FrogLeapController* controller)
@@ -1002,10 +1006,10 @@ float DecodedFrogLeapSolution::evalSolution()
 	return result;
 }
 
-int DecodedFrogLeapSolution::evalDepotSolution(int depotIndex)
+float DecodedFrogLeapSolution::evalDepotSolution(int depotIndex)
 {
 	Vehicle* vehPtr;
-	int result = 0;
+	float result = 0;
 
 	for (int j = 0; j < this->vehicles[depotIndex]->getSize(); j++)
 	{
@@ -1016,10 +1020,10 @@ int DecodedFrogLeapSolution::evalDepotSolution(int depotIndex)
 	return result;
 }
 
-int DecodedFrogLeapSolution::evalVehiclePaths(FrogObjectCol * vehicles)
+float DecodedFrogLeapSolution::evalVehiclePaths(FrogObjectCol * vehicles)
 {
 	Vehicle* vehPtr;
-	int result = 0, size = vehicles->getSize();
+	float result = 0, size = vehicles->getSize();
 
 	for (int i = 0; i < size; i++)
 	{

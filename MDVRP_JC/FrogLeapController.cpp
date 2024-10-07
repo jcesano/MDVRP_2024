@@ -977,6 +977,12 @@ DistanceTable * FrogLeapController::loadDistanceTable()
 	{
 		for(int j = i + 1; j < dimension; j++)
 		{
+			
+			if(i==208 && j==250)
+			{
+				printf("parar aca \n");
+			}
+
 			floatDistance = this->tspLibEud2DPtr->getEucDistance(i, j);			
 
 			// we add two edges (a[u][v] and a[v][u])

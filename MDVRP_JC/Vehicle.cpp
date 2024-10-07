@@ -628,6 +628,7 @@ Vehicle * Vehicle::copy()
 	}
 
 	v_copy->ptrController = this->ptrController;
+	v_copy->setDepotIndex(this->getDepotIndex());
 	return v_copy;
 }
 

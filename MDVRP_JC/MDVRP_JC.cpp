@@ -57,14 +57,15 @@ int main()
 
 	FrogLeapController * controller = new FrogLeapController();
 
-	//char * fileName = "casog01.vrp";
-	char* fileName = "ClusterId_0_Input.vrp";
+	char * fileName = "casog01.vrp";
+	//char* fileName = "ClusterId_0_Input.vrp";
+	//char* fileName = "ClusterId_251.vrp";
 	//char* fileName = "casoch01.vrp";
 	//char* fileName = "casoch02swp.txt";
 	char *testCaseFileName = "TestCase01Casog01 - copia.txt";
 
 	
-	DecodedFrogLeapSolution* dfls_1 = NULL;
+	DecodedFrogLeapSolution* dfls_1 = NULL, * dfls_2 = NULL;
 
 	controller->setSourceType(SourceType::Tsp2DEuc);
 	//controller->setSourceType(SourceType::ClarkWright);
@@ -198,7 +199,7 @@ int main()
 	int nCustomers = controller->getNumberOfCustomers();
 
 	dfls_1 = NULL;
-	float evalSol;
+	float evalSol, evalSol2;
 	const long long int itNumber = controller->getNumberOfIterations();
 	long long int i = 0, min_i = 0;
 	long long int timeBound, execTime;
@@ -219,7 +220,7 @@ int main()
 	FrogLeapSolution* fls = NULL;
 
 	//while(execTime <= timeBound)
-	while (i < 4000)	//while(true)
+	while (i < 4000)//(i < 4000)	//while(true)
 	{		
 		//controller->writeFrogLeapSolution(fls);
 
@@ -227,7 +228,7 @@ int main()
 
 		//FrogLeapSolution* fls = new FrogLeapSolution(SolutionGenerationType::FrogLeaping, controller->getSourceType(), nCustomers, nDepots, 0);
 
-		if( i == 2)
+		if( i == 0)
 		{
 			printf("parar aca \n");
 		}
@@ -246,10 +247,20 @@ int main()
 
 				//dfls_1 = fls->decodeWholeSolutionWithSimplifiedClosestNextCriteria(controller);
 				//dfls_1 = fls->decodeWholeSolutionWithClosestNextCriteria(controller);
-				dfls_1 = fls->decodeWholeSolutionWithMixedCriteria(controller);
+					dfls_1 = fls->decodeWholeSolutionWithMixedCriteria(controller);
 				//dfls_1 = fls->decodeWholeSolutionWithAngularCriteria(controller);
 				//dfls_1 = fls->decodeWholeSolutionWithClarkWrightCriteria(controller);
-				if (dfls_1->getIsFeasibleSolution() == true)
+				
+				//bool isFeasibleEval2 = dfls_2->getIsFeasibleSolution();
+				bool isFeasibleEval1 = dfls_1->getIsFeasibleSolution();
+
+				//if(isFeasibleEval2 == true && isFeasibleEval1 == true)
+				//{
+					evalSol = dfls_1->evalSolution();
+					//evalSol2 = dfls_2->evalSolution();
+				//}
+
+					if (dfls_1->getIsFeasibleSolution() == true)
 				{
 					controller->incSuccessAttempts();
 					evalSol = dfls_1->evalSolution();

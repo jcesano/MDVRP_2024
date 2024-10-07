@@ -591,6 +591,10 @@ void DecodedFrogLeapSolution::mixed_assignDecodedCustomersToDepotVehicles(int de
 
 	this->resetCustomersToDepotVehicles(depotIndex, controller);
 
+	//testing code
+	int depotLabelId = ((Pair *)controller->getDepotPairByIndex(depotIndex))->getLabelId();
+	// end testing code
+	
 	float scn_value = this->evalVehiclePaths(scn);
 
 	this->assignDecodedCustomersToDepotVehicles(depotIndex, controller);	
@@ -651,7 +655,7 @@ void DecodedFrogLeapSolution::scn_assignDecodedCustomersToDepotVehicles(int depo
 			veh->decRemainingCapacity(customerDemand);
 			veh->incDemand(customerDemand);
 			//this->vehicles[depotIndex]->reorderFrogObject(veh);
-			this->vehicles[depotIndex]->reorderFrogObject(veh);
+			//this->vehicles[depotIndex]->reorderFrogObject(veh);
 		}
 
 		veh->addLastCustomerPair(customerPair);
@@ -994,7 +998,8 @@ float DecodedFrogLeapSolution::evalSolution()
 
 	for(int i = 0; i < this->numDepots; i++)
 	{
-		result = result + evalDepotSolution(i);
+		float eval = evalDepotSolution(i);
+		result = result + eval;
 	}
 
 	//for (int j = 0; j < this->vehicles->getSize(); j++)
@@ -1023,7 +1028,8 @@ float DecodedFrogLeapSolution::evalDepotSolution(int depotIndex)
 float DecodedFrogLeapSolution::evalVehiclePaths(FrogObjectCol * vehicles)
 {
 	Vehicle* vehPtr;
-	float result = 0, size = vehicles->getSize();
+	float result = 0; 
+	int size = vehicles->getSize();
 
 	for (int i = 0; i < size; i++)
 	{

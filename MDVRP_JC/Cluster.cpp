@@ -216,7 +216,7 @@ int Cluster::getDepotRemainingCapacity()
 
 void Cluster::exportClusterToVRP(FrogLeapController * controller)
 {
-	int number = this->getDepotPair()->getId();
+	int number = this->getDepotPair()->getLabelId();
 	char fileName[50];
 	std::sprintf(fileName, "ClusterId_%d.vrp", number);
 	

@@ -755,7 +755,7 @@ void DecodedFrogLeapSolution::cw_assignDecodedCustomersToDepotVehicles(int depot
 			for(int k=0; k < current_route_size; k++)
 			{
 				Pair* customerPair = (Pair *)current_route->getFrogObject(k);
-				float customerDemand = customerPair->get_i_IntValue();
+				int customerDemand = customerPair->get_i_IntValue();
 				veh = (Vehicle*)this->vehicles[depotIndex]->getFirstUpperValueFrogObject(customerDemand);
 				int vehicleId;
 				if (veh == NULL)
@@ -770,7 +770,7 @@ void DecodedFrogLeapSolution::cw_assignDecodedCustomersToDepotVehicles(int depot
 					//int depotIndex = vehicleId / numberOfDepots;
 					veh->setDepotIndex(depotIndex);
 
-					this->vehicles[depotIndex]->addFrogObjectOrdered(veh);
+					this->vehicles[depotIndex]->addLastFrogObject(veh);
 				}
 				else
 				{

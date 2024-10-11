@@ -116,7 +116,7 @@ void ClarkWrightHandler::create_SavingsList()
 void ClarkWrightHandler::merge_Routes()
 {
 	int savingsListSize = this->savingsList->getSize();
-	LocationType result_i, result_j;
+	LocationType result_i, result_j, testing_result;
 	int route_demand_i, route_demand_j, node_demand;
 
 	int routeIndex, internalId_node_to_add;
@@ -128,6 +128,19 @@ void ClarkWrightHandler::merge_Routes()
 		int route_index_i = findInRoutes(current_Saving->get_i_IntValue(), result_i);
 		int route_index_j = findInRoutes(current_Saving->get_j_IntValue(), result_j);
 
+		int routeWithDepotInside = findDepotInRoutes(testing_result);
+
+		if(i == 44)
+		{
+			printf("PARA ACA \n");
+			printf("mostrando current_saving: i = %d, j = %d  \n\n", current_Saving->get_i_IntValue(), current_Saving->get_j_IntValue());
+		}
+		
+		if(testing_result == LocationType::At_Middle)
+		{
+			printf("PARAR ACA \n");
+		}
+		
 		if(internalIdsExistInDifferentRoutes(route_index_i, route_index_j,result_i, result_j) == true)
 		{
 			route_demand_i = this->getRouteDemand(this->routes[route_index_i]);
@@ -278,17 +291,28 @@ void ClarkWrightHandler::merge_diff_routes(int routeIndex_i, int routeIndex_j, L
 
 	if(result_i == LocationType::At_Begin && result_j == LocationType::At_Begin)
 	{
+		printf("mostrando ruta i \n");
+		this->routes[routeIndex_i]->printFrogObjCol();
+
+		printf("mostrando ruta j \n");
+		this->routes[routeIndex_j]->printFrogObjCol();
+
 		// reverse route to concatenate routes with adjascent nodes.
 		this->routes[routeIndex_i]->reverse();
+		this->routes[routeIndex_i]->printFrogObjCol();
 		
 		// remove last item of list because corresponds to the depot of the cluster
 		this->routes[routeIndex_i]->removeLastItem();
-		
+		this->routes[routeIndex_i]->printFrogObjCol();
+
 		// remove first item of list because corresponds to the depot of the cluster
+		this->routes[routeIndex_j]->printFrogObjCol();
 		this->routes[routeIndex_j]->removeFirstItem();
-		
+		this->routes[routeIndex_j]->printFrogObjCol();
+
 		//concatenate routes
 		this->routes[routeIndex_i]->addLastAllFrogObjects(this->routes[routeIndex_j]);
+		this->routes[routeIndex_i]->printFrogObjCol();
 
 		// erase route_j
 		this->routes[routeIndex_j]->unReferenceFrogObjectCol();
@@ -391,6 +415,27 @@ bool ClarkWrightHandler::noIndexExists(int index_route_i, int index_route_j)
 	return ((index_route_i == -1) && (index_route_j == -1));
 }
 
+int ClarkWrightHandler::findDepotInRoutes(LocationType & result_i)
+{
+	int nCustomers = this->cluster->getCustomerCol()->getSize();
+	int routes_index = -1;
+	result_i = LocationType::No_Exists;
+	int i = 0;
+	while (i < nCustomers && result_i == LocationType::No_Exists)
+	{
+		result_i = findDepotInRoute(this->routes[i]);
+		if (result_i != LocationType::No_Exists)
+		{
+			routes_index = i;
+		}
+
+		i++;
+	}
+
+	return routes_index;
+
+}
+
 // returns the index of the first route which includes the customerIndex
 int ClarkWrightHandler::findInRoutes(int customerClusterInternalId, LocationType & result_i)
 {
@@ -410,6 +455,58 @@ int ClarkWrightHandler::findInRoutes(int customerClusterInternalId, LocationType
 	}
 
 	return routes_index;
+}
+
+LocationType ClarkWrightHandler::findDepotInRoute(FrogObjectCol* route)
+{	
+	int int_result = -1;
+	LocationType result = LocationType::No_Exists;
+	int i = 0;
+	int depotInternalId = this->cluster->getDepotPair()->getId();
+
+	if (route != NULL)
+	{
+		int routeSize = route->getSize();
+
+		while (i < routeSize && int_result == -1)
+		{
+			Pair* route_item = (Pair*)route->getFrogObject(i);			
+			
+			if (route_item->getId() == depotInternalId)
+			{
+				int_result = i;
+			}
+
+			i++;
+		}
+
+		if (int_result == -1 || int_result == 0 || int_result == (routeSize - 1))
+		{
+			result = LocationType::No_Exists;
+			return result;
+		};
+
+		if (int_result == 1)
+		{
+			result = LocationType::At_Begin;
+			return result;
+		}
+
+		if (int_result == routeSize - 2)
+		{
+			result = LocationType::At_Last;
+			return result;
+		}
+
+		if (int_result >= 1 && int_result <= routeSize - 2)
+		{
+			result = LocationType::At_Middle;
+			return result;
+		}
+	}
+
+	return result;
+
 }
 
 LocationType ClarkWrightHandler::findInRoute(FrogObjectCol * route, int customerInternalId)

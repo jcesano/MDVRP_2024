@@ -733,12 +733,19 @@ void FrogObjectCol::ConcatCol(FrogObjectCol * fs)
 
 void FrogObjectCol::reverse()
 {
-	for (int i = 0; i < this->getSize(); i++)
+	FrogObjNode* prev = nullptr;
+	FrogObjNode* current = this->head;
+	FrogObjNode* next = nullptr;
+
+	while(current != nullptr)
 	{
-		FrogObject * object = this->getFrogObject(i);
-		this->removeFrogObject(object);
-		this->addLastFrogObject(object);
+		next = current->getNextFrogObjNode();
+		current->setNextFrogObjNode(prev);
+		prev = current;
+		current = next;
 	}
+
+	this->head = prev;
 }
 
 void FrogObjectCol::removeFirstItem()

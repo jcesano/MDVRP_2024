@@ -35,7 +35,11 @@ private:
 
 	void merge_Routes();
 
+	int findDepotInRoutes(LocationType& result);
+	
 	int findInRoutes(int customerClusterInternalId, LocationType& result_i);
+
+	enum class LocationType findDepotInRoute(FrogObjectCol* route);
 
 	enum class LocationType findInRoute(FrogObjectCol* route, int customerClusterIndex);
 

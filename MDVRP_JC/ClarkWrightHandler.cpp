@@ -39,6 +39,54 @@ void ClarkWrightHandler::create_Null_Routes()
 	{
 		this->routes[i] = NULL;//create_Route(i); // create an initial route with (depot, customer_i, depot)
 	}
+
+	//this->printRoutesStats();
+}
+
+void ClarkWrightHandler::printRoutesStats()
+{
+	printf("Mostrando estadisticas de routas asociadas al Deposito: %d \n", this->cluster->getDepotPair()->getLabelId());
+
+	int null_routes = this->getNumberOfNullRoutes();
+	int not_null_routes = this->getNumberOfNotNullRoutes();
+
+	printf("Cantidad de rutas nulas: %d \n", null_routes);
+	printf("Cantidad de rutas NO nulas: %d \n", not_null_routes);
+	printf("Cantidad de rutas total: %d \n", null_routes + not_null_routes);
+}
+
+int ClarkWrightHandler::getNumberOfNullRoutes()
+{
+	int customer_col_size = this->cluster->getCustomerCol()->getSize();
+	// The initial size of routes is the same as the number of customers of the cluster. One route per customer
+	int null_routes = 0;
+
+	for (int i = 0; i < customer_col_size; i++)
+	{
+		if(this->routes[i] == NULL)
+		{
+			null_routes++;
+		}
+	}
+
+	return null_routes;
+}
+
+int ClarkWrightHandler::getNumberOfNotNullRoutes() 
+{
+	int customer_col_size = this->cluster->getCustomerCol()->getSize();
+	// The initial size of routes is the same as the number of customers of the cluster. One route per customer
+	int not_null_routes = 0;
+
+	for (int i = 0; i < customer_col_size; i++)
+	{
+		if (this->routes[i] != NULL)
+		{
+			not_null_routes++;
+		}
+	}
+
+	return not_null_routes;
 }
 
 FrogObjectCol * ClarkWrightHandler:: create_Route(int i)
@@ -111,6 +159,8 @@ void ClarkWrightHandler::create_SavingsList()
 			savingsList->addFrogObjectDescOrdered(pair_ptr);
 		}
 	}
+
+	//savingsList->printFrogObjCol();
 }
 
 void ClarkWrightHandler::merge_Routes()
@@ -130,16 +180,16 @@ void ClarkWrightHandler::merge_Routes()
 
 		int routeWithDepotInside = findDepotInRoutes(testing_result);
 
-		if(i == 44)
-		{
-			printf("PARA ACA \n");
-			printf("mostrando current_saving: i = %d, j = %d  \n\n", current_Saving->get_i_IntValue(), current_Saving->get_j_IntValue());
-		}
+		//if(i == 44)
+		//{
+		//	printf("PARA ACA \n");
+		//	printf("mostrando current_saving: i = %d, j = %d  \n\n", current_Saving->get_i_IntValue(), current_Saving->get_j_IntValue());
+		//}
 		
-		if(testing_result == LocationType::At_Middle)
-		{
-			printf("PARAR ACA \n");
-		}
+		//if(testing_result == LocationType::At_Middle)
+		//{
+		//	printf("PARAR ACA \n");
+		//}
 		
 		if(internalIdsExistInDifferentRoutes(route_index_i, route_index_j,result_i, result_j) == true)
 		{
@@ -291,28 +341,28 @@ void ClarkWrightHandler::merge_diff_routes(int routeIndex_i, int routeIndex_j, L
 
 	if(result_i == LocationType::At_Begin && result_j == LocationType::At_Begin)
 	{
-		printf("mostrando ruta i \n");
-		this->routes[routeIndex_i]->printFrogObjCol();
+		//printf("mostrando ruta i \n");
+		//this->routes[routeIndex_i]->printFrogObjCol();
 
-		printf("mostrando ruta j \n");
-		this->routes[routeIndex_j]->printFrogObjCol();
+		//printf("mostrando ruta j \n");
+		//this->routes[routeIndex_j]->printFrogObjCol();
 
 		// reverse route to concatenate routes with adjascent nodes.
 		this->routes[routeIndex_i]->reverse();
-		this->routes[routeIndex_i]->printFrogObjCol();
+		//this->routes[routeIndex_i]->printFrogObjCol();
 		
 		// remove last item of list because corresponds to the depot of the cluster
 		this->routes[routeIndex_i]->removeLastItem();
-		this->routes[routeIndex_i]->printFrogObjCol();
+		//this->routes[routeIndex_i]->printFrogObjCol();
 
 		// remove first item of list because corresponds to the depot of the cluster
-		this->routes[routeIndex_j]->printFrogObjCol();
+		//this->routes[routeIndex_j]->printFrogObjCol();
 		this->routes[routeIndex_j]->removeFirstItem();
-		this->routes[routeIndex_j]->printFrogObjCol();
+		//this->routes[routeIndex_j]->printFrogObjCol();
 
 		//concatenate routes
 		this->routes[routeIndex_i]->addLastAllFrogObjects(this->routes[routeIndex_j]);
-		this->routes[routeIndex_i]->printFrogObjCol();
+		//this->routes[routeIndex_i]->printFrogObjCol();
 
 		// erase route_j
 		this->routes[routeIndex_j]->unReferenceFrogObjectCol();
@@ -619,6 +669,63 @@ int ClarkWrightHandler:: getRouteDemand(FrogObjectCol* route)
 	return route_demand;
 }
 
+float ClarkWrightHandler::eval_final_route(int i)
+{
+	float result = 0;
+
+	int route_size = this->final_routes[i]->getSize();
+
+	Pair* prevPair = (Pair *)this->final_routes[i]->getFrogObject(0);
+	Pair* currentPair = NULL;
+
+	for(int k=1; k<route_size;k++)
+	{
+		currentPair = (Pair*)this->final_routes[i]->getFrogObject(k);
+		float current_distance = this->distanceTable_ptr->getEdge(prevPair->getId(), currentPair->getId());
+		result = result + current_distance;
+
+		prevPair = currentPair;
+	}
+
+	return result;
+}
+
+void ClarkWrightHandler::print_final_route(int i) 
+{
+	int customerLabelId; 
+	float routeCost = eval_final_route(i), currentEdge = 0;
+	Pair * currentPair = NULL, * prevPair = NULL;
+
+	printf("Cost of route %d is %.2f \n", i, routeCost);
+	int route_size = this->final_routes[i]->getSize();
+
+	printf("NodeLabelId; Cost\n");
+	prevPair = (Pair*)this->final_routes[i]->getFrogObject(0);
+	printf("%d; 0\n", prevPair->getLabelId());
+
+	for(int k =1; k<route_size; k++)
+	{
+		currentPair = (Pair*)this->final_routes[i]->getFrogObject(k);
+
+		float currentEdge = this->distanceTable_ptr->getEdge(prevPair->getId(), currentPair->getId());
+		printf("%d; %.2f  \n", currentPair->getLabelId(), currentEdge);
+
+		prevPair = currentPair;
+	}
+}
+
+void ClarkWrightHandler::print_final_routes()
+{
+	printf("Showing final routes \n");
+	int size = this->final_routes_size;
+
+	for(int i=0; i<size; i++)
+	{
+		print_final_route(i);
+	}
+	printf("FINISH OF Showing final routes \n");
+}
+
 void ClarkWrightHandler::cw_execute()
 {
 	create_SavingsList();
@@ -626,7 +733,9 @@ void ClarkWrightHandler::cw_execute()
 	create_Null_Routes();
 	merge_Routes();
 	select_final_routes();
+	//print_final_routes();
 }
+
 
 FrogObjectCol* ClarkWrightHandler::getRoute(int route_index)
 {
@@ -637,7 +746,7 @@ FrogObjectCol* ClarkWrightHandler::getRoute(int route_index)
 	return NULL;
 }
 
-int ClarkWrightHandler::getRoutesSize()
+int ClarkWrightHandler::getFinalRoutesSize()
 {
 	return this->final_routes_size;
 }

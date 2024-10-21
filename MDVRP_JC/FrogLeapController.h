@@ -212,6 +212,8 @@ class FrogLeapController
 		int getNumberOfVehicles();
 
 		int getCustomerInternalId(int position);
+
+		int getCustomerLabelId(int position);
 		
 		int getCustomerDemandByIndex(int position);
 

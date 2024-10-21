@@ -76,6 +76,10 @@ public:
 
 	void writeCustomerColNodeCoords(FILE* file, FrogLeapController* controller);
 
+	//void printClusterContentHeader();
+
+	void printClusterContentRecord(int customerIndexInCol);
+
 	// abstract methods
 	void printFrogObj();
 

@@ -211,6 +211,10 @@ class FrogLeapSolution: public FrogObject
 
 		void printFLS_Record(int i, FrogLeapController * controller);
 
+		void printClusterColInfo();
+
+		void printClusterContentHeader();
+
 		void setAllFLSWithValue(float value);
 
 		void initClusterCollection(FrogLeapController* controller);

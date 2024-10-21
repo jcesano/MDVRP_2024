@@ -1569,6 +1569,11 @@ int FrogLeapController::getCustomerInternalId(int position)
 	return this->customerArray[position]->getId();
 }
 
+int FrogLeapController::getCustomerLabelId(int position)
+{
+	return this->customerArray[position]->getLabelId();
+}
+
 
 int FrogLeapController::getCustomerDemandByIndex(int position)
 {

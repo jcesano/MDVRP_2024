@@ -57,9 +57,9 @@ int main()
 
 	FrogLeapController * controller = new FrogLeapController();
 
-	//char * fileName = "casog01.vrp";
+	char * fileName = "casog01.vrp";
 	//char* fileName = "ClusterId_0_Input.vrp";
-	char* fileName = "ClusterId_1 - Copy.vrp";
+ 	//char* fileName = "ClusterId_1_copy.vrp";
 	//char* fileName = "casoch01.vrp";
 	//char* fileName = "casoch02swp.txt";
 	char *testCaseFileName = "TestCase01Casog01 - copia.txt";
@@ -228,7 +228,7 @@ int main()
 
 		//FrogLeapSolution* fls = new FrogLeapSolution(SolutionGenerationType::FrogLeaping, controller->getSourceType(), nCustomers, nDepots, 0);
 
-		if( i == 0)
+		if( i == 89)
 		{
 			printf("parar aca \n");
 		}

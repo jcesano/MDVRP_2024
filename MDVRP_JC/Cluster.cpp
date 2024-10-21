@@ -303,8 +303,34 @@ void Cluster::writeCustomerColNodeCoords(FILE * file, FrogLeapController * contr
 	}
 }
 
+//void Cluster::printClusterContentHeader()
+//{
+//	printf("DepotInternalId; CustomerInternalId; DepotLabelId; CustomerLabelId \n");
+//}
+
+void Cluster::printClusterContentRecord(int customerIndexInCol)
+{
+	Pair * customerPair = (Pair *)this->getCustomerCol()->getFrogObject(customerIndexInCol);
+	Pair* depotPair = (Pair*)this->getDepotPair();
+
+	//printf("%d; %d; %d; %d \n", depotPair->getId(), customerPair->getId(), depotPair->getLabelId(), customerPair->getLabelId());
+	printf("%d; %d \n", depotPair->getLabelId(), customerPair->getLabelId());
+}
+
 void Cluster::printFrogObj()
 {
+	//printf("SHOWING  CLUSTER CONTENT \n");
+
+	int n_customers = this->getCustomerCol()->getSize();
+
+	//this->printClusterContentHeader();
+
+	for(int i=0;i<n_customers;i++)
+	{
+		this->printClusterContentRecord(i);
+	}
+
+	//printf("FINISH OF SHOWING CLUSTER CONTENT \n");
 }
 
 bool Cluster::isTheSame(FrogObject * fs)

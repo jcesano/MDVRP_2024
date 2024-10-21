@@ -424,7 +424,6 @@ void Vehicle::printVehicleRoute(SolutionData* sd)
 	}
 
 	printf("%d. End; %d\n", sd->getDepotLabelId(), totalRouteDemand);
-
 }
 
 void Vehicle::writeSolution(FrogLeapController* controller)

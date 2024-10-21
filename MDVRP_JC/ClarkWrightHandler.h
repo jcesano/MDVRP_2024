@@ -27,9 +27,21 @@ private:
 
 	void create_Routes();
 
+	float eval_final_route(int i);
+
+	void print_final_route(int i);
+	
+	void print_final_routes();
+
 	void select_final_routes();
 
 	void create_Null_Routes();
+
+	void printRoutesStats();
+
+	int getNumberOfNullRoutes();
+
+	int getNumberOfNotNullRoutes();
 
 	FrogObjectCol * create_Route(int i);
 
@@ -82,7 +94,7 @@ public:
 
 	FrogObjectCol* getRoute(int route_index);
 
-	int getRoutesSize();
+	int getFinalRoutesSize();
 
 	// abstract methods
 	void printFrogObj();

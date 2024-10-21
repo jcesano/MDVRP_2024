@@ -2651,10 +2651,37 @@ DecodedFrogLeapSolution* FrogLeapSolution::decodeWholeSolutionWithMixedCriteria(
 	return this->decodeFrogLeapWholeSolutionWithMixedCriteria(controller, true);
 }
 
+void FrogLeapSolution::printClusterContentHeader()
+{
+	//printf("DepotInternalId; CustomerInternalId; DepotLabelId; CustomerLabelId \n");
+	printf("DepotLabelId; CustomerLabelId \n");
+}
+
+void FrogLeapSolution::printClusterColInfo()
+{
+	int n_clusters = this->clusterCol->getSize();
+	Cluster* currentCluster;
+
+	
+	printf("SHOWING CLUSTER COLLECTION INFORMATION \n");
+
+	this->printClusterContentHeader();
+
+	for(int i=0; i<n_clusters; i++)
+	{
+		currentCluster = (Cluster*)this->clusterCol->getFrogObject(i);
+		currentCluster->printFrogObj();
+	}
+
+	printf("END OF SHOWING CLUSTER COLLECTION INFORMATION \n");
+}
+
 DecodedFrogLeapSolution * FrogLeapSolution::decodeWholeSolutionWithClarkWrightCriteria(FrogLeapController * controller)
 {
 	int nSize = this->clusterCol->getSize();
 	this->cw_handler_col = new FrogObjectCol();
+
+	//this->printClusterColInfo();		
 	
 	DecodedFrogLeapSolution* decodedSolution = new DecodedFrogLeapSolution(this->n_depots, controller);
 
@@ -2671,7 +2698,7 @@ DecodedFrogLeapSolution * FrogLeapSolution::decodeWholeSolutionWithClarkWrightCr
 	//decodedSolution->orderCustomersWithClosestNextCriteria(controller);
 	//decodedSolution->assignDecodedCustomersToVehicles(controller);
 	decodedSolution->cw_assignDecodedCustomersToVehicles(controller, this);
-	
+		
 	return decodedSolution;
 }
 
@@ -2988,6 +3015,8 @@ void FrogLeapSolution::printFrogLeapSolutionWithSolutionData(FrogLeapController 
 		this->printAssignedCustomers(currentCluster);
 	}
 
+	delete sd;
+
 	printf("END OF CLUSTER INFORMATION\n\n\n\n");
 }
 
@@ -3055,13 +3084,13 @@ void FrogLeapSolution::printAssignedCustomers(Cluster* cluster)
 		for (int i = 0; i < nCustomers - 1; i++)
 		{
 			currentCustomer = (Pair*)cluster->getCustomerCol()->getFrogObject(i);
-			printf("%d(%d) - ", currentCustomer->getId(), currentCustomer->get_i_IntValue());
+			printf("%d(%d) - ", currentCustomer->getLabelId(), currentCustomer->get_i_IntValue());
 			totalCustomerDemands += currentCustomer->get_i_IntValue();
 		}
 
 		currentCustomer = (Pair*)cluster->getCustomerCol()->getFrogObject(nCustomers - 1);
 		totalCustomerDemands += currentCustomer->get_i_IntValue();
-		printf("%d(%d) - END; %d \n", currentCustomer->getId(), currentCustomer->get_i_IntValue(), totalCustomerDemands);
+		printf("%d(%d) - END; %d \n", currentCustomer->getLabelId(), currentCustomer->get_i_IntValue(), totalCustomerDemands);
 	}
 	else
 	{
@@ -3216,7 +3245,7 @@ void FrogLeapSolution::printFLS_ArrayHeader()
 {
 	printf("Showing FLS_ARRAY \n");
 
-	printf("DepotIndex; DepotCapacity; DepotRemaCapacity; CustomerIndex; CustomerInternalId; CustomerDemand \n");
+	printf("DepotIndex; DepotCapacity; DepotRemaCapacity; CustomerIndex; CustomerInternalId; CustomerLabelId; CustomerDemand \n");
 }
 
 void FrogLeapSolution::printFLS_ArrayFooter()
@@ -3231,8 +3260,9 @@ void FrogLeapSolution::printFLS_Record(int i, FrogLeapController * controller)
 	int depotCapacity = controller->getDepotCapacityByIndex(depotIndex);
 	int depotRemCap = controller->getDepotRemainingCapacityByIndex(depotIndex);
 	int customerInternalId = controller->getCustomerInternalId(i);
+	int customerLabelId = controller->getCustomerLabelId(i);
 	int customerDemand = controller->getCustomerDemandByIndex(i);
-	printf(" %d; %d ; %d; %d; %d ; %d\n", depotIndex, depotCapacity, depotRemCap, i, customerInternalId, customerDemand);
+	printf(" %d; %d ; %d; %d; %d ; %d; %d\n", depotIndex, depotCapacity, depotRemCap, i, customerInternalId, customerLabelId, customerDemand);
 }
 
 

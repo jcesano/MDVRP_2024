@@ -143,6 +143,8 @@ class DecodedFrogLeapSolution : public FrogObject
 
 		void printFrogObjWithSolutionData();
 
+		void printDecodedSolutionByDepot(int i);
+
 		void setCustomersAsNotAssignedToVehicles(FrogLeapController* controller);
 
 		void setDepotCustomersAsNotAssignedToVehicles(int depotIndex, FrogLeapController * controller);

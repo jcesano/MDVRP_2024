@@ -69,6 +69,15 @@ DecodedFrogLeapSolution::~DecodedFrogLeapSolution()
 	this->vehicles = NULL;
 	//printf("Destroying of DecodedFrogLeapSolution: vehicles destroyed  \n");
 
+
+	if(this->assignedCustomers != NULL)
+	{
+		this->deleteArrayOfFrogObjectCols(this->assignedCustomers, nDepots);
+		delete[] assignedCustomers;
+	}
+
+	this->assignedCustomers = NULL;
+
 	this->ptrController = NULL;		
 
 	//printf("Destroying of DecodedFrogLeapSolution: FINISHED \n");

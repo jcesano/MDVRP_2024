@@ -41,6 +41,7 @@ FrogLeapSolution::~FrogLeapSolution()
 {
 	
 	delete clusterCol;
+	delete cw_handler_col;
 	delete[] values;
 }
 

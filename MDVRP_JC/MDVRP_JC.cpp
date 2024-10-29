@@ -260,7 +260,7 @@ int main()
 					//evalSol2 = dfls_2->evalSolution();
 				//}
 
-					if (dfls_1->getIsFeasibleSolution() == true)
+				if (dfls_1->getIsFeasibleSolution() == true)
 				{
 					controller->incSuccessAttempts();
 					evalSol = dfls_1->evalSolution();

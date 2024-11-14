@@ -157,7 +157,7 @@ Pair * Pair::createCopy()
 
 void Pair::printFrogObj()
 {
-	printf("Printing values of pair object: labelId = %d, Id = %d, int_i = %.d, int_j = %.d, float_i = %.2f, float_j = %.2f, \n", this->labed_id, this->getId(),this->i_int, this->j_int, this->i_float, this->j_float);
+	printf("Printing values of pair object: Value = %.2f, labelId = %d, Id = %d, int_i = %.d, int_j = %.d, float_i = %.2f, float_j = %.2f, \n", this->getValue(), this->labed_id, this->getId(),this->i_int, this->j_int, this->i_float, this->j_float);
 }
 
 bool Pair::isTheSame(FrogObject * fs)

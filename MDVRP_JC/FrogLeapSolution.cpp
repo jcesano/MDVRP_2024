@@ -2220,8 +2220,16 @@ void FrogLeapSolution::assignRandomFeasibleDepot14(FrogLeapController* controlle
 	//FrogObjectCol* matchCustomerCol = controller->createFullMatchCustomerList(currentDepotPair);
 	FrogObjectCol* matchCustomerCol = controller->createMatchCustomerList_Cluster(currentCluster, this);
 
+	//matchCustomerCol = controller->reorderCustomerListByDemandPerDistance(matchCustomerCol, currentCluster);
+
+	//printf("Showing matchCustomerCol ordered by demand \n");
+	//matchCustomerCol->printFrogObjCol();
+	//printf("\n");
+	
 	int depotRemainingCapacity = currentCluster->getDepotRemainingCapacity();
 
+	// reorder customer by the following value = customer_demand / distance
+	
 	// all customers that fit in depot are assigned. The rest of customers are left without any assignation
 	FrogObjectCol* assignedCustomers = controller->assignCustomersToClusterUntilCapacityIsComplete(currentCluster, matchCustomerCol, this);
 
@@ -2233,17 +2241,39 @@ void FrogLeapSolution::assignRandomFeasibleDepot14(FrogLeapController* controlle
 
 	if(demandOfAssignedCustomers > depotCapacity || depotRemainingCapacity < 0)
 	{
-		printf("ERROR DE CAPACIDAD \n");
+		printf("ERROR DE CAPACIDAD \n");		
+		// Terminate the program
+		exit(EXIT_FAILURE);
 	}
 
-	//FrogObjectCol* assignedCustomers = controller->assignDepotRndToCustomerPairsUntilCapacityIsComplete(currentDepotPair, matchCustomerCol, this);
+	//ESTA LINEA NO SE DEBE DESCOMENTAR FrogObjectCol* assignedCustomers = controller->assignDepotRndToCustomerPairsUntilCapacityIsComplete(currentDepotPair, matchCustomerCol, this);
+	//printf("Showing DepotPair information \n");
+	//currentCluster->getDepotPair()->printFrogObj();
+	//printf("\n");
 
+	//printf("Showing demand of assignedCustomerList: %d \n", demandOfAssignedCustomers);
+	//
+	//printf("showing matchcolCustomerCol \n");
+	//matchCustomerCol->printFrogObjCol();
+	//printf("\n");
+
+	//printf("showing assignedCustomers \n");
+	//assignedCustomers->printFrogObjCol();
+	//printf("\n");
+
+	
 	if ((matchCustomerCol->getSize() - assignedCustomers->getSize()) > 0)
 	{
 		this->updateClusterCollectionWithDistanceType(DistanceType::nearest);
 		
 		depotRemainingCapacity = currentCluster->getDepotRemainingCapacity();
 		FrogObjectCol* secondMatchCustomerCol = controller->createMatchCustomerList_Cluster(currentCluster, this);
+
+		//secondMatchCustomerCol = controller->reorderCustomerListByDemandPerDistance(secondMatchCustomerCol, currentCluster);
+
+		//printf("Showing secondMatchCustomerCol \n");
+		//secondMatchCustomerCol->printFrogObjCol();
+		//printf("\n");
 
 		depotRemainingCapacity = currentCluster->getDepotRemainingCapacity();
 		FrogObjectCol* assignedCustomers2 = controller->assignCustomersToClusterUntilCapacityIsComplete(currentCluster, secondMatchCustomerCol, this);
@@ -2255,15 +2285,45 @@ void FrogLeapSolution::assignRandomFeasibleDepot14(FrogLeapController* controlle
 		if (demandOfAssignedCustomers > depotCapacity || depotRemainingCapacity < 0)
 		{
 			printf("ERROR DE CAPACIDAD \n");
+			// Terminate the program
+			exit(EXIT_FAILURE);
 		}
 
+		
+		//if ((secondMatchCustomerCol->getSize() - assignedCustomers2->getSize()) > 0)
+		//{
+		//	this->updateClusterCollectionWithDistanceType(DistanceType::depot);
+
+		//	depotRemainingCapacity = currentCluster->getDepotRemainingCapacity();
+		//	FrogObjectCol* thirdMatchCustomerCol = controller->createMatchCustomerList_Cluster(currentCluster, this);
+
+		//	depotRemainingCapacity = currentCluster->getDepotRemainingCapacity();
+		//	FrogObjectCol* assignedCustomers3 = controller->assignCustomersToClusterUntilCapacityIsComplete(currentCluster, secondMatchCustomerCol, this);
+
+		//	demandOfAssignedCustomers = controller->getDemandFromCustomerList(assignedCustomers2);
+		//	depotRemainingCapacity = currentCluster->getDepotRemainingCapacity();
+		//	depotCapacity = currentCluster->getDepotCapacity();
+
+		//	if (demandOfAssignedCustomers > depotCapacity || depotRemainingCapacity < 0)
+		//	{
+		//		printf("ERROR DE CAPACIDAD \n");
+		//		// Terminate the program
+		//		exit(EXIT_FAILURE);
+		//	}
+
+		//	thirdMatchCustomerCol->unReferenceFrogObjectCol();
+		//	delete thirdMatchCustomerCol;
+
+		//	assignedCustomers3->unReferenceFrogObjectCol();
+		//	delete assignedCustomers3;
+		//}
+		
 		secondMatchCustomerCol->unReferenceFrogObjectCol();
 		delete secondMatchCustomerCol;
 
 		assignedCustomers2->unReferenceFrogObjectCol();
 		delete assignedCustomers2;
 	}
-
 
 	matchCustomerCol->unReferenceFrogObjectCol();
 	delete matchCustomerCol;
@@ -3146,6 +3206,13 @@ bool FrogLeapSolution::isAMatch_Cluster(Pair* currentCustomerPair, Cluster* curr
 	
 	FrogObjectCol* clusterListOrdered = this->createClusterListOrderedByDistanceFromCustomer(currentCustomerPair, controller);
 
+	//if(currentCustomerPair->getLabelId() == 15)
+	//{
+	//	printf("Showing clusterListOrdered of currentCustomerPair with labelId = %d \n", currentCustomerPair->getLabelId());
+	//	clusterListOrdered->printFrogObjCol();
+	//	printf(" \n");
+	//}
+	
 	Cluster * closestClusterPair = (Cluster*) controller->getFirstClusterWithRemainingCapacity(clusterListOrdered, currentCustomerPair, controller);
 
 	result = (currentCluster->getId() == closestClusterPair->getId());

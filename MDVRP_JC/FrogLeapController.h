@@ -313,7 +313,9 @@ class FrogLeapController
 
 		FrogObjectCol* createCustomerListOrderedByDistanceFromCluster(Cluster* currentCluster, FrogLeapSolution * fls);
 
-		FrogObjectCol* getListOfUnassignedCustomers();
+		FrogObjectCol * getListOfUnassignedCustomers();
+
+		FrogObjectCol * reorderCustomerListByDemandPerDistance(FrogObjectCol* matchCustomerCol, Cluster* cluster);
 
 		bool getReassignCustomersSettings();
 

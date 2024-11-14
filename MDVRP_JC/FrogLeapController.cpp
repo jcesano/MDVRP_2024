@@ -2195,6 +2195,34 @@ FrogObjectCol* FrogLeapController::createFullMatchCustomerList(Pair* currentDepo
 	return matchCol;
 }
 
+FrogObjectCol* FrogLeapController::reorderCustomerListByDemandPerDistance(FrogObjectCol * matchCustomerCol, Cluster * cluster)
+{
+	FrogObjectCol* result = new FrogObjectCol();
+
+	int size = matchCustomerCol->getSize();
+
+	DistanceTable* dt = this->getDistanceTable();
+
+	for(int i = 0; i < size; i++)
+	{
+		Pair * currentCustomerPair = (Pair *)matchCustomerCol->getFrogObject(0);
+		matchCustomerCol->removeFrogObjectByPosition(0);
+
+		int currentCustomerPair_Index = this->getCustomerListIndexByInternal(currentCustomerPair->getId());
+		float distanceToCluster = cluster->getDistanceToCustomer(currentCustomerPair_Index, this);
+		
+		float demandPerDistance = (float)currentCustomerPair->get_i_IntValue() / distanceToCluster;
+
+		currentCustomerPair->setValue(demandPerDistance);
+		result->addFrogObjectOrdered(currentCustomerPair);
+	}
+
+	matchCustomerCol->unReferenceFrogObjectCol();
+	delete matchCustomerCol;
+
+	return result;
+}
+
 // create a list of customers that satisfies for each customer of the list that 
 // 1) the depotPair is the closest one of all.
 // The returned list is ordered by distance from the depotpair to all customers that satisfy condition 1)
@@ -2210,19 +2238,37 @@ FrogObjectCol* FrogLeapController::createMatchCustomerList_Cluster(Cluster* curr
 	{
 		Pair* currentCustomerPair = (Pair*)distanceCustList->getFrogObject(i);
 
-		if(currentCustomerPair->getId() == 5)
-		{
-			//printf("Parar acá \n");
-		}
+		//if(currentCustomerPair->getLabelId() == 15)
+		//{
+		//	printf("showing current cluster information \n");
+		//	currentCluster->printFrogObj();
+		//	printf("\n");
+		//	printf("showing currentCustomerPair information \n");
+		//	currentCustomerPair->printFrogObj();
+		//	printf("\n");
 
+
+		//	printf("Parar acá \n");
+
+		//	DistanceTable* dt = this->getDistanceTable();
+		//	float distance = dt->getEdge(currentCluster->getDepotPair()->getId(), currentCustomerPair->getId());
+		//	printf("Distance from customer LabelId = %d to depot LabelId = %d is %.2f \n", currentCustomerPair->getLabelId(), currentCluster->getDepotPair()->getLabelId(), distance);
+
+		//	printf("Showing distanceCustList size: %d \n", size);
+		//	distanceCustList->printFrogObjCol();
+		//	printf("\n");
+
+		//}
+
+		
 		bool itIsAMatch = fls->isAMatch_Cluster(currentCustomerPair, currentCluster, this);
 
 		if (itIsAMatch)
 		{
-			if (this->getCustomerListIndexByInternal(currentCustomerPair->getId()) == 19)
-			{
+			//if (this->getCustomerListIndexByInternal(currentCustomerPair->getId()) == 19)
+			//{
 				//printf("Stop in createMatchCustomerList: customer 19 found \n");
-			}
+			//}
 
 			matchCol->addLastFrogObject(currentCustomerPair);
 		}

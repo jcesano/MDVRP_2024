@@ -319,15 +319,27 @@ void Cluster::printClusterContentRecord(int customerIndexInCol)
 
 void Cluster::printFrogObj()
 {
-	//printf("SHOWING  CLUSTER CONTENT \n");
+	printf("SHOWING  CLUSTER CONTENT \n");
+
+	printf("Showing Cluster Value = %.2f \n", this->getValue());
+	printf("Cluster Depot Information \n");
+	this->getDepotPair()->printFrogObj();
 
 	int n_customers = this->getCustomerCol()->getSize();
 
 	//this->printClusterContentHeader();
+	printf("Showing Cluster Customers Information \n");
 
-	for(int i=0;i<n_customers;i++)
+	if(n_customers == 0)
 	{
-		this->printClusterContentRecord(i);
+		printf("Cluster is empty \n");
+	}
+	else 
+	{
+		for (int i = 0; i < n_customers; i++)
+		{
+			this->printClusterContentRecord(i);
+		}
 	}
 
 	//printf("FINISH OF SHOWING CLUSTER CONTENT \n");

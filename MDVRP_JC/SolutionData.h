@@ -10,6 +10,7 @@ class SolutionData : public FrogObject
 	int depotRemainingCap;
 	int numVehicles;
 	float routeCost;
+	int routeLength;
 
 public:
 
@@ -20,6 +21,7 @@ public:
 	void setDepotRemCap(int v_depotRemCap);
 	void setNumVehicles(int v_numVehicles);
 	void setRouteCost(float v_routeCost);
+	void setRouteLength(int v_routeLength);
 
 	int getDepotIndex();
 	int getDepotLabelId();
@@ -28,6 +30,7 @@ public:
 	int getDepotRemCap();
 	int getNumVehicles();
 	float getRouteCost();
+	int getRouteLength();
 
 	void writeSolutionDataHeader(FILE* pFile);
 	void printSolutionDataHeader();

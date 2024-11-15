@@ -410,6 +410,14 @@ void DecodedFrogLeapSolution::assignDecodedCustomersToVehicles(FrogLeapControlle
 	}
 }
 
+void DecodedFrogLeapSolution::cw2_assignDecodedCustomersToVehicles(FrogLeapController* controller, FrogLeapSolution* fls)
+{
+	for (int i = 0; i < this->numDepots; i++)
+	{
+		cw2_assignDecodedCustomersToDepotVehicles(i, controller, fls);
+	}
+}
+
 void DecodedFrogLeapSolution::cw_assignDecodedCustomersToVehicles(FrogLeapController* controller, FrogLeapSolution * fls)
 {
 	for (int i = 0; i < this->numDepots; i++)
@@ -733,6 +741,100 @@ void DecodedFrogLeapSolution::assignDecodedCustomersToDepotVehicles(int depotInd
 	}
 }
 
+void DecodedFrogLeapSolution::unassignDecodedCustomersFromDepotVehicles(int depotIndex, FrogLeapController * controller, FrogLeapSolution * fls)
+{
+	int size = this->vehicles[depotIndex]->getSize();
+	Vehicle* veh = NULL;
+			
+	for(int i = 0; i < size; i++)
+	{
+		// get and remove the first vehicle from the vehicle set of the depot
+		Vehicle* veh = (Vehicle*)this->vehicles[depotIndex]->getFrogObject(0);
+		this->vehicles[depotIndex]->removeFrogObject(0);
+
+		veh->unreferenceAndDeleteCustomerList();
+		delete veh;
+		veh = NULL;
+	}
+}
+
+void DecodedFrogLeapSolution::cw2_assignDecodedCustomersToDepotVehicles(int depotIndex, FrogLeapController* controller, FrogLeapSolution* fls)
+{
+	//int size = this->assignedCustomers[depotIndex]->getSize();
+	FrogObjectCol* clusterCustomers = fls->getClusterByIndex(depotIndex)->getCustomerCol();
+	int nCustomers = clusterCustomers->getSize();
+	Vehicle* veh = NULL;
+	int vehicleId;
+
+	int cw_handler_col_size = fls->getCWHandlerCol()->getSize();
+
+	ClarkWrightHandler* depot_cw = (ClarkWrightHandler*)fls->getCWHandlerCol()->getFrogObject(depotIndex);
+
+	int routes_size = depot_cw->getFinalRoutesSize();
+
+	// decode routes
+	for (int j = 0; j < routes_size; j++)
+	{
+		FrogObjectCol* current_route = depot_cw->getRoute(j);
+
+		// getting the Depot of route located in the first and last position of the route
+		Pair * start_depot = (Pair *)current_route->getFrogObject(0);
+				
+		int current_route_size = current_route->getSize();
+		Pair * final_depot = (Pair*)current_route->getFrogObject(current_route_size-1);
+		
+		// create the new vehicle for the current route
+		vehicleId = controller->getGlobalVehicleId();
+		veh = new Vehicle(vehicleId, this->ptrController);
+		veh->setDepotIndex(depotIndex);
+		this->vehicles[depotIndex]->addLastFrogObject(veh);
+
+		// adding the depot as the starting node for vehicle
+		veh->addLastCustomerPair(start_depot);
+
+
+		// adding customers of the current_route. This is the decoding of customers
+		for (int k = 1; k < current_route_size-1; k++)
+		{
+			Pair* customerPair = (Pair*)current_route->getFrogObject(k);
+			int customerDemand = customerPair->get_i_IntValue();
+			
+			int veh_remaining_capacity = veh->getRemainingCapacity();
+
+			if(veh_remaining_capacity >= customerDemand)
+			{
+				// assign the customer to vehicle
+				veh->decRemainingCapacity(customerDemand);
+				veh->incDemand(customerDemand);
+				veh->addLastCustomerPair(customerPair);
+			}
+			else
+			{
+				// we add the depot as the last node for the route of vehicle and create a new vehicle to continue with the current route
+				veh->addLastCustomerPair(final_depot);
+
+				// we create a new vehicle to continue with the rest of customers of current_route		
+				vehicleId = controller->getGlobalVehicleId();
+				veh = new Vehicle(vehicleId, this->ptrController);
+				veh->setDepotIndex(depotIndex);
+				this->vehicles[depotIndex]->addLastFrogObject(veh);
+
+				// adding the depot as the starting node for vehicle
+				veh->addLastCustomerPair(start_depot);
+
+				// assign the customer to vehicle
+				veh->decRemainingCapacity(customerDemand);
+				veh->incDemand(customerDemand);
+				veh->addLastCustomerPair(customerPair);
+			}			
+		}
+
+		// we add the depot as the last node for the route of vehicle and create a new vehicle to continue with the current route
+		veh->addLastCustomerPair(final_depot);
+	}
+}
+
+
 void DecodedFrogLeapSolution::cw_assignDecodedCustomersToDepotVehicles(int depotIndex, FrogLeapController* controller, FrogLeapSolution * fls)
 {
 	//int size = this->assignedCustomers[depotIndex]->getSize();
@@ -764,6 +866,7 @@ void DecodedFrogLeapSolution::cw_assignDecodedCustomersToDepotVehicles(int depot
 			int customerDemand = customerPair->get_i_IntValue();
 			veh = (Vehicle*)this->vehicles[depotIndex]->getFirstUpperValueFrogObject(customerDemand);
 			int vehicleId;
+
 			if (veh == NULL)
 			{
 				vehicleId = controller->getGlobalVehicleId();
@@ -997,6 +1100,51 @@ void DecodedFrogLeapSolution::orderCustomersWithClosestNextCriteria(FrogLeapCont
 	//return result;
 //}
 
+
+float DecodedFrogLeapSolution::cw2_evalSolution()
+{
+	Vehicle* vehPtr = NULL;
+	float result = 0;
+
+	for (int i = 0; i < this->numDepots; i++)
+	{
+		Pair* depotPair_i = (Pair*)this->ptrController->getDepotPairByIndex(i);
+		float eval = cw2_evalDepotSolution(i);
+		result = result + eval;
+	}
+
+	//for (int j = 0; j < this->vehicles->getSize(); j++)
+	//{
+	//	vehPtr = (Vehicle *)this->vehicles->getFrogObject(j);
+	//	result = result + vehPtr->evalPath(this->ptrController);
+	//}	
+
+	return result;
+}
+
+
+float DecodedFrogLeapSolution::cw_evalSolution()
+{
+	Vehicle* vehPtr = NULL;
+	float result = 0;
+
+	for (int i = 0; i < this->numDepots; i++)
+	{
+		Pair* depotPair_i = (Pair*)this->ptrController->getDepotPairByIndex(i);
+		float eval = cw_evalDepotSolution(i);
+		result = result + eval;
+	}
+
+	//for (int j = 0; j < this->vehicles->getSize(); j++)
+	//{
+	//	vehPtr = (Vehicle *)this->vehicles->getFrogObject(j);
+	//	result = result + vehPtr->evalPath(this->ptrController);
+	//}	
+
+	return result;
+}
+
+
 float DecodedFrogLeapSolution::evalSolution()
 {
 	Vehicle * vehPtr = NULL;
@@ -1014,6 +1162,37 @@ float DecodedFrogLeapSolution::evalSolution()
 	//	vehPtr = (Vehicle *)this->vehicles->getFrogObject(j);
 	//	result = result + vehPtr->evalPath(this->ptrController);
 	//}	
+
+	return result;
+}
+
+float DecodedFrogLeapSolution::cw2_evalDepotSolution(int depotIndex)
+{
+	Vehicle* vehPtr;
+	float result = 0;
+
+	int nsize = this->vehicles[depotIndex]->getSize();
+	for (int j = 0; j < nsize; j++)
+	{
+		vehPtr = (Vehicle*)this->vehicles[depotIndex]->getFrogObject(j);
+		result = result + vehPtr->cw2_evalPath(this->ptrController);
+	}
+
+	return result;
+}
+
+
+float DecodedFrogLeapSolution::cw_evalDepotSolution(int depotIndex)
+{
+	Vehicle* vehPtr;
+	float result = 0;
+
+	int nsize = this->vehicles[depotIndex]->getSize();
+	for (int j = 0; j < nsize; j++)
+	{
+		vehPtr = (Vehicle*)this->vehicles[depotIndex]->getFrogObject(j);
+		result = result + vehPtr->cw_evalPath(this->ptrController);
+	}
 
 	return result;
 }
@@ -1143,13 +1322,42 @@ void DecodedFrogLeapSolution::writeFrogObjWithSolutionData()
 	//fprintf(pFile, "DecodedFrogLeapSolution FINISHED \n");
 }
 
-void DecodedFrogLeapSolution::printDecodedSolutionByDepot(int i)
+void DecodedFrogLeapSolution::cw_printDecodedSolutionByDepot(int i, SolutionData * sd)
 {
 	Vehicle* vehPtr;
 
-	SolutionData* sd = new SolutionData();
+	int internalId = this->ptrController->getDepotInternalId(i);
+	sd->setDepotIndex(i);
+	sd->setDepotInternalId(internalId);
+	sd->setDepotLabelId(this->ptrController->getLabelId(internalId));
+	sd->setDepotCap(this->ptrController->getDepotCapacityByIndex(i));
+	sd->setDepotRemCap(this->ptrController->getDepotRemainingCapacityByIndex(i));
+	/*int internalId = this->ptrController->getDepotInternalId(i);*/
+	/*int labelId = this->ptrController->getLabelId(internalId);*/
+	/*int depotCapacity = this->ptrController->getDepotCapacityByIndex(i);
+	int depotRemaniningCapacity = this->ptrController->getDepotRemainingCapacityByIndex(i);*/
+	//fprintf(pFile, "Deposito index: %d; internalId: %d ; LabelId = ; Capacity = %d, RemainingCapacity = %d \n", i, internalId, labelId, depotCapacity, depotRemaniningCapacity);
 
-	sd->printSolutionDataHeader();
+	int numVehicles_i = this->vehicles[i]->getSize();
+
+	sd->setNumVehicles(numVehicles_i);
+
+	//fprintf(pFile, "Cantidad de vehiculos: %d \n", numVehicles_i);
+
+	for (int j = 0; j < numVehicles_i; j++)
+	{
+		vehPtr = (Vehicle*)this->vehicles[i]->getFrogObject(j);
+		vehPtr->cw_printFrogObj(this->ptrController, sd);
+	}	
+}
+
+void DecodedFrogLeapSolution::printDecodedSolutionByDepot(int i, SolutionData * sd)
+{
+	Vehicle* vehPtr;
+
+	//SolutionData* sd = new SolutionData();
+
+	//sd->printSolutionDataHeader();
 
 	int internalId = this->ptrController->getDepotInternalId(i);
 	sd->setDepotIndex(i);
@@ -1173,19 +1381,39 @@ void DecodedFrogLeapSolution::printDecodedSolutionByDepot(int i)
 	{
 		vehPtr = (Vehicle*)this->vehicles[i]->getFrogObject(j);
 		vehPtr->printFrogObj(this->ptrController, sd);
+	}	
+}
+
+
+void DecodedFrogLeapSolution::cw_printFrogObjWithSolutionData()
+{
+	SolutionData * sd = new SolutionData();
+
+	sd->printSolutionDataHeader();
+
+	for (int i = 0; i < this->numDepots; i++)
+	{
+		this->cw_printDecodedSolutionByDepot(i, sd);
 	}
 
 	delete sd;
 }
 
+
 void DecodedFrogLeapSolution::printFrogObjWithSolutionData()
 {
 	
+	SolutionData* sd = new SolutionData();
+
+	sd->printSolutionDataHeader();
+
+	
 	for(int i=0; i<this->numDepots; i++)
 	{
-		this->printDecodedSolutionByDepot(i);
+		this->printDecodedSolutionByDepot(i, sd);
 	}
 	
+	delete sd;
 	//Vehicle* vehPtr;
 
 									//fprintf(pFile, "\n Showing DecodedFrogLeapSolution data results: ");

@@ -1,0 +1,26 @@
+// ejecutar una busqueda local
+
+	
+	// tomar para el cluster i, los K (K=1 en principio) clientes más cercanos de otros clusters
+		// para cada cliente_k perteneciente a un cluster_K,  del conjunto de K clientes
+			// tomo el cliente_ik del cluster i, más cercano a cliente_k del cluster_K
+				// Los permuto
+					// backupAssignedDecodedCustomersToVehicles(cluster_i)
+					// backupAssignedDecodedCustomersToVehicles(cluster_k)
+
+				//Calculo las rutas y vehículos para el cluster i y el cluster cliente_k, sea cluster_K
+				//new_Cost = Evalúo el ruteo de Cluster_i y Cluster_K
+				if (new_Cost < routing_cost_cluster_i + routing_cost_cluster_K)
+				{
+					//mantengo la permutación
+					// unassignDecodedCustomersFromBackUpDepotVehicles(cluster_i)
+					// unassignDecodedCustomersFromBackUpDepotVehicles(cluster_k)
+
+				}
+				else{
+						// deshago la permutación
+						// unassignDecodedCustomersFromDepotVehicles(cluster_i)
+						// restoreAssignedDecodedCustomersToVehicles(cluster_i)
+						// unassignDecodedCustomersFromDepotVehicles(cluster_k)
+						// restoreAssignedDecodedCustomersToVehicles(cluster_k)
+					}

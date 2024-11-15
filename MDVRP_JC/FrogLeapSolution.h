@@ -161,6 +161,8 @@ class FrogLeapSolution: public FrogObject
 
 		DecodedFrogLeapSolution * decodeWholeSolutionWithClosestNextCriteria(FrogLeapController * controller);
 
+		DecodedFrogLeapSolution* decodeWholeSolutionWithClarkWrightCriteria2(FrogLeapController* controller);
+		
 		DecodedFrogLeapSolution* decodeWholeSolutionWithClarkWrightCriteria(FrogLeapController* controller);		
 
 		DecodedFrogLeapSolution* FrogLeapSolution::decodeWholeSolutionWithSimplifiedClosestNextCriteria(FrogLeapController* controller);

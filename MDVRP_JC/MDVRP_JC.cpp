@@ -228,7 +228,7 @@ int main()
 
 		//FrogLeapSolution* fls = new FrogLeapSolution(SolutionGenerationType::FrogLeaping, controller->getSourceType(), nCustomers, nDepots, 0);
 
-		if( i == 89)
+		if( i == 6)
 		{
 			printf("parar aca \n");
 		}
@@ -249,22 +249,23 @@ int main()
 				//dfls_1 = fls->decodeWholeSolutionWithClosestNextCriteria(controller);
 				//dfls_1 = fls->decodeWholeSolutionWithMixedCriteria(controller);
 				//dfls_1 = fls->decodeWholeSolutionWithAngularCriteria(controller);
-				dfls_1 = fls->decodeWholeSolutionWithClarkWrightCriteria(controller);
-				
+				//dfls_1 = fls->decodeWholeSolutionWithClarkWrightCriteria(controller);
+				dfls_1 = fls->decodeWholeSolutionWithClarkWrightCriteria2(controller);
 				//bool isFeasibleEval2 = dfls_2->getIsFeasibleSolution();
 				bool isFeasibleEval1 = dfls_1->getIsFeasibleSolution();
 
 				//if(isFeasibleEval2 == true && isFeasibleEval1 == true)
 				//{
-					evalSol = dfls_1->evalSolution();
+					//evalSol = dfls_1->cw_evalSolution();
+					//evalSol = dfls_1->evalSolution();
 					//evalSol2 = dfls_2->evalSolution();
 				//}
 
 				if (dfls_1->getIsFeasibleSolution() == true)
 				{
 					controller->incSuccessAttempts();
-					evalSol = dfls_1->evalSolution();
-
+					//evalSol = dfls_1->cw_evalSolution();
+					evalSol = dfls_1->cw2_evalSolution();
 					//printf("Showing CURRENT SOLUTION VALUE: %.3f\n", evalSol);
 					//controller->printCtrl();
 
@@ -284,7 +285,9 @@ int main()
 						fls->exportClusterColToVRP(controller);
 						fls->printFrogLeapSolutionArray(controller);
 						fls->printFrogLeapSolutionWithSolutionData(controller);
-						controller->printCtrlSolutionData(controller);
+						//controller->printCtrlSolutionData(controller);
+						controller->cw_printCtrlSolutionData(controller);
+						
 						//controller->writeCtrl();
 
 						//controller->getBestDecodedFrogLeapSolution();

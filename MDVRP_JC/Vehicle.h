@@ -52,6 +52,10 @@ class Vehicle : public FrogObject
 
 		int getDepotInternalId();
 
+		float cw2_evalPath(FrogLeapController* controller);
+
+		float cw_evalPath(FrogLeapController* controller);
+		
 		float evalPath(FrogLeapController * controller);
 
 		void setController(FrogLeapController * controller);
@@ -78,6 +82,8 @@ class Vehicle : public FrogObject
 
 		bool getIsFeasible();
 
+		void cw_setupLocalSearch();
+		
 		void setupLocalSearch();
 
 		float applyLocalSearch(FrogLeapController * controller);
@@ -117,11 +123,17 @@ class Vehicle : public FrogObject
 
 		void writeNodeCoordinateInfo(FrogLeapController * controller, int nodeInternalId, int orderInPath, int prevInternalId);
 
+		void cw_printFrogObj(FrogLeapController* controller, SolutionData* sd);
+
 		void printFrogObj(FrogLeapController* controller, SolutionData* sd);
 
-		void printVehicleRoute(SolutionData* sd);
+		void cw_printVehicleRoute(SolutionData* sd, FrogLeapController* controller);
 
-		void printSolutionData(SolutionData* sd);
+		void printVehicleRoute(SolutionData* sd, FrogLeapController* controller);
+
+		void cw_printSolutionData(SolutionData* sd, FrogLeapController* controller);
+		
+		void printSolutionData(SolutionData* sd, FrogLeapController* controller);
 
 		// abstract methods
 		void printFrogObj();

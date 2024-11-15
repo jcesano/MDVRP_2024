@@ -2737,6 +2737,33 @@ void FrogLeapSolution::printClusterColInfo()
 	printf("END OF SHOWING CLUSTER COLLECTION INFORMATION \n");
 }
 
+DecodedFrogLeapSolution* FrogLeapSolution::decodeWholeSolutionWithClarkWrightCriteria2(FrogLeapController* controller)
+{
+	int nSize = this->clusterCol->getSize();
+	this->cw_handler_col = new FrogObjectCol();
+
+	//this->printClusterColInfo();		
+
+	DecodedFrogLeapSolution* decodedSolution = new DecodedFrogLeapSolution(this->n_depots, controller);
+
+	for (int i = 0; i < nSize; i++)
+	{
+		ClarkWrightHandler* current_cw_handler = new ClarkWrightHandler(controller, this->getClusterByIndex(i));
+		current_cw_handler->cw_execute();
+		this->cw_handler_col->addLastFrogObject(current_cw_handler);
+	}
+
+	//controller->resetDepotRemainingCapacities();
+	decodedSolution->setUnReferenceBeforeDelete(true);
+	//decodedSolution->assignCustomersToDepotLists(controller, this);
+	//decodedSolution->orderCustomersWithClosestNextCriteria(controller);
+	//decodedSolution->assignDecodedCustomersToVehicles(controller);
+	decodedSolution->cw2_assignDecodedCustomersToVehicles(controller, this);
+
+	return decodedSolution;
+}
+
+
 DecodedFrogLeapSolution * FrogLeapSolution::decodeWholeSolutionWithClarkWrightCriteria(FrogLeapController * controller)
 {
 	int nSize = this->clusterCol->getSize();
@@ -3050,7 +3077,7 @@ void FrogLeapSolution::writeFLSWithSolutionDataHeader(FrogLeapController* contro
 void FrogLeapSolution::printFLSWithSolutionDataHeader(FrogLeapController* controller)
 {
 	printf("SHOWING CLUSTER INFORMATION\n");
-	printf("DepotIndex; DepotInternalId; DepotLabelId; DepotCapacity; DepotRemainingCap; AssignedCustomers; TotalCustomerDemands.\n");
+	printf("DepotIndex; DepotInternalId; DepotLabelId; DepotCapacity; DepotRemainingCap; AssignedCustomers; TotalCustomerDemands; TotalCustomersAssigned.\n");
 }
 
 void FrogLeapSolution::printFrogLeapSolutionWithSolutionData(FrogLeapController * controller)
@@ -3151,11 +3178,11 @@ void FrogLeapSolution::printAssignedCustomers(Cluster* cluster)
 
 		currentCustomer = (Pair*)cluster->getCustomerCol()->getFrogObject(nCustomers - 1);
 		totalCustomerDemands += currentCustomer->get_i_IntValue();
-		printf("%d(%d) - END; %d \n", currentCustomer->getLabelId(), currentCustomer->get_i_IntValue(), totalCustomerDemands);
+		printf("%d(%d) - END; %d; %d\n", currentCustomer->getLabelId(), currentCustomer->get_i_IntValue(), totalCustomerDemands, nCustomers);
 	}
 	else
 	{
-		printf("END; %d \n", totalCustomerDemands);
+		printf("END; %d; %d \n", totalCustomerDemands, nCustomers);
 	}
 }
 

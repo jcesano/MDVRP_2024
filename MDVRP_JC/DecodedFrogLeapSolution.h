@@ -2,6 +2,7 @@
 #define DECODEDFROGLEAPSOLUTION_H_
 
 #include "FrogObject.h"
+#include "SolutionData.h"
 #include <vector>
 using namespace std;
 
@@ -68,6 +69,8 @@ class DecodedFrogLeapSolution : public FrogObject
 
 		void assignDecodedCustomersToVehicles(FrogLeapController * controller);
 
+		void cw2_assignDecodedCustomersToVehicles(FrogLeapController* controller, FrogLeapSolution* fls);
+
 		void cw_assignDecodedCustomersToVehicles(FrogLeapController* controller, FrogLeapSolution * fls);
 
 		bool unassignedCustomerToVehicleExists(int depotIndex, FrogLeapController* controller);		
@@ -81,6 +84,10 @@ class DecodedFrogLeapSolution : public FrogObject
 		void scn_assignDecodedCustomersToDepotVehicles(int depotIndex, FrogLeapController* controller);
 
 		void assignDecodedCustomersToDepotVehicles(int depotIndex, FrogLeapController * controller);
+
+		void unassignDecodedCustomersFromDepotVehicles(int depotIndex, FrogLeapController* controller, FrogLeapSolution* fls);
+
+		void cw2_assignDecodedCustomersToDepotVehicles(int depotIndex, FrogLeapController* controller, FrogLeapSolution* fls);
 
 		void cw_assignDecodedCustomersToDepotVehicles(int depotIndex, FrogLeapController* controller, FrogLeapSolution* fls);
 
@@ -100,11 +107,19 @@ class DecodedFrogLeapSolution : public FrogObject
 
 		Pair * getClosestCustomerIndexToCustomer(int customerIndex, int depotIndex, FrogLeapController * controller);
 
+		float cw2_evalSolution();
+
+		float cw_evalSolution();
+
 		float evalSolution();
 
 		void unreferenceAndDeleteVehicles(FrogObjectCol*& vehicles);
 
 		float evalVehiclePaths(FrogObjectCol* vehicles);
+
+		float cw2_evalDepotSolution(int depotIndex);
+
+		float cw_evalDepotSolution(int depotIndex);
 
 		float evalDepotSolution(int depotIndex);
 
@@ -141,9 +156,13 @@ class DecodedFrogLeapSolution : public FrogObject
 
 		void writeFrogObjWithSolutionData();
 
+		void cw_printFrogObjWithSolutionData();
+
 		void printFrogObjWithSolutionData();
 
-		void printDecodedSolutionByDepot(int i);
+		void cw_printDecodedSolutionByDepot(int i, SolutionData * sd);
+		
+		void printDecodedSolutionByDepot(int i, SolutionData * sd);
 
 		void setCustomersAsNotAssignedToVehicles(FrogLeapController* controller);
 

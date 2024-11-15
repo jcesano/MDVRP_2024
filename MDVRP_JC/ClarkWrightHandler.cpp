@@ -37,7 +37,7 @@ void ClarkWrightHandler::create_Null_Routes()
 
 	for (int i = 0; i < n_Customers; i++)
 	{
-		this->routes[i] = NULL;//create_Route(i); // create an initial route with (depot, customer_i, depot)
+		this->routes[i] = NULL;//	create_Route(i); // create an initial route with (depot, customer_i, depot)
 	}
 
 	//this->printRoutesStats();
@@ -132,6 +132,15 @@ void ClarkWrightHandler::select_final_routes()
 void ClarkWrightHandler::create_SavingsList()
 {
 	Pair* pair_ptr = NULL, * currentCustomer_i = NULL, * currentCustomer_j = NULL;
+
+	// testing code
+	int depotLabelId = this->cluster->getDepotPair()->getLabelId();
+
+	if(depotLabelId == 255)
+	{
+		//printf("PARAR ACA \n");
+	}
+	// end of testing code
 
 	int n = this->cluster->getCustomerCol()->getSize();
 	int aux = 0;
@@ -729,8 +738,8 @@ void ClarkWrightHandler::print_final_routes()
 void ClarkWrightHandler::cw_execute()
 {
 	create_SavingsList();
-	//create_Routes();
-	create_Null_Routes();
+	create_Routes();
+	//create_Null_Routes();
 	merge_Routes();
 	select_final_routes();
 	//print_final_routes();

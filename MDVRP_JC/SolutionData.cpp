@@ -36,6 +36,11 @@ void SolutionData::setRouteCost(float v_routeCost)
 	this->routeCost = v_routeCost;
 }
 
+void SolutionData::setRouteLength(int v_routeLength)
+{
+	this->routeLength;
+}
+
 int SolutionData::getDepotIndex()
 {
 	return this->depotIndex;
@@ -71,6 +76,11 @@ float SolutionData::getRouteCost()
 	return this->routeCost;
 }
 
+int SolutionData::getRouteLength()
+{
+	return this->routeCost;
+}
+
 void SolutionData::writeSolutionDataHeader(FILE* pFile)
 {
 	fprintf(pFile, "DepotIndex; DepotInternalId; DepotLabelId; DepotCapacity; DepotRemainingCap; NumVehicles; RouteCost; Route; RouteDemand \n");
@@ -78,7 +88,7 @@ void SolutionData::writeSolutionDataHeader(FILE* pFile)
 
 void SolutionData::printSolutionDataHeader()
 {
-	printf("DepotIndex; DepotInternalId; DepotLabelId; DepotCapacity; DepotRemainingCap; NumVehicles; RouteCost; Route; RouteDemand \n");
+	printf("DepotIndex; DepotInternalId; DepotLabelId; DepotCapacity; DepotRemainingCap; NumVehicles; RouteCost; Route; RouteDemand; RouteLength \n");
 }
 
 void SolutionData::writeSolutionData(FILE* pFile)

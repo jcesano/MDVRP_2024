@@ -176,6 +176,32 @@ void FrogLeapController::applyLocalSearch()
 	this->setMinCostValue(newCost);
 }
 
+
+void FrogLeapController::cw_printCtrlSolutionData(FrogLeapController* controller)
+{
+	FILE* pFile = this->getPFile();
+
+	//fprintf(pFile, "\n \n SHOWING DATA OF FROGLEAPING CONTROLLER \n");
+	if (this->ptrBestSolution != NULL)
+	{
+		this->ptrBestSolution->cw_printFrogObjWithSolutionData();
+	}
+	else
+	{
+		fprintf(pFile, "\n NO FEASIBLE SOLUTION FOUND: ptrBestSolution IS NULL \n");
+	}
+
+	//fprintf(pFile, "\n Summary of Best Found Solution \n");
+	//fprintf(pFile, "	Time Seed used %lld \n", (long long)this->timeSeedUsed);
+	//fprintf(pFile, "	Number of success attempts: %d \n", this->successAttempts);
+	//fprintf(pFile, "	Number of fail attempts: %d \n", this->failAttempts);
+	//fprintf(pFile, "	Number of TOTAL Improvements: %d \n", this->getTotalImprovements());
+	//fprintf(pFile, "	Number of Global Search Improvements: %d \n", this->globalImprovements);
+	//fprintf(pFile, "	Number of Local Search Improvements: %d \n", this->localSearchImprovements);
+	//fprintf(pFile, "	Evaluation of best found solution is: %.3f \n \n", this->getMinCostValue());
+}
+
+
 void FrogLeapController::printCtrlSolutionData(FrogLeapController * controller)
 {
 	FILE* pFile = this->getPFile();

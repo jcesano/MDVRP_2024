@@ -414,6 +414,8 @@ class FrogLeapController
 		void cw_loadCustomersAndDepots();
 		void cw_loadVehicleCapacity();
 
+		void cw_printCtrlSolutionData(FrogLeapController* controller);
+
 		void printCtrlSolutionData(FrogLeapController* controller);
 
 		void writeSeed();

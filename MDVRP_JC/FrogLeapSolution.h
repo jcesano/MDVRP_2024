@@ -165,9 +165,9 @@ class FrogLeapSolution: public FrogObject
 		
 		DecodedFrogLeapSolution* decodeWholeSolutionWithClarkWrightCriteria(FrogLeapController* controller);		
 
-		DecodedFrogLeapSolution* FrogLeapSolution::decodeWholeSolutionWithSimplifiedClosestNextCriteria(FrogLeapController* controller);
+		DecodedFrogLeapSolution* decodeWholeSolutionWithSimplifiedClosestNextCriteria(FrogLeapController* controller);
 
-		DecodedFrogLeapSolution* FrogLeapSolution::decodeWholeSolutionWithMixedCriteria(FrogLeapController* controller);
+		DecodedFrogLeapSolution* decodeWholeSolutionWithMixedCriteria(FrogLeapController* controller);
 
 		DecodedFrogLeapSolution * decodeFrogLeapWholeSolutionWithSimplifiedClosestNextCriteria(FrogLeapController* controller, bool adjustVehicleRoutes);
 		

@@ -13,8 +13,10 @@
 #include "FeasibleSolCol.h"
 #include "DistanceTable.h"
 
-//#include "ortools/constraint_solver/routing.h"
-//#include "ortools/constraint_solver/routing_parameters.h"
+//#include <cstdint>
+#define ABSL_NO_HAVE_INTRINSIC_INT128
+#include "ortools/constraint_solver/routing.h"
+#include "ortools/constraint_solver/routing_parameters.h"
 
 #include <iostream>
 #include <time.h>
@@ -60,13 +62,13 @@ int main()
 
 	FrogLeapController * controller = new FrogLeapController();
 
-	char* fileName = "casog01.vrp";
+	const char* fileName = "casog01.vrp";
 	//char * fileName = "casog09.vrp";
 	//char* fileName = "ClusterId_0_Input.vrp";
  	//char* fileName = "ClusterId_1_copy.vrp";
 	//char* fileName = "casoch01.vrp";
 	//char* fileName = "casoch02swp.txt";
-	char *testCaseFileName = "TestCase01Casog01 - copia.txt";
+	const char *testCaseFileName = "TestCase01Casog01 - copia.txt";
 
 	
 	DecodedFrogLeapSolution* dfls_1 = NULL, * dfls_2 = NULL;

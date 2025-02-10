@@ -272,7 +272,7 @@ void FrogLeapController::printCtrl()
 	printf("	Evaluation of best found solution is: %.3f \n \n", this->getMinCostValue());
 }
 
-void FrogLeapController::loadTSPEUC2D_Data(char * fileName){
+void FrogLeapController::loadTSPEUC2D_Data(const char * fileName){
 	
 	FILE * filePtr;	
 	
@@ -512,7 +512,7 @@ void FrogLeapController::loadTSPEUC2D_Data(char * fileName){
 	}
 }
 
-DecodedFrogLeapSolution * FrogLeapController::loadTestCaseData(char * fileName)
+DecodedFrogLeapSolution * FrogLeapController::loadTestCaseData(const char * fileName)
 {
 	FILE * filePtr;
 	//char * sectionTag = new char[50], *separatorChar = new char[1], buf[LINE_MAX];
@@ -3076,7 +3076,7 @@ void FrogLeapController::openOutPutFile()
 	//}
 
 
-	outPutFileName = "outPutFL2.txt";
+	const char* outPutFileName = "outPutFL2.txt";
 
 	// Intentar abrir el archivo de salida de forma segura
 	errno_t err = fopen_s(&pFile, outPutFileName, "w");

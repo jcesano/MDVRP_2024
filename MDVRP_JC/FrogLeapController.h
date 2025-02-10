@@ -127,9 +127,9 @@ class FrogLeapController
 
 		void writeCtrl();
 
-		void loadTSPEUC2D_Data(char * fileName);
+		void loadTSPEUC2D_Data(const char * fileName);
 
-		DecodedFrogLeapSolution * loadTestCaseData(char * fileName);
+		DecodedFrogLeapSolution * loadTestCaseData(const char * fileName);
 
 		void readTSPSection(FILE * filePtr, char * ctrlSectionTag, char * ctrlSeparatorChar, int * off_set);
 
@@ -329,11 +329,11 @@ class FrogLeapController
 				
 		bool isAFullMatch(Pair* currentCustomerPair, Pair* currentDepotPair);
 
-		void FrogLeapController::upDateRemainingCapacity(Pair* depotPair, Pair* customerPair);
+		void upDateRemainingCapacity(Pair* depotPair, Pair* customerPair);
 
 		Pair * getFirstDepotPairWithRemainingCapacity(FrogObjectCol * depotListOrderded, int customerDemand);
 
-		Cluster* FrogLeapController::getFirstClusterWithRemainingCapacity(FrogObjectCol* clusterListOrdered, Pair * customerPair, FrogLeapController* controller);
+		Cluster* getFirstClusterWithRemainingCapacity(FrogObjectCol* clusterListOrdered, Pair * customerPair, FrogLeapController* controller);
 
 		int getTotalDemandOrCapacity(FrogObjectCol * pairCol);
 

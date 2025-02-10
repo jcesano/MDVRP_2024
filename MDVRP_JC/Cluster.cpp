@@ -218,12 +218,13 @@ void Cluster::exportClusterToVRP(FrogLeapController * controller)
 {
 	int number = this->getDepotPair()->getLabelId();
 	char fileName[50];
-	std::sprintf(fileName, "ClusterId_%d.vrp", number);
-	
+	//std::sprintf(fileName, "ClusterId_%d.vrp", number);
+	sprintf_s(fileName, sizeof(fileName), "ClusterId_%d.vrp", number);
 	FILE* file = controller->openFile(fileName);
 
 	char clusterName[50];
-	std::sprintf(clusterName, "ClusterId_%d", number);
+	//std::sprintf(clusterName, "ClusterId_%d", number);
+	sprintf_s(clusterName, sizeof(clusterName), "ClusterId_%d", number);
 	std::string strClusterName(clusterName);
 	
 	if (file == NULL) {

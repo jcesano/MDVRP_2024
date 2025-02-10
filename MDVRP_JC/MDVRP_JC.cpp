@@ -13,6 +13,9 @@
 #include "FeasibleSolCol.h"
 #include "DistanceTable.h"
 
+//#include "ortools/constraint_solver/routing.h"
+//#include "ortools/constraint_solver/routing_parameters.h"
+
 #include <iostream>
 #include <time.h>
 #include <chrono>
@@ -57,7 +60,8 @@ int main()
 
 	FrogLeapController * controller = new FrogLeapController();
 
-	char * fileName = "casog01.vrp";
+	char* fileName = "casog01.vrp";
+	//char * fileName = "casog09.vrp";
 	//char* fileName = "ClusterId_0_Input.vrp";
  	//char* fileName = "ClusterId_1_copy.vrp";
 	//char* fileName = "casoch01.vrp";

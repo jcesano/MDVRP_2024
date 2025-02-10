@@ -278,21 +278,27 @@ void FrogLeapController::loadTSPEUC2D_Data(char * fileName){
 	
 	TspLibEuc2D * tspLibEuc2DPtrAux = new TspLibEuc2D();
 	
-	char * sectionTag = new char[50], *separatorChar = new char[1], buf[LINE_MAX];
+	//char * sectionTag = new char[50], *separatorChar = new char[1], buf[LINE_MAX];
+	char sectionTag[50], separatorChar[10], buf[LINE_MAX];
 
 	string ctrlSectionTagStr, ctrlSeparatorCharStr, sectionTagStr, separatorCharStr;
 
 	ctrlSeparatorCharStr = string(":");
 		
 	// Opening file
-	if ((filePtr = fopen(fileName, "r")) != NULL)
+	//if ((filePtr = fopen(fileName, "r")) != NULL)
+	if ((fopen_s(&filePtr, fileName, "r")) == 0)
 	{
 		
 		// Reading section tag NAME
-		char * name = new char[50];
+		//char * name = new char[50];
+		char name[50];
+
 		if (fgets(buf, sizeof buf, filePtr) != NULL)
 		{
-			sscanf(buf, "%s %s %s", sectionTag, separatorChar, name);
+			//sscanf(buf, "%s %s %s", sectionTag, separatorChar, name);
+			sscanf_s(buf, "%s %s %s", sectionTag, (unsigned int)sizeof(sectionTag), separatorChar, (unsigned int)sizeof(separatorChar), name, (unsigned int)sizeof(name));
+
 			printf("Section: %s %s %s \n", sectionTag, separatorChar, name);
 
 			sectionTagStr = sectionTag;
@@ -313,10 +319,14 @@ void FrogLeapController::loadTSPEUC2D_Data(char * fileName){
 		}
 
 		// reading COMMENT
-		char * comment = new char[100];
+		//char * comment = new char[100];
+		char comment[100];
+
 		if (fgets(buf, sizeof buf, filePtr) != NULL)
 		{
-			sscanf(buf, "%s %s %s", sectionTag, separatorChar, comment);
+			//sscanf(buf, "%s %s %s", sectionTag, separatorChar, comment);
+			sscanf_s(buf, "%s %s %s", sectionTag, (unsigned int)sizeof(sectionTag), separatorChar, (unsigned int)sizeof(separatorChar), comment, (unsigned int)sizeof(comment));
+
 			printf("Section: %s %s %s \n", sectionTag, separatorChar, comment);
 
 			sectionTagStr = sectionTag;
@@ -337,10 +347,14 @@ void FrogLeapController::loadTSPEUC2D_Data(char * fileName){
 
 		
 		// reading type
-		char * type = new char[50];
+		//char * type = new char[50];
+		char type[50];
+
 		if (fgets(buf, sizeof buf, filePtr) != NULL)
 		{
-			sscanf(buf, "%s %s %s", sectionTag, separatorChar, type);
+			//sscanf(buf, "%s %s %s", sectionTag, separatorChar, type);
+			sscanf_s(buf, "%s %s %s", sectionTag, (unsigned int)sizeof(sectionTag), separatorChar, (unsigned int)sizeof(separatorChar), type, (unsigned int)sizeof(type));
+
 			printf("Section: %s %s %s \n", sectionTag, separatorChar, type);
 
 			sectionTagStr = sectionTag;
@@ -364,7 +378,9 @@ void FrogLeapController::loadTSPEUC2D_Data(char * fileName){
 		int dimension;
 		if (fgets(buf, sizeof buf, filePtr) != NULL)
 		{
-			sscanf(buf, "%s %s %d", sectionTag, separatorChar, &dimension);
+			//sscanf(buf, "%s %s %d", sectionTag, separatorChar, &dimension);
+			sscanf_s(buf, "%49s %9s %d", sectionTag, (unsigned int)50, separatorChar, (unsigned int)10, &dimension);
+
 			printf("Section: %s %s %d \n", sectionTag, separatorChar, dimension);
 
 			sectionTagStr = sectionTag;
@@ -385,14 +401,25 @@ void FrogLeapController::loadTSPEUC2D_Data(char * fileName){
 		}
 		
 		// reading EDGE_WEIGHT_TYPE
-		char * edge_weight_type = new char[50];;
+		//char * edge_weight_type = new char[50];;
+		char edge_weight_type[50];
+
 		if (fgets(buf, sizeof buf, filePtr) != NULL)
 		{
-			sscanf(buf, "%s %s %s", sectionTag, separatorChar, edge_weight_type);
+			//sscanf(buf, "%s %s %s", sectionTag, separatorChar, edge_weight_type);
+			sscanf_s(buf, "%49s %9s %49s",
+				sectionTag, (unsigned int)sizeof(sectionTag),
+				separatorChar, (unsigned int)sizeof(separatorChar),
+				edge_weight_type, (unsigned int)sizeof(edge_weight_type));
+
 			printf("Section: %s %s %s \n", sectionTag, separatorChar, edge_weight_type);
 
+			//sectionTagStr = sectionTag;
+			//separatorCharStr = separatorChar;
+
 			sectionTagStr = sectionTag;
-			separatorCharStr = separatorChar;
+			separatorCharStr = std::string(separatorChar, 1); // Convertir correctamente el carácter en un string
+
 
 			ctrlSectionTagStr = string("EDGE_WEIGHT_TYPE");
 			if (sectionTagStr.compare(ctrlSectionTagStr) != 0 || separatorCharStr.compare(ctrlSeparatorCharStr) != 0)
@@ -413,11 +440,19 @@ void FrogLeapController::loadTSPEUC2D_Data(char * fileName){
 		int capacity;
 		if (fgets(buf, sizeof buf, filePtr) != NULL)
 		{
-			sscanf(buf, "%s %s %d", sectionTag, separatorChar, &capacity);
+			//sscanf(buf, "%s %s %d", sectionTag, separatorChar, &capacity);
+			sscanf_s(buf, "%49s %9s %d",
+				sectionTag, (unsigned int)sizeof(sectionTag),
+				separatorChar, (unsigned int)sizeof(separatorChar),
+				&capacity);
+
 			printf("Section: %s %s %d \n", sectionTag, separatorChar, capacity);
 
+			//sectionTagStr = sectionTag;
+			//separatorCharStr = separatorChar;
+
 			sectionTagStr = sectionTag;
-			separatorCharStr = separatorChar;
+			separatorCharStr = std::string(separatorChar, 1); // Convertir correctamente el carácter en un string
 
 			ctrlSectionTagStr = string("CAPACITY");
 			if (sectionTagStr.compare(ctrlSectionTagStr) != 0 || separatorCharStr.compare(ctrlSeparatorCharStr) != 0)
@@ -434,13 +469,18 @@ void FrogLeapController::loadTSPEUC2D_Data(char * fileName){
 		}
 
 		// reading Node Coord Section
-		char * nodeCoordSection = new char[50];;
+		//char * nodeCoordSection = new char[50];
+		char nodeCoordSection[50];
+
 		if (fgets(buf, sizeof buf, filePtr) != NULL)
 		{
-			sscanf(buf, "%s ", nodeCoordSection);
+			//sscanf(buf, "%s ", nodeCoordSection);
+			sscanf_s(buf, "%49s", nodeCoordSection, (unsigned int)sizeof(nodeCoordSection));
+
 			printf("Section: %s \n", nodeCoordSection);
 
-			sectionTagStr = nodeCoordSection;
+			//sectionTagStr = nodeCoordSection;
+			sectionTagStr = std::string(nodeCoordSection);
 			
 			ctrlSectionTagStr = string("NODE_COORD_SECTION");
 			if (sectionTagStr.compare(ctrlSectionTagStr) != 0)
@@ -475,24 +515,36 @@ void FrogLeapController::loadTSPEUC2D_Data(char * fileName){
 DecodedFrogLeapSolution * FrogLeapController::loadTestCaseData(char * fileName)
 {
 	FILE * filePtr;
-	char * sectionTag = new char[50], *separatorChar = new char[1], buf[LINE_MAX];
+	//char * sectionTag = new char[50], *separatorChar = new char[1], buf[LINE_MAX];
+	char sectionTag[50], separatorChar[1], buf[LINE_MAX];
 	string ctrlSectionTagStr, ctrlSeparatorCharStr, sectionTagStr, separatorCharStr;
 
 	TestCaseObj * testCaseObjPtr = new TestCaseObj();
 
 	ctrlSeparatorCharStr = string(":");
 
-	if ((filePtr = fopen(fileName, "r")) != NULL)
+	//if ((filePtr = fopen(fileName, "r")) != NULL)
+	
+	if ((fopen_s(&filePtr, fileName, "r")) == 0)
 	{
 		// Reading section tag NAME
-		char * name = new char[50];
+		//char * name = new char[50];
+		char name[50];
 		if (fgets(buf, sizeof buf, filePtr) != NULL)
 		{
-			sscanf(buf, "%s %s %s", sectionTag, separatorChar, name);
+			//sscanf(buf, "%s %s %s", sectionTag, separatorChar, name);
+			sscanf_s(buf, "%49s %49s %49s", sectionTag, (unsigned int)sizeof(sectionTag),
+				separatorChar, (unsigned int)sizeof(separatorChar),
+				name, (unsigned int)sizeof(name));
+
 			printf("Section: %s %s %s \n", sectionTag, separatorChar, name);
 
+			//sectionTagStr = sectionTag;
+			//separatorCharStr = separatorChar;
+
 			sectionTagStr = sectionTag;
-			separatorCharStr = separatorChar;
+			separatorCharStr = std::string(separatorChar);
+
 
 			ctrlSectionTagStr = string("NAME");
 			
@@ -514,7 +566,12 @@ DecodedFrogLeapSolution * FrogLeapController::loadTestCaseData(char * fileName)
 		char * comment = new char[100];
 		if (fgets(buf, sizeof buf, filePtr) != NULL)
 		{
-			sscanf(buf, "%s %s %s", sectionTag, separatorChar, comment);
+			//sscanf(buf, "%s %s %s", sectionTag, separatorChar, comment);
+			sscanf_s(buf, "%49s %49s %49s",
+				sectionTag, (unsigned int)sizeof(sectionTag),
+				separatorChar, (unsigned int)sizeof(separatorChar),
+				comment, (unsigned int)sizeof(comment));
+
 			printf("Section: %s %s %s \n", sectionTag, separatorChar, comment);
 
 			sectionTagStr = sectionTag;
@@ -538,7 +595,12 @@ DecodedFrogLeapSolution * FrogLeapController::loadTestCaseData(char * fileName)
 		int dimension;
 		if (fgets(buf, sizeof buf, filePtr) != NULL)
 		{
-			sscanf(buf, "%s %s %d", sectionTag, separatorChar, &dimension);
+			//sscanf(buf, "%s %s %d", sectionTag, separatorChar, &dimension);
+			sscanf_s(buf, "%49s %49s %d",
+				sectionTag, (unsigned int)sizeof(sectionTag),
+				separatorChar, (unsigned int)sizeof(separatorChar),
+				&dimension);
+
 			printf("Section: %s %s %d \n", sectionTag, separatorChar, dimension);
 
 			sectionTagStr = sectionTag;
@@ -563,7 +625,12 @@ DecodedFrogLeapSolution * FrogLeapController::loadTestCaseData(char * fileName)
 		char * type = new char[50];
 		if (fgets(buf, sizeof buf, filePtr) != NULL)
 		{
-			sscanf(buf, "%s %s %s", sectionTag, separatorChar, type);
+			//sscanf(buf, "%s %s %s", sectionTag, separatorChar, type);
+			sscanf_s(buf, "%49s %49s %49s",
+				sectionTag, (unsigned int)sizeof(sectionTag),
+				separatorChar, (unsigned int)sizeof(separatorChar),
+				type, (unsigned int)sizeof(type));
+
 			printf("Section: %s %s %s \n", sectionTag, separatorChar, type);
 
 			sectionTagStr = sectionTag;
@@ -588,7 +655,12 @@ DecodedFrogLeapSolution * FrogLeapController::loadTestCaseData(char * fileName)
 		int capacity;
 		if (fgets(buf, sizeof buf, filePtr) != NULL)
 		{
-			sscanf(buf, "%s %s %d", sectionTag, separatorChar, &capacity);
+			//sscanf(buf, "%s %s %d", sectionTag, separatorChar, &capacity);
+			sscanf_s(buf, "%49s %49s %d",
+				sectionTag, (unsigned int)sizeof(sectionTag),
+				separatorChar, (unsigned int)sizeof(separatorChar),
+				&capacity);
+
 			printf("Section: %s %s %d \n", sectionTag, separatorChar, capacity);
 
 			sectionTagStr = sectionTag;
@@ -613,7 +685,9 @@ DecodedFrogLeapSolution * FrogLeapController::loadTestCaseData(char * fileName)
 		char * assignationSection = new char[50];;
 		if (fgets(buf, sizeof buf, filePtr) != NULL)
 		{
-			sscanf(buf, "%s ", assignationSection);
+			//sscanf(buf, "%s ", assignationSection);
+			sscanf_s(buf, "%49s", assignationSection, (unsigned int)sizeof(assignationSection));
+
 			printf("Section: %s \n", assignationSection);
 
 			sectionTagStr = assignationSection;
@@ -661,7 +735,9 @@ void FrogLeapController::loadAssignations(FILE * filePtr, TestCaseObj * testCase
 		{
 			if(vehicleDataLoaded == false)
 			{
-				sscanf(buf, "%d %d %d", &nodeLabelId, &depot_capacity, &customer_load);
+				//sscanf(buf, "%d %d %d", &nodeLabelId, &depot_capacity, &customer_load);
+				sscanf_s(buf, "%d %d %d", &nodeLabelId, &depot_capacity, &customer_load);
+
 				printf("Depot data: %d %d %d \n", nodeLabelId, depot_capacity, customer_load);
 
 				currPair = new Pair(PairType::IntVsInt, nodeLabelId);
@@ -679,7 +755,9 @@ void FrogLeapController::loadAssignations(FILE * filePtr, TestCaseObj * testCase
 				int customerLabelId;
 				if(assignationBlockLoaded == false)
 				{					
-					sscanf(buf, "%d ", &customerLabelId);
+					//sscanf(buf, "%d ", &customerLabelId);
+					sscanf_s(buf, "%d ", &customerLabelId);
+
 					printf("Customer Label Id : %d \n", customerLabelId);
 					
 					if(customerLabelId == -1)
@@ -721,6 +799,7 @@ DecodedFrogLeapSolution * FrogLeapController::loadAssignations2(FILE * filePtr, 
 	bool stopLoop = false, vehicleDataLoaded = false, assignationBlockLoaded = false;
 	int depotLabelId = 0, vehicle_cost = 0, vehicle_load = 0, v_dimension = testCaseObjPtr->getDimension();
 	char buf[LINE_MAX];
+	char* context = nullptr;  // Variable para strtok_s
 	Pair * currPair;
 	float globalCounter = 0;
 	int depotIndex;
@@ -734,8 +813,9 @@ DecodedFrogLeapSolution * FrogLeapController::loadAssignations2(FILE * filePtr, 
 
 	while (fgets(buf, sizeof buf, filePtr) != NULL)
 	{
-		char* tok = strtok(buf, " ");
-			
+		//char* tok = strtok(buf, " ");
+		char* tok = strtok_s(buf, " ", &context);
+
 		// read data of the depot vehicle
 		count = 0;
 			
@@ -760,7 +840,8 @@ DecodedFrogLeapSolution * FrogLeapController::loadAssignations2(FILE * filePtr, 
 				cout << vehicle_load << endl;  // Print the current token before getting the next token.
 			}
 								
-			tok = strtok(NULL, " ");
+			//tok = strtok(NULL, " ");
+			tok = strtok_s(NULL, " ", &context);
 			count++;
 		}
 
@@ -787,7 +868,8 @@ DecodedFrogLeapSolution * FrogLeapController::loadAssignations2(FILE * filePtr, 
 				
 			veh->addLastCustomerPair(customerPair);
 
-			tok = strtok(NULL, " ");
+			//tok = strtok(NULL, " ");
+			tok = strtok_s(NULL, " ", &context);
 
 			globalCounter = globalCounter + 1;
 		}
@@ -805,6 +887,7 @@ FrogLeapSolution * FrogLeapController::loadAssignations3(FILE * filePtr, TestCas
 	bool stopLoop = false, vehicleDataLoaded = false, assignationBlockLoaded = false;
 	int depotLabelId = 0, vehicle_cost = 0, vehicle_load = 0, v_dimension = testCaseObjPtr->getDimension();
 	char buf[LINE_MAX];
+	char* context = nullptr;  // Variable para strtok_s
 	Pair * currPair = NULL;
 	float globalCounter = 0, fvalue;
 	int depotIndex, customerLabelId, customerIndex;
@@ -815,7 +898,8 @@ FrogLeapSolution * FrogLeapController::loadAssignations3(FILE * filePtr, TestCas
 		
 	while (fgets(buf, sizeof buf, filePtr) != NULL)
 	{
-		char* tok = strtok(buf, " ");
+		//char* tok = strtok(buf, " ");
+		char* tok = strtok_s(buf, " ", &context);
 
 		// read data of the depot vehicle
 		count = 0;
@@ -841,7 +925,8 @@ FrogLeapSolution * FrogLeapController::loadAssignations3(FILE * filePtr, TestCas
 				cout << vehicle_load << endl;  // Print the current token before getting the next token.
 			}
 
-			tok = strtok(NULL, " ");
+			//tok = strtok(NULL, " ");
+			tok = strtok_s(NULL, " ", &context);
 			count++;
 		}
 
@@ -855,7 +940,8 @@ FrogLeapSolution * FrogLeapController::loadAssignations3(FILE * filePtr, TestCas
 			fvalue = depotIndex + (globalCounter / 1000);
 			frogLeapSolution->setFLValue(customerIndex, fvalue);
 
-			tok = strtok(NULL, " ");
+			//tok = strtok(NULL, " ");
+			tok = strtok_s(NULL, " ", &context);
 
 			globalCounter = globalCounter + 1;
 		}		
@@ -875,7 +961,9 @@ void FrogLeapController::loadCoordinates(FILE * filePtr, TspLibEuc2D * tspLibEuc
 	{
 		if (fgets(buf, sizeof buf, filePtr) != NULL)
 		{
-			sscanf(buf, "%d %d %d", &nodeId, &x_coord, &y_coord);
+			//sscanf(buf, "%d %d %d", &nodeId, &x_coord, &y_coord);
+			sscanf_s(buf, "%d %d %d", &nodeId, &x_coord, &y_coord);
+
 			printf("Coordinate: %d %d %d \n", nodeId, x_coord, y_coord);
 
 			Pair * currPair = new Pair(PairType::IntVsInt, nodeId);
@@ -898,12 +986,15 @@ void FrogLeapController::loadCoordinates(FILE * filePtr, TspLibEuc2D * tspLibEuc
 void FrogLeapController::loadDemand(FILE * filePtr, TspLibEuc2D * tspLibEuc2DPtr)
 {	
 	int nodeId = -1, demand = 0;
-	char * demandSection = new char[50];
+	//char * demandSection = new char[50];
+	char demandSection[50];
 	char buf [LINE_MAX];
 
 	if (fgets(buf, sizeof buf, filePtr) != NULL)
 	{
-		sscanf(buf, "%s ", demandSection);
+		//sscanf(buf, "%s ", demandSection);
+		sscanf_s(buf, "%s", demandSection, (unsigned int)sizeof(demandSection));
+
 		printf("Section: %s \n", demandSection);
 	}
 
@@ -923,7 +1014,9 @@ void FrogLeapController::loadDemand(FILE * filePtr, TspLibEuc2D * tspLibEuc2DPtr
 	{
 		if (fgets(buf, sizeof buf, filePtr) != NULL)
 		{
-			sscanf(buf, "%d %d", &nodeId, &demand);
+			//sscanf(buf, "%d %d", &nodeId, &demand);
+			sscanf_s(buf, "%d %d", &nodeId, &demand);
+
 			printf("Demand: %d %d \n", nodeId, demand);
 
 	
@@ -947,12 +1040,15 @@ void FrogLeapController::loadDemand(FILE * filePtr, TspLibEuc2D * tspLibEuc2DPtr
 void FrogLeapController::loadDepots(FILE * filePtr, TspLibEuc2D * tspLibEuc2DPtr)
 {
 	int depotId = -2;
-	char * depotSection = new char[50];
+	//char * depotSection = new char[50];
+	char depotSection[50];
 	char buf[LINE_MAX];
 
 	if (fgets(buf, sizeof buf, filePtr) != NULL)
 	{
-		sscanf(buf, "%s ", depotSection);
+		//sscanf(buf, "%s ", depotSection);
+		sscanf_s(buf, "%s", depotSection, (unsigned int)sizeof(depotSection));
+
 		printf("Section: %s \n", depotSection);
 	}
 
@@ -972,7 +1068,9 @@ void FrogLeapController::loadDepots(FILE * filePtr, TspLibEuc2D * tspLibEuc2DPtr
 	{
 		if (fgets(buf, sizeof buf, filePtr) != NULL)
 		{
-			sscanf(buf, "%d ", &depotId);
+			//sscanf(buf, "%d ", &depotId);
+			sscanf_s(buf, "%d ", &depotId);
+
 			printf("%d \n", depotId);
 
 			if(depotId != -1)
@@ -1206,7 +1304,9 @@ void FrogLeapController::readTSPSection(FILE * filePtr, char * ctrlSectionTag, c
 
 	if (fgets(buf, sizeof buf, filePtr) != NULL)
 	{
-		sscanf(buf, "%s %s", sectionTag, separatorChar);
+		//sscanf(buf, "%s %s", sectionTag, separatorChar);
+		sscanf_s(buf, "%s %s", sectionTag, (unsigned int)sizeof(sectionTag), separatorChar, (unsigned int)sizeof(separatorChar));
+
 		printf("Section: %s %s", sectionTag, separatorChar);
 
 		string sectionTagStr = sectionTag;
@@ -1236,7 +1336,8 @@ void FrogLeapController::loadTSPSection(char * buf, char * sectionTag)
 
 	if (sectionTagStr.compare("NAME") == 0)
 	{
-		sscanf(buf, "%s", auxContentCharPtr);
+		//sscanf(buf, "%s", auxContentCharPtr);
+		sscanf_s(buf, "%49s", auxContentCharPtr, (unsigned int)sizeof(auxContentCharPtr));
 
 		this->tspLibEud2DPtr->setName(auxContentCharPtr);
 		return;
@@ -1244,14 +1345,17 @@ void FrogLeapController::loadTSPSection(char * buf, char * sectionTag)
 
 	if (sectionTagStr.compare("TYPE") == 0)
 	{
-		sscanf(buf, "%s", auxContentCharPtr);
+		//sscanf(buf, "%s", auxContentCharPtr);
+		sscanf_s(buf, "%49s", auxContentCharPtr, (unsigned int)sizeof(auxContentCharPtr));
+		
 		this->tspLibEud2DPtr->setType(auxContentCharPtr);
 		return;
 	}
 
 	if (sectionTagStr.compare("DIMENSION") == 0)
 	{
-		sscanf(buf, "%hu", &auxShortInt);
+		//sscanf(buf, "%hu", &auxShortInt);
+		sscanf_s(buf, "%d", &auxShortInt);  // Se usa %d en lugar de %hu para short int en seguridad
 
 		this->tspLibEud2DPtr->setDimension(auxShortInt);
 		return;
@@ -1259,14 +1363,18 @@ void FrogLeapController::loadTSPSection(char * buf, char * sectionTag)
 
 	if (sectionTagStr.compare("EDGE_WEIGHT_TYPE") == 0)
 	{
-		sscanf(buf, "%s", auxContentCharPtr);
+		//sscanf(buf, "%s", auxContentCharPtr);
+		sscanf_s(buf, "%49s", auxContentCharPtr, (unsigned int)sizeof(auxContentCharPtr));
+
 		this->tspLibEud2DPtr->setEdgeWeightType(auxContentCharPtr);
 		return;
 	}
 
 	if (sectionTagStr.compare("CAPACITY") == 0)
 	{
-		sscanf(buf, "%hu", &auxShortInt);
+		//sscanf(buf, "%hu", &auxShortInt);
+		sscanf_s(buf, "%d", &auxShortInt);  // Se usa %d en lugar de %hu para evitar problemas
+		
 		this->tspLibEud2DPtr->setCapacity(auxShortInt);
 		return;
 	}
@@ -2958,12 +3066,28 @@ void FrogLeapController::assignDepotToCustomerAndUpdateRemainingCapacity(Pair* d
 
 void FrogLeapController::openOutPutFile()
 {
-	outPutFileName = "outPutFL2.txt";
-	pFile = fopen(outPutFileName, "w");
+	//outPutFileName = "outPutFL2.txt";
+	////pFile = fopen(outPutFileName, "w");
+	//fopen_s(&pFile, outPutFileName, "w");
 
-	if(pFile != NULL)
+	//if(pFile != NULL)
+	//{
+	//	fputs("MDVRP ALGORITHM OUTPUT \n", pFile);
+	//}
+
+
+	outPutFileName = "outPutFL2.txt";
+
+	// Intentar abrir el archivo de salida de forma segura
+	errno_t err = fopen_s(&pFile, outPutFileName, "w");
+
+	if (err == 0 && pFile != nullptr) // Verificar que fopen_s no haya fallado
 	{
 		fputs("MDVRP ALGORITHM OUTPUT \n", pFile);
+	}
+	else
+	{
+		printf("Error al abrir el archivo de salida: %s\n", outPutFileName);
 	}
 }
 
@@ -2974,12 +3098,27 @@ void FrogLeapController::closeOutPutFile()
 
 FILE * FrogLeapController::openFile(char* fileName)
 {
-	FILE * pFile = fopen(fileName, "w");
+	//FILE * pFile = fopen(fileName, "w");
+	//FILE* pFile = NULL;
+	//
+	//fopen_s(&pFile, fileName, "w");
 
-	if (pFile == NULL)
+	//if (pFile == NULL)
+	//{
+	//	std::cerr << "Error: Null pointer detected. Terminating program." << std::endl;
+	//	// Terminate the program
+	//	exit(EXIT_FAILURE);
+	//}
+
+	//return pFile;
+
+
+	FILE* pFile = NULL;
+	errno_t err = fopen_s(&pFile, fileName, "w");
+
+	if (err != 0 || pFile == NULL)
 	{
-		std::cerr << "Error: Null pointer detected. Terminating program." << std::endl;
-		// Terminate the program
+		std::cerr << "Error: Could not open file " << fileName << ". Terminating program." << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
@@ -3129,8 +3268,8 @@ void FrogLeapController::writeSeed()
 {
 	char buffer[256] = { 0 };
 
-	sprintf(buffer, "SEED USED: ; %lld \n", this->timeSeedUsed);
-
+	//sprintf(buffer, "SEED USED: ; %lld \n", this->timeSeedUsed);
+	sprintf_s(buffer, sizeof(buffer), "SEED USED: ; %lld \n", this->timeSeedUsed);
 	fputs(buffer, this->pFile);
 }
 
@@ -3164,7 +3303,8 @@ void FrogLeapController::writeIterationInfo(long long int i, float currentValue)
 	char buffer[300] = { 0 };
 
 	printf("\n\n\n Iteration Number i = %lld ; MinCostValue = %.3f ; CurrentCostValue = %.3f \n\n\n", i, this->getMinCostValue(), currentValue);
-	sprintf(buffer, "Iteration Number i = ; %lld ; MinCostValue = ; %.3f ; CurrentCostValue = ; %.3f \n", i, this->getMinCostValue(), currentValue);
+	//sprintf(buffer, "Iteration Number i = ; %lld ; MinCostValue = ; %.3f ; CurrentCostValue = ; %.3f \n", i, this->getMinCostValue(), currentValue);
+	sprintf_s(buffer, sizeof(buffer), "Iteration Number i = ; %lld ; MinCostValue = ; %.3f ; CurrentCostValue = ; %.3f \n", i, this->getMinCostValue(), currentValue);
 	fputs(buffer, this->pFile);	
 }
 
@@ -3173,7 +3313,8 @@ void FrogLeapController::writeRandomInfo(float a, float b, float finalRandom)
 	char buffer[300] = { 0 };
 
 	printf("Random Info a = %.3f b = %.3f finalRandom = %.3f \n", a, b, finalRandom);
-	sprintf(buffer, "Random Info a = ; %.3f ; b = ; %.3f m = ; %.3f finalRandom = ; %.3f \n", a, b, finalRandom);
+	//sprintf(buffer, "Random Info a = ; %.3f ; b = ; %.3f m = ; %.3f finalRandom = ; %.3f \n", a, b, finalRandom);
+	sprintf_s(buffer, sizeof(buffer), "Random Info a = ; %.3f ; b = ; %.3f m = ; %.3f finalRandom = ; %.3f \n", a, b, finalRandom);
 	fputs(buffer, this->pFile);
 }
 
@@ -3181,7 +3322,9 @@ void FrogLeapController::writeExecutionInfo()
 {
 	char buffer[300] = { 0 };
 
-	sprintf(buffer, "\n \n SHOWING DATA OF FROGLEAPING CONTROLLER \n");
+	//sprintf(buffer, "\n \n SHOWING DATA OF FROGLEAPING CONTROLLER \n");
+	sprintf_s(buffer, sizeof(buffer), "\n \n SHOWING DATA OF FROGLEAPING CONTROLLER \n");
+
 	buffer[300] = { 0 };
 	fputs(buffer, this->pFile);
 
@@ -3191,32 +3334,38 @@ void FrogLeapController::writeExecutionInfo()
 	}
 	else
 	{
-		sprintf(buffer,"\n NO FEASIBLE SOLUTION FOUND: ptrBestSolution IS NULL \n");
+		//sprintf(buffer,"\n NO FEASIBLE SOLUTION FOUND: ptrBestSolution IS NULL \n");
+		sprintf_s(buffer, sizeof(buffer), "\n NO FEASIBLE SOLUTION FOUND: ptrBestSolution IS NULL \n");
 		buffer[300] = { 0 };
 	}
 
-	sprintf(buffer, "\n Summary of Best Found Solution \n");
+	//sprintf(buffer, "\n Summary of Best Found Solution \n");
+	sprintf_s(buffer, sizeof(buffer), "\n Summary of Best Found Solution \n");
 	buffer[300] = { 0 };
 	fputs(buffer, this->pFile);
-	sprintf(buffer, "	Time Seed used %lld \n", (long long)this->timeSeedUsed);
+	//sprintf(buffer, "	Time Seed used %lld \n", (long long)this->timeSeedUsed);
+	sprintf_s(buffer, sizeof(buffer), "	Time Seed used %lld \n", (long long)this->timeSeedUsed);
 	buffer[300] = { 0 };
 	fputs(buffer, this->pFile);
-	sprintf(buffer, "	Number of success attempts: %d \n", this->successAttempts);
+	//sprintf(buffer, "	Number of success attempts: %d \n", this->successAttempts);
+	sprintf_s(buffer, sizeof(buffer), "	Number of success attempts: %d \n", this->successAttempts);
 	buffer[300] = { 0 };
 	fputs(buffer, this->pFile);
-	sprintf(buffer, "	Number of fail attempts: %d \n", this->failAttempts);
+	sprintf_s(buffer, sizeof(buffer), "	Number of fail attempts: %d \n", this->failAttempts);
 	buffer[300] = { 0 };
 	fputs(buffer, this->pFile);
-	sprintf(buffer, "	Number of TOTAL Improvements: %d \n", this->getTotalImprovements());
+	//sprintf(buffer, "	Number of TOTAL Improvements: %d \n", this->getTotalImprovements());
+	sprintf_s(buffer, sizeof(buffer),"	Number of TOTAL Improvements: %d \n", this->getTotalImprovements());
 	buffer[300] = { 0 };
 	fputs(buffer, this->pFile);
-	sprintf(buffer, "	Number of Global Search Improvements: %d \n", this->globalImprovements);
+	//sprintf(buffer, "	Number of Global Search Improvements: %d \n", this->globalImprovements);
+	sprintf_s(buffer, sizeof(buffer), "	Number of Global Search Improvements: %d \n", this->globalImprovements);
 	buffer[300] = { 0 };
 	fputs(buffer, this->pFile);
-	sprintf(buffer, "	Number of Local Search Improvements: %d \n", this->localSearchImprovements);
+	sprintf_s(buffer, sizeof(buffer), "	Number of Local Search Improvements: %d \n", this->localSearchImprovements);
 	buffer[300] = { 0 };
 	fputs(buffer, this->pFile);
-	sprintf(buffer, "	Evaluation of best found solution is: %.3f \n \n", this->getMinCostValue());
+	sprintf_s(buffer, sizeof(buffer), "	Evaluation of best found solution is: %.3f \n \n", this->getMinCostValue());
 	buffer[300] = { 0 };
 	fputs(buffer, this->pFile);
 }
